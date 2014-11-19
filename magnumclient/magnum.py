@@ -24,6 +24,11 @@ CLI commands not yet implemented
 * pod delete
 * pod show
 
+* service create
+* service list
+* service delete
+* service show
+
 * container create
 * container list
 * container delete
