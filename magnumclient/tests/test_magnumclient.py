@@ -12,8 +12,16 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pbr.version
+"""
+test_magnumclient
+----------------------------------
+Tests for `magnumclient` module.
+"""
+
+from magnumclient.tests import base
 
 
-__version__ = pbr.version.VersionInfo(
-    'python-magnumclient').version_string()
+class TestMagnumclient(base.TestCase):
+
+    def test_something(self):
+        pass

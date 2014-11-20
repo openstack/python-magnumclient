@@ -42,5 +42,6 @@ CLI commands not yet implemented
 * container execute
 """
 
+
 def main():
-    print 'This is the client to be'
+    print('This is the client to be')
