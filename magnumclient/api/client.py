@@ -22,7 +22,7 @@ from magnumclient.api import httpclient
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, magnum_url=None,
-                 endpoint_type='publicURL', service_type='data_processing',
+                 endpoint_type='publicURL', service_type='container',
                  input_auth_token=None):
 
         if not input_auth_token:

@@ -57,7 +57,7 @@ from magnumclient import version
 
 DEFAULT_API_VERSION = 'api'
 DEFAULT_ENDPOINT_TYPE = 'publicURL'
-DEFAULT_SERVICE_TYPE = 'data_processing'
+DEFAULT_SERVICE_TYPE = 'container'
 
 logger = logging.getLogger(__name__)
 
@@ -279,7 +279,7 @@ class OpenStackMagnumShell(object):
 
         parser.add_argument('--service-type',
                             metavar='<service-type>',
-                            help='Defaults to data_processing for all '
+                            help='Defaults to container for all '
                                  'actions.')
         parser.add_argument('--service_type',
                             help=argparse.SUPPRESS)
