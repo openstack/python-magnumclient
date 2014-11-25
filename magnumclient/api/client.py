@@ -16,7 +16,11 @@
 from keystoneclient.v2_0 import client as keystone_client_v2
 from keystoneclient.v3 import client as keystone_client_v3
 
-from magnumclient.api import httpclient
+from magnumclient.api import bays
+from magnumclient.api import containers
+from magnumclient.api import pods
+from magnumclient.api import services
+from magnumclient.common import httpclient
 
 
 class Client(object):
@@ -52,8 +56,26 @@ class Client(object):
         if not magnum_catalog_url:
             raise RuntimeError("Could not find Magnum endpoint in catalog")
 
-        self.client = httpclient.HTTPClient(magnum_catalog_url,
-                                            input_auth_token)
+        http_cli_kwargs = {
+            'token': input_auth_token,
+            # TODO(yuanying): - use insecure
+            # 'insecure': kwargs.get('insecure'),
+            # TODO(yuanying): - use timeout
+            # 'timeout': kwargs.get('timeout'),
+            # TODO(yuanying): - use ca_file
+            # 'ca_file': kwargs.get('ca_file'),
+            # TODO(yuanying): - use cert_file
+            # 'cert_file': kwargs.get('cert_file'),
+            # TODO(yuanying): - use key_file
+            # 'key_file': kwargs.get('key_file'),
+            'auth_ref': None,
+        }
+        self.http_client = httpclient.HTTPClient(magnum_catalog_url,
+                                                 **http_cli_kwargs)
+        self.bays = bays.BayManager(self.http_client)
+        self.pods = pods.PodManager(self.http_client)
+        self.services = services.ServiceManager(self.http_client)
+        self.containers = containers.ContainerManager(self.http_client)
 
     def get_keystone_client(self, username=None, api_key=None, auth_url=None,
                             token=None, project_id=None, project_name=None):

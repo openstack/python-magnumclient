@@ -588,6 +588,7 @@ class OpenStackMagnumShell(object):
                                 project_id=os_tenant_id,
                                 project_name=os_tenant_name,
                                 auth_url=os_auth_url,
+                                service_type=service_type,
                                 magnum_url=bypass_url)
 
         args.func(self.cs, args)
