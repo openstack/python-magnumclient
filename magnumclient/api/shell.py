@@ -28,16 +28,40 @@ def _show_container(container):
     utils.print_dict(container._info)
 
 
+def _show_bay(bay):
+    utils.print_dict(bay._info)
+
+
 def do_bay_list(cs, args):
-    pass
+    """Print a list of available containers."""
+    bays = cs.bays.list()
+    columns = ('id', 'name', 'type')
+    utils.print_list(bays, columns,
+                     {'versions': _print_list_field('versions')})
 
 
+@utils.arg('--name',
+           metavar='<name>',
+           help='Name of the bay to create.')
+@utils.arg('--type',
+           metavar='<type>',
+           help='Type of bay to create (virt or bare).')
 def do_bay_create(cs, args):
-    pass
+    """Create a bay."""
+    opts = {}
+    opts['name'] = args.name
+    opts['type'] = args.type
+
+    bay = cs.bays.create(**opts)
+    _show_bay(bay)
 
 
+@utils.arg('--id',
+           metavar='<bay_id>',
+           help='ID of the bay to delete.')
 def do_bay_delete(cs, args):
-    pass
+    """Delete a bay."""
+    cs.containers.delete(args.id)
 
 
 def do_bay_show(cs, args):
