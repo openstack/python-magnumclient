@@ -13,6 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import argparse
+import json
+import sys
+
+from magnumclient.openstack.common import cliutils as utils
+
+
+def _print_list_field(field):
+    return lambda obj: ', '.join(getattr(obj, field))
+
+
+def _show_container(container):
+    utils.print_dict(container._info)
+
 
 def do_bay_list(cs, args):
     pass
@@ -62,20 +76,73 @@ def do_service_show(cs, args):
     pass
 
 
+#
+# Containers
+# ~~~~~~~~~~
+# container-create [--json <file>]
+#
+# container-list
+#
+# container-delete --id <container_id>
+#
+# container-show --id <container_id> [--json]
+#
+# TODO(yuanying): container-reboot
+#
+# TODO(yuanying): container-stop
+#
+# TODO(yuanying): container-start
+#
+# TODO(yuanying): container-pause
+#
+# TODO(yuanying): container-unpause
+#
+# TODO(yuanying): container-logs
+#
+# TODO(yuanying): container-execute
+#
+
+
+@utils.arg('--json',
+           default=sys.stdin,
+           type=argparse.FileType('r'),
+           help='JSON representation of container.')
 def do_container_create(cs, args):
-    pass
+    """Create a container."""
+    container = json.loads(args.json.read())
+    _show_container(cs.containers.create(**container))
 
 
 def do_container_list(cs, args):
-    pass
+    """Print a list of available containers."""
+    containers = cs.containers.list()
+    columns = ('name', 'desc')
+    utils.print_list(containers, columns,
+                     {'versions': _print_list_field('versions')})
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to delete.')
 def do_container_delete(cs, args):
-    pass
+    """Delete a cluster."""
+    cs.containers.delete(args.id)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to show.')
+@utils.arg('--json',
+           action='store_true',
+           default=False,
+           help='Print JSON representation of the container.')
 def do_container_show(cs, args):
-    pass
+    """Show details of a container."""
+    container = cs.containers.get(args.id)
+    if args.json:
+        print(json.dumps(container._info))
+    else:
+        _show_container(container)
 
 
 def do_container_reboot(cs, args):

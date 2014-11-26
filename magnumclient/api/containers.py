@@ -18,7 +18,7 @@ from magnumclient import exceptions
 
 
 # FIXME: Modify correct attributes.
-CREATION_ATTRIBUTES = ['description']
+CREATION_ATTRIBUTES = ['name', 'desc']
 
 
 class Container(base.Resource):
@@ -72,9 +72,13 @@ class ContainerManager(base.Manager):
             path += '?' + '&'.join(filters)
 
         if limit is None:
-            return self._list(self._path(path), "containers")
+            # TODO(yuanying): if endpoint returns "map",
+            # change None to response_key
+            return self._list(self._path(path), None)
         else:
-            return self._list_pagination(self._path(path), "containers",
+            # TODO(yuanying): if endpoint returns "map",
+            # change None to response_key
+            return self._list_pagination(self._path(path), None,
                                          limit=limit)
 
     def get(self, container_id):
@@ -89,6 +93,7 @@ class ContainerManager(base.Manager):
             if key in CREATION_ATTRIBUTES:
                 new[key] = value
             else:
+                pass
                 raise exceptions.InvalidAttribute()
         return self._create(self._path(), new)
 
