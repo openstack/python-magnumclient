@@ -116,7 +116,7 @@ def do_container_create(cs, args):
 def do_container_list(cs, args):
     """Print a list of available containers."""
     containers = cs.containers.list()
-    columns = ('name', 'desc')
+    columns = ('container_id', 'name', 'desc')
     utils.print_list(containers, columns,
                      {'versions': _print_list_field('versions')})
 

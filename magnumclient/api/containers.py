@@ -17,8 +17,7 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-# FIXME: Modify correct attributes.
-CREATION_ATTRIBUTES = ['name', 'desc']
+CREATION_ATTRIBUTES = ['container_id', 'name', 'desc']
 
 
 class Container(base.Resource):
