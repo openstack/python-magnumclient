@@ -17,7 +17,7 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-CREATION_ATTRIBUTES = ['container_id', 'name', 'desc']
+CREATION_ATTRIBUTES = ['name', 'desc']
 
 
 class Container(base.Resource):
@@ -80,9 +80,9 @@ class ContainerManager(base.Manager):
             return self._list_pagination(self._path(path), None,
                                          limit=limit)
 
-    def get(self, container_id):
+    def get(self, id):
         try:
-            return self._list(self._path(container_id))[0]
+            return self._list(self._path(id))[0]
         except IndexError:
             return None
 
@@ -92,12 +92,11 @@ class ContainerManager(base.Manager):
             if key in CREATION_ATTRIBUTES:
                 new[key] = value
             else:
-                pass
                 raise exceptions.InvalidAttribute()
         return self._create(self._path(), new)
 
-    def delete(self, container_id):
-        return self._delete(self._path(container_id))
+    def delete(self, id):
+        return self._delete(self._path(id))
 
-    def update(self, container_id, patch):
-        return self._update(self._path(container_id), patch)
+    def update(self, id, patch):
+        return self._update(self._path(id), patch)
