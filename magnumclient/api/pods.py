@@ -18,7 +18,7 @@ from magnumclient import exceptions
 
 
 # FIXME: Modify correct attributes.
-CREATION_ATTRIBUTES = ['description']
+CREATION_ATTRIBUTES = ['name', 'description']
 
 
 class Pod(base.Resource):
@@ -72,14 +72,18 @@ class PodManager(base.Manager):
             path += '?' + '&'.join(filters)
 
         if limit is None:
-            return self._list(self._path(path), "pods")
+            # TODO(yuanying): if endpoint returns "map",
+            # change None to response_key
+            return self._list(self._path(path), None)
         else:
-            return self._list_pagination(self._path(path), "pods",
+            # TODO(yuanying): if endpoint returns "map",
+            # change None to response_key
+            return self._list_pagination(self._path(path), None,
                                          limit=limit)
 
-    def get(self, pod_id):
+    def get(self, id):
         try:
-            return self._list(self._path(pod_id))[0]
+            return self._list(self._path(id))[0]
         except IndexError:
             return None
 
@@ -92,8 +96,8 @@ class PodManager(base.Manager):
                 raise exceptions.InvalidAttribute()
         return self._create(self._path(), new)
 
-    def delete(self, pod_id):
-        return self._delete(self._path(pod_id))
+    def delete(self, id):
+        return self._delete(self._path(id))
 
-    def update(self, pod_id, patch):
-        return self._update(self._path(pod_id), patch)
+    def update(self, id, patch):
+        return self._update(self._path(id), patch)
