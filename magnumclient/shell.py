@@ -269,36 +269,12 @@ class OpenStackMagnumShell(object):
                             default=cliutils.env('OS_TENANT_ID'),
                             help='Defaults to env[OS_TENANT_ID].')
 
-# NA
-#        parser.add_argument('--os-region-name',
-#            metavar='<region-name>',
-#            default=cliutils.env('OS_REGION_NAME', 'SAHARA_REGION_NAME'),
-#            help='Defaults to env[OS_REGION_NAME].')
-#        parser.add_argument('--os_region_name',
-#            help=argparse.SUPPRESS)
-
         parser.add_argument('--service-type',
                             metavar='<service-type>',
                             help='Defaults to container for all '
                                  'actions.')
         parser.add_argument('--service_type',
                             help=argparse.SUPPRESS)
-
-# NA
-#        parser.add_argument('--service-name',
-#            metavar='<service-name>',
-#            default=utils.env('SAHARA_SERVICE_NAME'),
-#            help='Defaults to env[SAHARA_SERVICE_NAME]')
-#        parser.add_argument('--service_name',
-#            help=argparse.SUPPRESS)
-
-# NA
-#        parser.add_argument('--volume-service-name',
-#            metavar='<volume-service-name>',
-#            default=utils.env('NOVA_VOLUME_SERVICE_NAME'),
-#            help='Defaults to env[NOVA_VOLUME_SERVICE_NAME]')
-#        parser.add_argument('--volume_service_name',
-#            help=argparse.SUPPRESS)
 
         parser.add_argument('--endpoint-type',
                             metavar='<endpoint-type>',
@@ -330,15 +306,6 @@ class OpenStackMagnumShell(object):
                             help='Specify a CA bundle file to use in '
                             'verifying a TLS (https) server certificate. '
                             'Defaults to env[OS_CACERT].')
-
-# NA
-#        parser.add_argument('--insecure',
-#            default=utils.env('NOVACLIENT_INSECURE', default=False),
-#            action='store_true',
-#            help="Explicitly allow novaclient to perform \"insecure\" "
-#                 "SSL (https) requests. The server's certificate will "
-#                 "not be verified against any certificate authorities. "
-#                 "This option should be used with caution.")
 
         parser.add_argument('--bypass-url',
                             metavar='<bypass-url>',
@@ -452,20 +419,6 @@ class OpenStackMagnumShell(object):
             self.do_bash_completion(args)
             return 0
 
-#        (os_username, os_tenant_name, os_tenant_id, os_auth_url,
-#                os_region_name, os_auth_system, endpoint_type, insecure,
-#                service_type, service_name, volume_service_name,
-#                bypass_url, os_cache, cacert) = ( #, timeout) = (
-#                        args.os_username,
-#                        args.os_tenant_name, args.os_tenant_id,
-#                        args.os_auth_url,
-#                        args.os_region_name,
-#                        args.os_auth_system,
-#                        args.endpoint_type, args.insecure,
-#                        args.service_type,
-#                        args.service_name, args.volume_service_name,
-#                        args.bypass_url, args.os_cache,
-#                        args.os_cacert, args.timeout)
         (os_username, os_tenant_name, os_tenant_id,
          os_auth_url, os_auth_system, endpoint_type,
          service_type, bypass_url) = (
@@ -520,20 +473,7 @@ class OpenStackMagnumShell(object):
                                            "default url with --os-auth-system "
                                            "or env[OS_AUTH_SYSTEM]")
 
-# NA
-#        if (options.os_compute_api_version and
-#                options.os_compute_api_version != '1.0'):
-#            if not os_tenant_name and not os_tenant_id:
-#                raise exc.CommandError("You must provide a tenant name "
-#                        "or tenant id via --os-tenant-name, "
-#                        "--os-tenant-id, env[OS_TENANT_NAME] "
-#                        "or env[OS_TENANT_ID]")
-#
-#            if not os_auth_url:
-#                raise exc.CommandError("You must provide an auth url "
-#                        "via either --os-auth-url or env[OS_AUTH_URL]")
-
-# NOTE: The Sahara client authenticates when you create it. So instead of
+# NOTE: The Magnum client authenticates when you create it. So instead of
 #       creating here and authenticating later, which is what the novaclient
 #       does, we just create the client later.
 
@@ -541,47 +481,23 @@ class OpenStackMagnumShell(object):
         # identifying keyring key can come from the underlying client
         if not cliutils.isunauthenticated(args.func):
             # NA - Client can't be used with SecretsHelper
-            # helper = SecretsHelper(args, self.cs.client)
             if (auth_plugin and auth_plugin.opts and
                     "os_password" not in auth_plugin.opts):
                 use_pw = False
             else:
                 use_pw = True
 
-#            tenant_id, auth_token, management_url = (helper.tenant_id,
-#                                                     helper.auth_token,
-#                                                     helper.management_url)
-#
-#            if tenant_id and auth_token and management_url:
-#                self.cs.client.tenant_id = tenant_id
-#                self.cs.client.auth_token = auth_token
-#                self.cs.client.management_url = management_url
-#                # authenticate just sets up some values in this case, no REST
-#                # calls
-#                self.cs.authenticate()
             if use_pw:
                 # Auth using token must have failed or not happened
                 # at all, so now switch to password mode and save
                 # the token when its gotten... using our keyring
                 # saver
-                # os_password = helper.password
                 os_password = args.os_password
                 if not os_password:
                     raise exc.CommandError(
                         'Expecting a password provided via either '
                         '--os-password, env[OS_PASSWORD], or '
                         'prompted response')
-#                self.cs.client.password = os_password
-#                self.cs.client.keyring_saver = helper
-
-# NA
-#        try:
-#            if not utils.isunauthenticated(args.func):
-#                self.cs.authenticate()
-#        except exc.Unauthorized:
-#            raise exc.CommandError("Invalid OpenStack Sahara credentials.")
-#        except exc.AuthorizationFailure:
-#            raise exc.CommandError("Unable to authorize user")
 
         self.cs = client.Client(username=os_username,
                                 api_key=os_password,
@@ -592,10 +508,6 @@ class OpenStackMagnumShell(object):
                                 magnum_url=bypass_url)
 
         args.func(self.cs, args)
-
-# TODO(mattf) - add get_timings support to Client
-#        if args.timings:
-#            self._dump_timings(self.cs.get_timings())
 
     def _dump_timings(self, timings):
         class Tyme(object):
