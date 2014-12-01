@@ -33,7 +33,7 @@ def _show_bay(bay):
 
 
 def do_bay_list(cs, args):
-    """Print a list of available containers."""
+    """Print a list of available bays."""
     bays = cs.bays.list()
     columns = ('id', 'name', 'type')
     utils.print_list(bays, columns,
@@ -149,7 +149,7 @@ def do_container_list(cs, args):
            metavar='<container_id>',
            help='ID of the container to delete.')
 def do_container_delete(cs, args):
-    """Delete a cluster."""
+    """Delete a container."""
     cs.containers.delete(args.id)
 
 
