@@ -61,7 +61,7 @@ def do_bay_create(cs, args):
            help='ID of the bay to delete.')
 def do_bay_delete(cs, args):
     """Delete a bay."""
-    cs.containers.delete(args.id)
+    cs.bays.delete(args.id)
 
 
 def do_bay_show(cs, args):
