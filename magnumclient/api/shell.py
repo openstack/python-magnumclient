@@ -35,7 +35,7 @@ def _show_bay(bay):
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list()
-    columns = ('id', 'name', 'type')
+    columns = ('uuid', 'name', 'type')
     utils.print_list(bays, columns,
                      {'versions': _print_list_field('versions')})
 

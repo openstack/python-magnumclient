@@ -33,12 +33,12 @@ class BayManager(base.Manager):
     def _path(id=None):
         return '/v1/bays/%s' % id if id else '/v1/bays'
 
-    def list(self, marker=None, limit=None, sort_key=None,
+    def list(self, limit=None, marker=None, sort_key=None,
              sort_dir=None, detail=False):
-        """Retrieve a list of bays.
+        """Retrieve a list of port.
 
-        :param marker: Optional, the UUID of a bays, eg the last
-                       bays from a previous result set. Return
+        :param marker: Optional, the UUID of a port, eg the last
+                       port from a previous result set. Return
                        the next result set.
         :param limit: The maximum number of results to return per
                       request, if:
@@ -72,13 +72,9 @@ class BayManager(base.Manager):
             path += '?' + '&'.join(filters)
 
         if limit is None:
-            # TODO(yuanying): if endpoint returns "map",
-            # change None to response_key
-            return self._list(self._path(path), None)
+            return self._list(self._path(path), "bays")
         else:
-            # TODO(yuanying): if endpoint returns "map",
-            # change None to response_key
-            return self._list_pagination(self._path(path), None,
+            return self._list_pagination(self._path(path), "bays",
                                          limit=limit)
 
     def get(self, id):
