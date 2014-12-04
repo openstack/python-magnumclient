@@ -64,8 +64,12 @@ def do_bay_delete(cs, args):
     cs.bays.delete(args.id)
 
 
+@utils.arg('--id',
+           metavar='<bay_id>',
+           help='ID of the bay to show.')
 def do_bay_show(cs, args):
-    pass
+    bay = cs.bays.get(args.id)
+    _show_bay(bay)
 
 
 def do_pod_list(cs, args):
