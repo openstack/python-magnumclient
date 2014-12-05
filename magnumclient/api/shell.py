@@ -35,7 +35,7 @@ def _show_bay(bay):
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list()
-    columns = ('uuid', 'name', 'type')
+    columns = ('uuid', 'name', 'type', 'image_id', 'node_count')
     utils.print_list(bays, columns,
                      {'versions': _print_list_field('versions')})
 
@@ -46,11 +46,19 @@ def do_bay_list(cs, args):
 @utils.arg('--type',
            metavar='<type>',
            help='Type of bay to create (virt or bare).')
+@utils.arg('--image_id',
+           metavar='<image_id>',
+           help='The name or UUID of the base image to customize for the bay.')
+@utils.arg('--node_count',
+           metavar='<node_count>',
+           help='The bay node count.')
 def do_bay_create(cs, args):
     """Create a bay."""
     opts = {}
     opts['name'] = args.name
     opts['type'] = args.type
+    opts['image_id'] = args.image_id
+    opts['node_count'] = args.node_count
 
     bay = cs.bays.create(**opts)
     _show_bay(bay)
