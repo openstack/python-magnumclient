@@ -17,8 +17,7 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-# FIXME: Modify correct attributes.
-CREATION_ATTRIBUTES = ['name', 'type', 'description']
+CREATION_ATTRIBUTES = ['name', 'type', 'image_id', 'node_count']
 
 
 class Bay(base.Resource):
