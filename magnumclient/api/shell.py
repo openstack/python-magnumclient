@@ -32,6 +32,10 @@ def _show_bay(bay):
     utils.print_dict(bay._info)
 
 
+def _show_node(node):
+    utils.print_dict(node._info)
+
+
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list()
@@ -78,6 +82,30 @@ def do_bay_delete(cs, args):
 def do_bay_show(cs, args):
     bay = cs.bays.get(args.id)
     _show_bay(bay)
+
+
+def do_node_list(cs, args):
+    """Print a list of configured nodes."""
+    nodes = cs.nodes.list()
+    columns = ('uuid', 'type', 'image_id')
+    utils.print_list(nodes, columns,
+                     {'versions': _print_list_field('versions')})
+
+
+@utils.arg('--type',
+           metavar='<type>',
+           help='Type of node to create (virt or bare).')
+@utils.arg('--image_id',
+           metavar='<image_id>',
+           help='The name or UUID of the base image to use for the node.')
+def do_node_create(cs, args):
+    """Create a node."""
+    opts = {}
+    opts['type'] = args.type
+    opts['image_id'] = args.image_id
+
+    node = cs.nodes.create(**opts)
+    _show_node(node)
 
 
 def do_pod_list(cs, args):
