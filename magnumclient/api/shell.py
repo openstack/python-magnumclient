@@ -32,6 +32,10 @@ def _show_bay(bay):
     utils.print_dict(bay._info)
 
 
+def _show_baymodel(baymodel):
+    utils.print_dict(baymodel._info)
+
+
 def _show_node(node):
     utils.print_dict(node._info)
 
@@ -82,6 +86,60 @@ def do_bay_delete(cs, args):
 def do_bay_show(cs, args):
     bay = cs.bays.get(args.id)
     _show_bay(bay)
+
+
+@utils.arg('--name',
+           metavar='<name>',
+           help='Name of the bay to create.')
+@utils.arg('--image_id',
+           metavar='<image_id>',
+           help='The name or UUID of the base image to customize for the bay.')
+@utils.arg('--keypair_id',
+           metavar='<keypair_id>',
+           help='The name or UUID of the SSH keypair to load into the'
+           ' Bay nodes.')
+@utils.arg('--external_network_id',
+           metavar='<external_network_id>',
+           help='The external Neutron network ID to connect to this bay'
+           ' model.')
+@utils.arg('--dns_nameserver',
+           metavar='<dns_nameserver>',
+           help='The DNS nameserver to use for this Bay.')
+def do_baymodel_create(cs, args):
+    """Create a bay."""
+    opts = {}
+    opts['name'] = args.name
+    opts['image_id'] = args.image_id
+    opts['keypair_id'] = args.keypair_id
+    opts['external_network_id'] = args.external_network_id
+    opts['dns_nameserver'] = args.dns_nameserver
+
+    bay = cs.baymodels.create(**opts)
+    _show_baymodel(bay)
+
+
+@utils.arg('--id',
+           metavar='<bay_id>',
+           help='ID of the bay to delete.')
+def do_baymodel_delete(cs, args):
+    """Delete a bay."""
+    cs.baymodels.delete(args.id)
+
+
+@utils.arg('--id',
+           metavar='<bay_id>',
+           help='ID of the bay to show.')
+def do_baymodel_show(cs, args):
+    baymodel = cs.baymodels.get(args.id)
+    _show_bay(baymodel)
+
+
+def do_baymodel_list(cs, args):
+    """Print a list of bay models."""
+    nodes = cs.baymodels.list()
+    columns = ('uuid', 'name', 'image_id')
+    utils.print_list(nodes, columns,
+                     {'versions': _print_list_field('versions')})
 
 
 def do_node_list(cs, args):
