@@ -33,6 +33,7 @@ def _show_bay(bay):
 
 
 def _show_baymodel(baymodel):
+    del baymodel._info['links']
     utils.print_dict(baymodel._info)
 
 
@@ -69,7 +70,7 @@ def do_bay_create(cs, args):
     opts['node_count'] = args.node_count
 
     bay = cs.bays.create(**opts)
-    _show_bay(bay)
+    _show_baymodel(bay)
 
 
 @utils.arg('--id',
@@ -131,7 +132,7 @@ def do_baymodel_delete(cs, args):
            help='ID of the bay to show.')
 def do_baymodel_show(cs, args):
     baymodel = cs.baymodels.get(args.id)
-    _show_bay(baymodel)
+    _show_baymodel(baymodel)
 
 
 def do_baymodel_list(cs, args):
