@@ -42,6 +42,10 @@ def _show_node(node):
     utils.print_dict(node._info)
 
 
+def _show_pod(node):
+    utils.print_dict(node._info)
+
+
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list()
@@ -161,19 +165,45 @@ def do_node_create(cs, args):
 
 
 def do_pod_list(cs, args):
-    pass
+    """Print a list of registered pods."""
+    pods = cs.pods.list()
+    columns = ('uuid', 'name')
+    utils.print_list(pods, columns,
+                     {'versions': _print_list_field('versions')})
 
 
+@utils.arg('--name',
+           metavar='<name>',
+           help='Name of the pod to create.')
+@utils.arg('--pod-file',
+           metavar='<pod-file>',
+           help='Name of the pod file to use for creating PODs.')
 def do_pod_create(cs, args):
+    """Create a pod."""
+    opts = {}
+    opts['name'] = args.name
+    opts['pod_data'] = open(args.pod_file).read()
+
+    node = cs.pods.create(**opts)
+    _show_pod(node)
     pass
 
 
+@utils.arg('--id',
+           metavar='<bay_id>',
+           help='ID of the pod to delete.')
 def do_pod_delete(cs, args):
+    """Delete a pod."""
+    cs.pods.delete(args.id)
     pass
 
 
+@utils.arg('--id',
+           metavar='<bay_id>',
+           help='ID of the bay to show.')
 def do_pod_show(cs, args):
-    pass
+    pod = cs.pods.get(args.id)
+    _show_pod(pod)
 
 
 def do_service_list(cs, args):
