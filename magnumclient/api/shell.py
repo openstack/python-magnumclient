@@ -29,6 +29,7 @@ def _show_container(container):
 
 
 def _show_bay(bay):
+    del bay._info['links']
     utils.print_dict(bay._info)
 
 
