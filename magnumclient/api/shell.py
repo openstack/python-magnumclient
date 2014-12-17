@@ -103,10 +103,14 @@ def do_bay_show(cs, args):
 @utils.arg('--dns_nameserver',
            metavar='<dns_nameserver>',
            help='The DNS nameserver to use for this Bay.')
+@utils.arg('--flavor_id',
+           metavar='<flavor_id>',
+           help='The nova flavor id to use when launching the bay.')
 def do_baymodel_create(cs, args):
     """Create a bay."""
     opts = {}
     opts['name'] = args.name
+    opts['flavor_id'] = args.flavor_id
     opts['image_id'] = args.image_id
     opts['keypair_id'] = args.keypair_id
     opts['external_network_id'] = args.external_network_id
