@@ -53,12 +53,9 @@ def do_bay_list(cs, args):
 @utils.arg('--name',
            metavar='<name>',
            help='Name of the bay to create.')
-@utils.arg('--type',
-           metavar='<type>',
-           help='Type of bay to create (virt or bare).')
-@utils.arg('--image_id',
-           metavar='<image_id>',
-           help='The name or UUID of the base image to customize for the bay.')
+@utils.arg('--baymodel_id',
+           metavar='<baymodel_id>',
+           help='The ID or name of the bay model.')
 @utils.arg('--node_count',
            metavar='<node_count>',
            help='The bay node count.')
@@ -66,8 +63,7 @@ def do_bay_create(cs, args):
     """Create a bay."""
     opts = {}
     opts['name'] = args.name
-    opts['type'] = args.type
-    opts['image_id'] = args.image_id
+    opts['baymodel_id'] = args.type
     opts['node_count'] = args.node_count
 
     bay = cs.bays.create(**opts)
