@@ -138,7 +138,7 @@ def do_baymodel_show(cs, args):
 def do_baymodel_list(cs, args):
     """Print a list of bay models."""
     nodes = cs.baymodels.list()
-    columns = ('uuid', 'name', 'image_id')
+    columns = ('uuid', 'name')
     utils.print_list(nodes, columns,
                      {'versions': _print_list_field('versions')})
 
