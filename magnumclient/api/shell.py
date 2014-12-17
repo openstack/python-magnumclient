@@ -57,6 +57,9 @@ def do_bay_list(cs, args):
 @utils.arg('--name',
            metavar='<name>',
            help='Name of the bay to create.')
+@utils.arg('--baymodel_id',
+           metavar='<baymodel_id>',
+           help='The bay model ID.')
 @utils.arg('--node_count',
            metavar='<node_count>',
            help='The bay node count.')
@@ -64,6 +67,7 @@ def do_bay_create(cs, args):
     """Create a bay."""
     opts = {}
     opts['name'] = args.name
+    opts['baymodel_id'] = args.baymodel_id
     opts['node_count'] = args.node_count
 
     bay = cs.bays.create(**opts)
