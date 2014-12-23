@@ -42,8 +42,8 @@ def _show_node(node):
     utils.print_dict(node._info)
 
 
-def _show_pod(node):
-    utils.print_dict(node._info)
+def _show_pod(pod):
+    utils.print_dict(pod._info)
 
 
 def do_bay_list(cs, args):
