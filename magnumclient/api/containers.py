@@ -100,3 +100,30 @@ class ContainerManager(base.Manager):
 
     def update(self, id, patch):
         return self._update(self._path(id), patch)
+
+    def _action(self, id, action, **kwargs):
+        resp, body = self.api.json_request('PUT',
+                                           self._path(id) + action,
+                                           kwargs)
+        return resp
+
+    def start(self, id):
+        return self._action(id, '/start')
+
+    def stop(self, id):
+        return self._action(id, '/stop')
+
+    def reboot(self, id):
+        return self._action(id, '/reboot')
+
+    def pause(self, id):
+        return self._action(id, '/pause')
+
+    def unpause(self, id):
+        return self._action(id, '/unpause')
+
+    def logs(self, id):
+        return self._action(id, '/logs')
+
+    def execute(self, id, command):
+        return self._action(id, '/execute', command=command)

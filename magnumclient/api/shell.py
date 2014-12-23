@@ -232,30 +232,6 @@ def do_service_show(cs, args):
 
 #
 # Containers
-# ~~~~~~~~~~
-# container-create [--json <file>]
-#
-# container-list
-#
-# container-delete --id <container_id>
-#
-# container-show --id <container_id> [--json]
-#
-# TODO(yuanying): container-reboot
-#
-# TODO(yuanying): container-stop
-#
-# TODO(yuanying): container-start
-#
-# TODO(yuanying): container-pause
-#
-# TODO(yuanying): container-unpause
-#
-# TODO(yuanying): container-logs
-#
-# TODO(yuanying): container-execute
-#
-
 
 @utils.arg('--json',
            default=sys.stdin,
@@ -299,29 +275,53 @@ def do_container_show(cs, args):
         _show_container(container)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to start.')
 def do_container_reboot(cs, args):
-    pass
+    cs.containers.reboot(args.id)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to start.')
 def do_container_stop(cs, args):
-    pass
+    cs.containers.stop(args.id)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to start.')
 def do_container_start(cs, args):
-    pass
+    cs.containers.start(args.id)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to start.')
 def do_container_pause(cs, args):
-    pass
+    cs.containers.pause(args.id)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to start.')
 def do_container_unpause(cs, args):
-    pass
+    cs.containers.unpause(args.id)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to start.')
 def do_container_logs(cs, args):
-    pass
+    cs.containers.logs(args.id)
 
 
+@utils.arg('--id',
+           metavar='<container_id>',
+           help='ID of the container to start.')
+@utils.arg('--command',
+           metavar='<command>',
+           help='The command to execute')
 def do_container_execute(cs, args):
-    pass
+    cs.containers.execute(args.id, args.command)
