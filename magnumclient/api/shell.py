@@ -46,6 +46,10 @@ def _show_pod(pod):
     utils.print_dict(pod._info)
 
 
+def _show_service(service):
+    utils.print_dict(service._info)
+
+
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list()
@@ -215,19 +219,42 @@ def do_pod_show(cs, args):
 
 
 def do_service_list(cs, args):
-    pass
+    """Print a list of services."""
+    services = cs.services.list()
+    columns = ('uuid', 'name', 'bay_uuid')
+    utils.print_list(services, columns,
+                     {'versions': _print_list_field('versions')})
 
 
+@utils.arg('--name',
+           metavar='<name>',
+           help='Name of service to create.')
+@utils.arg('--service-file',
+           metavar='<service-file>',
+           help='Name of the serivce file to use for creating services.')
 def do_service_create(cs, args):
-    pass
+    """Create a service."""
+    opts = {}
+    opts['name'] = args.name
+    opts['service_data'] = open(args.service_file).read()
+    service = cs.services.create(**opts)
+    _show_service(service)
 
 
+@utils.arg('--id',
+           metavar='<service_id>',
+           help='ID of the service to delete.')
 def do_service_delete(cs, args):
-    pass
+    """Delete a service."""
+    cs.services.delete(args.id)
 
 
+@utils.arg('--id',
+           metavar='<service_id>',
+           help='ID of the service to show.')
 def do_service_show(cs, args):
-    pass
+    service = cs.services.get(args.id)
+    _show_service(service)
 
 
 #
