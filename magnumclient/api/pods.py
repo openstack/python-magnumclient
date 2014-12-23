@@ -17,7 +17,7 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-CREATION_ATTRIBUTES = ['name']
+CREATION_ATTRIBUTES = ['pod_data']
 
 
 class Pod(base.Resource):
