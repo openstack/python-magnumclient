@@ -16,8 +16,7 @@ from magnumclient.common import base
 from magnumclient.common import utils
 from magnumclient import exceptions
 
-# FIXME: Modify correct attributes.
-CREATION_ATTRIBUTES = ['description']
+CREATION_ATTRIBUTES = ['service_data']
 
 
 class Service(base.Resource):

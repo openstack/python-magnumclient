@@ -226,16 +226,12 @@ def do_service_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
-@utils.arg('--name',
-           metavar='<name>',
-           help='Name of service to create.')
 @utils.arg('--service-file',
            metavar='<service-file>',
            help='Name of the serivce file to use for creating services.')
 def do_service_create(cs, args):
     """Create a service."""
     opts = {}
-    opts['name'] = args.name
     opts['service_data'] = open(args.service_file).read()
     service = cs.services.create(**opts)
     _show_service(service)
