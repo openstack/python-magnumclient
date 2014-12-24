@@ -184,17 +184,13 @@ def do_pod_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
-@utils.arg('--name',
-           metavar='<name>',
-           help='Name of the pod to create.')
 @utils.arg('--pod-file',
            metavar='<pod-file>',
            help='Name of the pod file to use for creating PODs.')
 def do_pod_create(cs, args):
     """Create a pod."""
     opts = {}
-    opts['name'] = args.name
-    opts['pod_data'] = open(args.pod_file).read()
+    opts['pod_data'] = args.pod_file
 
     node = cs.pods.create(**opts)
     _show_pod(node)
