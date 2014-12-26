@@ -102,9 +102,11 @@ class ContainerManager(base.Manager):
         return self._update(self._path(id), patch)
 
     def _action(self, id, action, **kwargs):
+        kwargs.setdefault('headers', {})
+        kwargs['headers'].setdefault('Content-Length', '0')
         resp, body = self.api.json_request('PUT',
                                            self._path(id) + action,
-                                           kwargs)
+                                           **kwargs)
         return resp
 
     def start(self, id):
