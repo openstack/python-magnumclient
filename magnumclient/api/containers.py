@@ -73,11 +73,11 @@ class ContainerManager(base.Manager):
         if limit is None:
             # TODO(yuanying): if endpoint returns "map",
             # change None to response_key
-            return self._list(self._path(path), None)
+            return self._list(self._path(path), "containers")
         else:
             # TODO(yuanying): if endpoint returns "map",
             # change None to response_key
-            return self._list_pagination(self._path(path), None,
+            return self._list_pagination(self._path(path), "containers",
                                          limit=limit)
 
     def get(self, id):
