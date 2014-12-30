@@ -16,8 +16,8 @@ import json
 
 import mock
 
-from magnumclient.api import shell
 from magnumclient.tests import base
+from magnumclient.v1 import shell
 
 
 container_fixture = {

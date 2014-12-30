@@ -16,13 +16,13 @@
 from keystoneclient.v2_0 import client as keystone_client_v2
 from keystoneclient.v3 import client as keystone_client_v3
 
-from magnumclient.api import baymodels
-from magnumclient.api import bays
-from magnumclient.api import containers
-from magnumclient.api import nodes
-from magnumclient.api import pods
-from magnumclient.api import services
 from magnumclient.common import httpclient
+from magnumclient.v1 import baymodels
+from magnumclient.v1 import bays
+from magnumclient.v1 import containers
+from magnumclient.v1 import nodes
+from magnumclient.v1 import pods
+from magnumclient.v1 import services
 
 
 class Client(object):
