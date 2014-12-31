@@ -271,6 +271,7 @@ def do_container_list(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to delete.')
 def do_container_delete(cs, args):
@@ -279,6 +280,7 @@ def do_container_delete(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to show.')
 @utils.arg('--json',
@@ -295,6 +297,7 @@ def do_container_show(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_reboot(cs, args):
@@ -302,6 +305,7 @@ def do_container_reboot(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_stop(cs, args):
@@ -309,6 +313,7 @@ def do_container_stop(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_start(cs, args):
@@ -316,6 +321,7 @@ def do_container_start(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_pause(cs, args):
@@ -323,6 +329,7 @@ def do_container_pause(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_unpause(cs, args):
@@ -330,6 +337,7 @@ def do_container_unpause(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_logs(cs, args):
@@ -337,9 +345,11 @@ def do_container_logs(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<container_id>',
            help='ID of the container to start.')
 @utils.arg('--command',
+           required=True,
            metavar='<command>',
            help='The command to execute')
 def do_container_execute(cs, args):
