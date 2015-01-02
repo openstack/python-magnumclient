@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from six.moves.urllib import parse
+
 from magnumclient.common import base
 from magnumclient.common import utils
 from magnumclient import exceptions
@@ -101,7 +103,10 @@ class ContainerManager(base.Manager):
     def update(self, id, patch):
         return self._update(self._path(id), patch)
 
-    def _action(self, id, action, **kwargs):
+    def _action(self, id, action, qparams=None, **kwargs):
+        if qparams:
+            action = "%s?%s" % (action,
+                                parse.urlencode(qparams))
         kwargs.setdefault('headers', {})
         kwargs['headers'].setdefault('Content-Length', '0')
         resp, body = self.api.json_request('PUT',
@@ -128,4 +133,4 @@ class ContainerManager(base.Manager):
         return self._action(id, '/logs')
 
     def execute(self, id, command):
-        return self._action(id, '/execute', command=command)
+        return self._action(id, '/execute', qparams={'command': command})
