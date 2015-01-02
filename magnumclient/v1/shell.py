@@ -46,6 +46,10 @@ def _show_pod(pod):
     utils.print_dict(pod._info)
 
 
+def _show_rc(rc):
+    utils.print_dict(rc._info)
+
+
 def _show_service(service):
     utils.print_dict(service._info)
 
@@ -212,6 +216,43 @@ def do_pod_delete(cs, args):
 def do_pod_show(cs, args):
     pod = cs.pods.get(args.id)
     _show_pod(pod)
+
+
+def do_rc_list(cs, args):
+    """Print a list of registered replication controllers."""
+    rcs = cs.rcs.list()
+    columns = ('uuid', 'name')
+    utils.print_list(rcs, columns,
+                     {'versions': _print_list_field('versions')})
+
+
+@utils.arg('--rc-file',
+           metavar='<rc-file>',
+           help='Name/URI of the replication controller file to use for '
+                'creating replication controllers.')
+def do_rc_create(cs, args):
+    """Create a replication controller."""
+    opts = {}
+    opts['rc_definition_url'] = args.rc_file
+
+    rc = cs.rcs.create(**opts)
+    _show_rc(rc)
+
+
+@utils.arg('--id',
+           metavar='<rc_id>',
+           help='ID of the replication controller to delete.')
+def do_rc_delete(cs, args):
+    """Delete a replication controller."""
+    cs.rcs.delete(args.id)
+
+
+@utils.arg('--id',
+           metavar='<rc_id>',
+           help='ID of the replication controller to show.')
+def do_rc_show(cs, args):
+    rc = cs.rcs.get(args.id)
+    _show_rc(rc)
 
 
 def do_service_list(cs, args):

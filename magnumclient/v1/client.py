@@ -22,6 +22,7 @@ from magnumclient.v1 import bays
 from magnumclient.v1 import containers
 from magnumclient.v1 import nodes
 from magnumclient.v1 import pods
+from magnumclient.v1 import replicationcontroller as rc
 from magnumclient.v1 import services
 
 
@@ -76,10 +77,11 @@ class Client(object):
                                                  **http_cli_kwargs)
         self.bays = bays.BayManager(self.http_client)
         self.baymodels = baymodels.BayModelManager(self.http_client)
-        self.pods = pods.PodManager(self.http_client)
-        self.nodes = nodes.NodeManager(self.http_client)
-        self.services = services.ServiceManager(self.http_client)
         self.containers = containers.ContainerManager(self.http_client)
+        self.nodes = nodes.NodeManager(self.http_client)
+        self.pods = pods.PodManager(self.http_client)
+        self.rc = rc.ReplicationControllerManager(self.http_client)
+        self.services = services.ServiceManager(self.http_client)
 
     def get_keystone_client(self, username=None, api_key=None, auth_url=None,
                             token=None, project_id=None, project_name=None):
