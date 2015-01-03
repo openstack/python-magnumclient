@@ -202,7 +202,8 @@ def do_pod_create(cs, args):
 
 
 @utils.arg('--id',
-           metavar='<bay_id>',
+           required=True,
+           metavar='<pod_id>',
            help='ID of the pod to delete.')
 def do_pod_delete(cs, args):
     """Delete a pod."""
@@ -211,8 +212,9 @@ def do_pod_delete(cs, args):
 
 
 @utils.arg('--id',
-           metavar='<bay_id>',
-           help='ID of the bay to show.')
+           required=True,
+           metavar='<pod_id>',
+           help='ID of the pod to show.')
 def do_pod_show(cs, args):
     pod = cs.pods.get(args.id)
     _show_pod(pod)
@@ -240,6 +242,7 @@ def do_rc_create(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<rc_id>',
            help='ID of the replication controller to delete.')
 def do_rc_delete(cs, args):
@@ -248,6 +251,7 @@ def do_rc_delete(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<rc_id>',
            help='ID of the replication controller to show.')
 def do_rc_show(cs, args):
@@ -275,6 +279,7 @@ def do_service_create(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<service_id>',
            help='ID of the service to delete.')
 def do_service_delete(cs, args):
@@ -283,6 +288,7 @@ def do_service_delete(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<service_id>',
            help='ID of the service to show.')
 def do_service_show(cs, args):
