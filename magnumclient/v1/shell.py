@@ -190,11 +190,11 @@ def do_pod_list(cs, args):
 
 @utils.arg('--pod-file',
            metavar='<pod-file>',
-           help='Name of the pod file to use for creating PODs.')
+           help='Name/URL of the pod file to use for creating PODs.')
 def do_pod_create(cs, args):
     """Create a pod."""
     opts = {}
-    opts['pod_data'] = args.pod_file
+    opts['pod_definition_url'] = args.pod_file
 
     node = cs.pods.create(**opts)
     _show_pod(node)
@@ -230,7 +230,7 @@ def do_rc_list(cs, args):
 
 @utils.arg('--rc-file',
            metavar='<rc-file>',
-           help='Name/URI of the replication controller file to use for '
+           help='Name/URL of the replication controller file to use for '
                 'creating replication controllers.')
 def do_rc_create(cs, args):
     """Create a replication controller."""
@@ -269,11 +269,11 @@ def do_service_list(cs, args):
 
 @utils.arg('--service-file',
            metavar='<service-file>',
-           help='Name of the serivce file to use for creating services.')
+           help='Name/URL of the serivce file to use for creating services.')
 def do_service_create(cs, args):
     """Create a service."""
     opts = {}
-    opts['service_data'] = open(args.service_file).read()
+    opts['service_definition_url'] = args.service_file
     service = cs.services.create(**opts)
     _show_service(service)
 
