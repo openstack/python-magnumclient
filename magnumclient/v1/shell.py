@@ -15,6 +15,7 @@
 
 import argparse
 import json
+import os.path
 import sys
 
 from magnumclient.openstack.common import cliutils as utils
@@ -188,13 +189,25 @@ def do_pod_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
+@utils.arg('--pod-url',
+           metavar='<pod-url>',
+           help='Name/URL of the pod file to use for creating PODs.')
 @utils.arg('--pod-file',
            metavar='<pod-file>',
-           help='Name/URL of the pod file to use for creating PODs.')
+           help='File path of the pod file to use for creating PODs.')
+@utils.arg('--bay_id',
+           required=True,
+           metavar='<bay_id>',
+           help='The bay ID.')
 def do_pod_create(cs, args):
     """Create a pod."""
     opts = {}
-    opts['pod_definition_url'] = args.pod_file
+    opts['pod_definition_url'] = args.pod_url
+    opts['bay_uuid'] = args.bay_id
+
+    if args.pod_file is not None and os.path.isfile(args.pod_file):
+        with open(args.pod_file, 'r') as f:
+            opts['pod_data'] = f.read()
 
     node = cs.pods.create(**opts)
     _show_pod(node)
