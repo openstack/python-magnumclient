@@ -16,7 +16,7 @@ from magnumclient.common import base
 from magnumclient.common import utils
 from magnumclient import exceptions
 
-CREATION_ATTRIBUTES = ['service_definition_url']
+CREATION_ATTRIBUTES = ['bay_uuid', 'service_definition_url', 'service_data']
 
 
 class Service(base.Resource):

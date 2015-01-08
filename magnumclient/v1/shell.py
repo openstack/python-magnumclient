@@ -280,13 +280,26 @@ def do_service_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
+@utils.arg('--service-url',
+           metavar='<service-url>',
+           help='Name/URL of the serivce file to use for creating services.')
 @utils.arg('--service-file',
            metavar='<service-file>',
-           help='Name/URL of the serivce file to use for creating services.')
+           help='File path of the service file to use for creating services.')
+@utils.arg('--bay-id',
+           required=True,
+           metavar='<bay_id>',
+           help='The bay ID.')
 def do_service_create(cs, args):
     """Create a service."""
     opts = {}
-    opts['service_definition_url'] = args.service_file
+    opts['service_definition_url'] = args.service_url
+    opts['bay_uuid'] = args.bay_id
+
+    if args.service_file is not None and os.path.isfile(args.service_file):
+        with open(args.service_file, 'r') as f:
+            opts['service_data'] = f.read()
+
     service = cs.services.create(**opts)
     _show_service(service)
 
