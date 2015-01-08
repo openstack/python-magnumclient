@@ -66,10 +66,10 @@ def do_bay_list(cs, args):
 @utils.arg('--name',
            metavar='<name>',
            help='Name of the bay to create.')
-@utils.arg('--baymodel_id',
+@utils.arg('--baymodel-id',
            metavar='<baymodel_id>',
            help='The bay model ID.')
-@utils.arg('--node_count',
+@utils.arg('--node-count',
            metavar='<node_count>',
            help='The bay node count.')
 def do_bay_create(cs, args):
@@ -102,21 +102,21 @@ def do_bay_show(cs, args):
 @utils.arg('--name',
            metavar='<name>',
            help='Name of the bay to create.')
-@utils.arg('--image_id',
+@utils.arg('--image-id',
            metavar='<image_id>',
            help='The name or UUID of the base image to customize for the bay.')
-@utils.arg('--keypair_id',
+@utils.arg('--keypair-id',
            metavar='<keypair_id>',
            help='The name or UUID of the SSH keypair to load into the'
            ' Bay nodes.')
-@utils.arg('--external_network_id',
+@utils.arg('--external-network-id',
            metavar='<external_network_id>',
            help='The external Neutron network ID to connect to this bay'
            ' model.')
-@utils.arg('--dns_nameserver',
+@utils.arg('--dns-nameserver',
            metavar='<dns_nameserver>',
            help='The DNS nameserver to use for this Bay.')
-@utils.arg('--flavor_id',
+@utils.arg('--flavor-id',
            metavar='<flavor_id>',
            help='The nova flavor id to use when launching the bay.')
 def do_baymodel_create(cs, args):
@@ -168,7 +168,7 @@ def do_node_list(cs, args):
 @utils.arg('--type',
            metavar='<type>',
            help='Type of node to create (virt or bare).')
-@utils.arg('--image_id',
+@utils.arg('--image-id',
            metavar='<image_id>',
            help='The name or UUID of the base image to use for the node.')
 def do_node_create(cs, args):
@@ -195,7 +195,7 @@ def do_pod_list(cs, args):
 @utils.arg('--pod-file',
            metavar='<pod-file>',
            help='File path of the pod file to use for creating PODs.')
-@utils.arg('--bay_id',
+@utils.arg('--bay-id',
            required=True,
            metavar='<bay_id>',
            help='The bay ID.')
