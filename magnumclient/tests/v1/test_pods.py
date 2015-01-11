@@ -114,7 +114,7 @@ class PodManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(pod)
 
-    def test_update(self):
+    def test_pod_update(self):
         patch = {'op': 'replace',
                  'value': NEW_DESCR,
                  'path': '/description'}
