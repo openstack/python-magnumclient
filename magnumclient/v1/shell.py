@@ -241,14 +241,27 @@ def do_rc_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
-@utils.arg('--rc-file',
-           metavar='<rc-file>',
+@utils.arg('--rc-url',
+           metavar='<rc_url>',
            help='Name/URL of the replication controller file to use for '
                 'creating replication controllers.')
+@utils.arg('--rc-file',
+           metavar='<rc_file>',
+           help='File path of the replication controller file to use for '
+                'creating replication controllers.')
+@utils.arg('--bay-id',
+           required=True,
+           metavar='<bay_id>',
+           help='The bay ID.')
 def do_rc_create(cs, args):
     """Create a replication controller."""
     opts = {}
-    opts['rc_definition_url'] = args.rc_file
+    opts['rc_definition_url'] = args.rc_url
+    opts['bay_uuid'] = args.bay_id
+
+    if args.rc_file is not None and os.path.isfile(args.rc_file):
+        with open(args.rc_file, 'r') as f:
+            opts['rc_data'] = f.read()
 
     rc = cs.rcs.create(**opts)
     _show_rc(rc)

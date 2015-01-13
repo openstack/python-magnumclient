@@ -18,7 +18,7 @@ import testtools
 from testtools import matchers
 
 from magnumclient.tests import utils
-from magnumclient.v1 import replicationcontroller as rc
+from magnumclient.v1 import replicationcontrollers as rcs
 
 
 RC1 = {'id': 123,
@@ -77,7 +77,7 @@ class RCManagerTest(testtools.TestCase):
     def setUp(self):
         super(RCManagerTest, self).setUp()
         self.api = utils.FakeAPI(fake_responses)
-        self.mgr = rc.ReplicationControllerManager(self.api)
+        self.mgr = rcs.ReplicationControllerManager(self.api)
 
     def test_rc_list(self):
         rcs = self.mgr.list()
