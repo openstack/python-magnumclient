@@ -22,7 +22,7 @@ from magnumclient.v1 import shell
 
 container_fixture = {
     "name": "container",
-    "desc": "container description."
+    "image_id": "image_id"
 }
 
 
