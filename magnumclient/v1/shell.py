@@ -261,7 +261,7 @@ def do_rc_create(cs, args):
 
     if args.rc_file is not None and os.path.isfile(args.rc_file):
         with open(args.rc_file, 'r') as f:
-            opts['rc_data'] = f.read()
+            opts['replicationcontroller_data'] = f.read()
 
     rc = cs.rcs.create(**opts)
     _show_rc(rc)
