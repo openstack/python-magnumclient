@@ -376,14 +376,16 @@ class OpenStackMagnumShell(object):
             subparser.set_defaults(func=callback)
 
     def setup_debugging(self, debug):
-        if not debug:
-            return
-
-        streamformat = "%(levelname)s (%(module)s:%(lineno)d) %(message)s"
-        # Set up the root logger to debug so that the submodules can
-        # print debug messages
-        logging.basicConfig(level=logging.DEBUG,
-                            format=streamformat)
+        if debug:
+            streamformat = "%(levelname)s (%(module)s:%(lineno)d) %(message)s"
+            # Set up the root logger to debug so that the submodules can
+            # print debug messages
+            logging.basicConfig(level=logging.DEBUG,
+                                format=streamformat)
+        else:
+            streamformat = "%(levelname)s %(message)s"
+            logging.basicConfig(level=logging.CRITICAL,
+                                format=streamformat)
 
     def main(self, argv):
 
