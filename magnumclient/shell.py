@@ -52,10 +52,10 @@ from magnumclient.openstack.common.apiclient import auth
 from magnumclient.openstack.common.apiclient import exceptions as exc
 from magnumclient.openstack.common import cliutils
 from magnumclient.v1 import client
-from magnumclient.v1 import shell as shell_api
+from magnumclient.v1 import shell as shell_v1
 from magnumclient import version
 
-DEFAULT_API_VERSION = 'api'
+DEFAULT_API_VERSION = '1'
 DEFAULT_ENDPOINT_TYPE = 'publicURL'
 DEFAULT_SERVICE_TYPE = 'container'
 
@@ -329,11 +329,10 @@ class OpenStackMagnumShell(object):
 
         try:
             actions_module = {
-                'api': shell_api,
+                '1': shell_v1,
             }[version]
         except KeyError:
-            actions_module = shell_api
-        actions_module = shell_api
+            actions_module = shell_v1
 
         self._find_actions(subparsers, actions_module)
         self._find_actions(subparsers, self)
