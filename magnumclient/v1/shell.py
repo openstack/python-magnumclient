@@ -84,6 +84,7 @@ def do_bay_create(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<bay_id>',
            help='ID of the bay to delete.')
 def do_bay_delete(cs, args):
@@ -92,6 +93,7 @@ def do_bay_delete(cs, args):
 
 
 @utils.arg('--id',
+           required=True,
            metavar='<bay_id>',
            help='ID of the bay to show.')
 def do_bay_show(cs, args):
