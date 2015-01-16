@@ -17,7 +17,7 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-CREATION_ATTRIBUTES = ['bay_uuid', 'pod_definition_url', 'pod_data']
+CREATION_ATTRIBUTES = ['bay_uuid', 'manifest', 'manifest_url']
 
 
 class Pod(base.Resource):

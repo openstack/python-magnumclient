@@ -37,7 +37,7 @@ RC2 = {'id': 124,
        'selector': {'name': 'bar2'},
        'replicas': 2
        }
-CREATE_RC = {'rc_definition_url': 'file:///a/b.json'}
+CREATE_RC = {'manifest_url': 'file:///a/b.json'}
 UPDATED_RC = copy.deepcopy(RC1)
 NEW_REPLICAS = 3
 UPDATED_RC['replicas'] = NEW_REPLICAS

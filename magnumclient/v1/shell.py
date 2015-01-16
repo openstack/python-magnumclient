@@ -191,11 +191,11 @@ def do_pod_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
-@utils.arg('--pod-url',
-           metavar='<pod-url>',
+@utils.arg('--manifest-url',
+           metavar='<manifest_url>',
            help='Name/URL of the pod file to use for creating PODs.')
-@utils.arg('--pod-file',
-           metavar='<pod-file>',
+@utils.arg('--manifest',
+           metavar='<manifest>',
            help='File path of the pod file to use for creating PODs.')
 @utils.arg('--bay-id',
            required=True,
@@ -204,12 +204,12 @@ def do_pod_list(cs, args):
 def do_pod_create(cs, args):
     """Create a pod."""
     opts = {}
-    opts['pod_definition_url'] = args.pod_url
+    opts['manifest_url'] = args.manifest_url
     opts['bay_uuid'] = args.bay_id
 
-    if args.pod_file is not None and os.path.isfile(args.pod_file):
-        with open(args.pod_file, 'r') as f:
-            opts['pod_data'] = f.read()
+    if args.manifest is not None and os.path.isfile(args.manifest):
+        with open(args.manifest, 'r') as f:
+            opts['manifest'] = f.read()
 
     node = cs.pods.create(**opts)
     _show_pod(node)
@@ -243,12 +243,12 @@ def do_rc_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
-@utils.arg('--rc-url',
-           metavar='<rc_url>',
+@utils.arg('--manifest-url',
+           metavar='<manifest_url>',
            help='Name/URL of the replication controller file to use for '
                 'creating replication controllers.')
-@utils.arg('--rc-file',
-           metavar='<rc_file>',
+@utils.arg('--manifest',
+           metavar='<manifest>',
            help='File path of the replication controller file to use for '
                 'creating replication controllers.')
 @utils.arg('--bay-id',
@@ -258,12 +258,12 @@ def do_rc_list(cs, args):
 def do_rc_create(cs, args):
     """Create a replication controller."""
     opts = {}
-    opts['rc_definition_url'] = args.rc_url
+    opts['manifest_url'] = args.manifest_url
     opts['bay_uuid'] = args.bay_id
 
-    if args.rc_file is not None and os.path.isfile(args.rc_file):
-        with open(args.rc_file, 'r') as f:
-            opts['replicationcontroller_data'] = f.read()
+    if args.manifest is not None and os.path.isfile(args.manifest):
+        with open(args.manifest, 'r') as f:
+            opts['manifest'] = f.read()
 
     rc = cs.rcs.create(**opts)
     _show_rc(rc)
@@ -295,11 +295,11 @@ def do_service_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
-@utils.arg('--service-url',
-           metavar='<service-url>',
+@utils.arg('--manifest-url',
+           metavar='<manifest_url>',
            help='Name/URL of the serivce file to use for creating services.')
-@utils.arg('--service-file',
-           metavar='<service-file>',
+@utils.arg('--manifest',
+           metavar='<manifest>',
            help='File path of the service file to use for creating services.')
 @utils.arg('--bay-id',
            required=True,
@@ -308,12 +308,12 @@ def do_service_list(cs, args):
 def do_service_create(cs, args):
     """Create a service."""
     opts = {}
-    opts['service_definition_url'] = args.service_url
+    opts['manifest_url'] = args.manifest_url
     opts['bay_uuid'] = args.bay_id
 
-    if args.service_file is not None and os.path.isfile(args.service_file):
-        with open(args.service_file, 'r') as f:
-            opts['service_data'] = f.read()
+    if args.manifest is not None and os.path.isfile(args.manifest):
+        with open(args.manifest, 'r') as f:
+            opts['manifest'] = f.read()
 
     service = cs.services.create(**opts)
     _show_service(service)

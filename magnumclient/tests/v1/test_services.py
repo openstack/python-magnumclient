@@ -39,7 +39,7 @@ SERVICE2 = {'id': 124,
             'ip': '10.0.0.4',
             'port': 8081
             }
-CREATE_SVC = {'service_definition_url': 'file:///a/b.json'}
+CREATE_SVC = {'manifest_url': 'file:///a/b.json'}
 UPDATED_SVC = copy.deepcopy(SERVICE1)
 NEW_SELECTOR = {'name': 'bar3'}
 UPDATED_SVC['selector'] = NEW_SELECTOR

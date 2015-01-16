@@ -39,7 +39,7 @@ POD2 = {'id': 124,
         'labels': {'foo': 'bar'},
         'status': 'Running'
         }
-CREATE_POD = {'pod_definition_url': 'file:///a/b.json'}
+CREATE_POD = {'manifest_url': 'file:///a/b.json'}
 UPDATED_POD = copy.deepcopy(POD1)
 NEW_DESCR = 'new-description'
 UPDATED_POD['description'] = NEW_DESCR
