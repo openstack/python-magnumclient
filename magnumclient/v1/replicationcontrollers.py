@@ -17,7 +17,8 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-CREATION_ATTRIBUTES = ['bay_uuid', 'rc_definition_url', 'rc_data']
+CREATION_ATTRIBUTES = ['bay_uuid', 'rc_definition_url',
+                       'replicationcontroller_data']
 
 
 class ReplicationController(base.Resource):
