@@ -97,6 +97,7 @@ def do_bay_delete(cs, args):
            metavar='<bay_id>',
            help='ID of the bay to show.')
 def do_bay_show(cs, args):
+    """Show details about the given bay."""
     bay = cs.bays.get(args.id)
     _show_bay(bay)
 
@@ -147,6 +148,7 @@ def do_baymodel_delete(cs, args):
            metavar='<bay_id>',
            help='ID of the bay to show.')
 def do_baymodel_show(cs, args):
+    """Show details about the given baymodel."""
     baymodel = cs.baymodels.get(args.id)
     _show_baymodel(baymodel)
 
@@ -231,6 +233,7 @@ def do_pod_delete(cs, args):
            metavar='<pod_id>',
            help='ID of the pod to show.')
 def do_pod_show(cs, args):
+    """Show details about the given pod."""
     pod = cs.pods.get(args.id)
     _show_pod(pod)
 
@@ -283,6 +286,7 @@ def do_rc_delete(cs, args):
            metavar='<rc_id>',
            help='ID of the replication controller to show.')
 def do_rc_show(cs, args):
+    """Show details about the given replication controller."""
     rc = cs.rcs.get(args.id)
     _show_rc(rc)
 
@@ -333,6 +337,7 @@ def do_service_delete(cs, args):
            metavar='<service_id>',
            help='ID of the service to show.')
 def do_service_show(cs, args):
+    """Show details about the given service."""
     service = cs.services.get(args.id)
     _show_service(service)
 
