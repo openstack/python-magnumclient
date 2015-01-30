@@ -123,7 +123,7 @@ def do_bay_show(cs, args):
            metavar='<flavor_id>',
            help='The nova flavor id to use when launching the bay.')
 def do_baymodel_create(cs, args):
-    """Create a bay."""
+    """Create a baymodel."""
     opts = {}
     opts['name'] = args.name
     opts['flavor_id'] = args.flavor_id
@@ -137,16 +137,16 @@ def do_baymodel_create(cs, args):
 
 
 @utils.arg('--id',
-           metavar='<bay_id>',
-           help='ID of the bay to delete.')
+           metavar='<baymodel_id>',
+           help='ID of the baymodel to delete.')
 def do_baymodel_delete(cs, args):
-    """Delete a bay."""
+    """Delete a baymodel."""
     cs.baymodels.delete(args.id)
 
 
 @utils.arg('--id',
-           metavar='<bay_id>',
-           help='ID of the bay to show.')
+           metavar='<baymodel_id>',
+           help='ID of the baymodel to show.')
 def do_baymodel_show(cs, args):
     """Show details about the given baymodel."""
     baymodel = cs.baymodels.get(args.id)
