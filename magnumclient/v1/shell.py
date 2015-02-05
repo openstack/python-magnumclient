@@ -394,6 +394,7 @@ def do_container_show(cs, args):
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_reboot(cs, args):
+    """Reboot a container."""
     cs.containers.reboot(args.id)
 
 
@@ -402,6 +403,7 @@ def do_container_reboot(cs, args):
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_stop(cs, args):
+    """Stop a container."""
     cs.containers.stop(args.id)
 
 
@@ -410,6 +412,7 @@ def do_container_stop(cs, args):
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_start(cs, args):
+    """Start a container."""
     cs.containers.start(args.id)
 
 
@@ -418,6 +421,7 @@ def do_container_start(cs, args):
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_pause(cs, args):
+    """Pause a container."""
     cs.containers.pause(args.id)
 
 
@@ -426,6 +430,7 @@ def do_container_pause(cs, args):
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_unpause(cs, args):
+    """Unpause a container."""
     cs.containers.unpause(args.id)
 
 
@@ -434,6 +439,7 @@ def do_container_unpause(cs, args):
            metavar='<container_id>',
            help='ID of the container to start.')
 def do_container_logs(cs, args):
+    """Get logs of a container."""
     cs.containers.logs(args.id)
 
 
@@ -446,4 +452,5 @@ def do_container_logs(cs, args):
            metavar='<command>',
            help='The command to execute')
 def do_container_execute(cs, args):
+    """Execute command in a container."""
     cs.containers.execute(args.id, args.command)
