@@ -103,13 +103,13 @@ class ContainerManager(base.Manager):
     def update(self, id, patch):
         return self._update(self._path(id), patch)
 
-    def _action(self, id, action, qparams=None, **kwargs):
+    def _action(self, id, action, method='PUT', qparams=None, **kwargs):
         if qparams:
             action = "%s?%s" % (action,
                                 parse.urlencode(qparams))
         kwargs.setdefault('headers', {})
         kwargs['headers'].setdefault('Content-Length', '0')
-        resp, body = self.api.json_request('PUT',
+        resp, body = self.api.json_request(method,
                                            self._path(id) + action,
                                            **kwargs)
         return resp
@@ -130,7 +130,7 @@ class ContainerManager(base.Manager):
         return self._action(id, '/unpause')
 
     def logs(self, id):
-        return self._action(id, '/logs')
+        return self._action(id, '/logs', method='GET')
 
     def execute(self, id, command):
         return self._action(id, '/execute', qparams={'command': command})
