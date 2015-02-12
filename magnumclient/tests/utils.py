@@ -15,6 +15,7 @@
 
 import copy
 import datetime
+import os
 
 import fixtures
 import six
@@ -109,3 +110,20 @@ class FakeKeystone():
                       '%Y-%m-%dT%H:%M:%S.%f'),
                       'id': 'd1a541311782870742235'}
         }
+
+
+class TestCase(testtools.TestCase):
+    TEST_REQUEST_BASE = {
+        'verify': True,
+    }
+
+    def setUp(self):
+        super(TestCase, self).setUp()
+        if (os.environ.get('OS_STDOUT_CAPTURE') == 'True' or
+                os.environ.get('OS_STDOUT_CAPTURE') == '1'):
+            stdout = self.useFixture(fixtures.StringStream('stdout')).stream
+            self.useFixture(fixtures.MonkeyPatch('sys.stdout', stdout))
+        if (os.environ.get('OS_STDERR_CAPTURE') == 'True' or
+                os.environ.get('OS_STDERR_CAPTURE') == '1'):
+            stderr = self.useFixture(fixtures.StringStream('stderr')).stream
+            self.useFixture(fixtures.MonkeyPatch('sys.stderr', stderr))

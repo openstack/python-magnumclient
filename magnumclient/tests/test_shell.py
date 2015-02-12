@@ -1,0 +1,256 @@
+# Copyright 2015 NEC Corporation.  All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import re
+import sys
+
+import fixtures
+from keystoneclient import fixture
+import mock
+import six
+from testtools import matchers
+
+from magnumclient import exceptions
+import magnumclient.shell
+from magnumclient.tests import utils
+
+FAKE_ENV = {'OS_USERNAME': 'username',
+            'OS_PASSWORD': 'password',
+            'OS_TENANT_NAME': 'tenant_name',
+            'OS_AUTH_URL': 'http://no.where/v2.0'}
+
+FAKE_ENV2 = {'OS_USER_ID': 'user_id',
+             'OS_PASSWORD': 'password',
+             'OS_TENANT_ID': 'tenant_id',
+             'OS_AUTH_URL': 'http://no.where/v2.0'}
+
+FAKE_ENV3 = {'OS_USERNAME': 'username',
+             'OS_PASSWORD': 'password',
+             'OS_TENANT_ID': 'tenant_id',
+             'OS_AUTH_URL': 'http://no.where/v2.0'}
+
+
+def _create_ver_list(versions):
+    return {'versions': {'values': versions}}
+
+
+class ParserTest(utils.TestCase):
+
+    def setUp(self):
+        super(ParserTest, self).setUp()
+        self.parser = magnumclient.shell.MagnumClientArgumentParser()
+
+    def test_ambiguous_option(self):
+        self.parser.add_argument('--tic')
+        self.parser.add_argument('--tac')
+        try:
+            self.parser.parse_args(['--t'])
+        except SystemExit as err:
+            self.assertEqual(2, err.code)
+        else:
+            self.fail('SystemExit not raised')
+
+
+class ShellTest(utils.TestCase):
+
+    _msg_no_tenant_project = ("You must provide a tenant name or tenant id"
+                              " via --os-tenant-name, --os-tenant-id,"
+                              " env[OS_TENANT_NAME] or env[OS_TENANT_ID]")
+
+    def make_env(self, exclude=None, fake_env=FAKE_ENV):
+        env = dict((k, v) for k, v in fake_env.items() if k != exclude)
+        self.useFixture(fixtures.MonkeyPatch('os.environ', env))
+
+    def setUp(self):
+        super(ShellTest, self).setUp()
+        self.nc_util = mock.patch(
+            'magnumclient.openstack.common.cliutils.isunauthenticated').start()
+        self.nc_util.return_value = False
+
+    def shell(self, argstr, exitcodes=(0,)):
+        orig = sys.stdout
+        orig_stderr = sys.stderr
+        try:
+            sys.stdout = six.StringIO()
+            sys.stderr = six.StringIO()
+            _shell = magnumclient.shell.OpenStackMagnumShell()
+            _shell.main(argstr.split())
+        except SystemExit:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            self.assertIn(exc_value.code, exitcodes)
+        finally:
+            stdout = sys.stdout.getvalue()
+            sys.stdout.close()
+            sys.stdout = orig
+            stderr = sys.stderr.getvalue()
+            sys.stderr.close()
+            sys.stderr = orig_stderr
+        return (stdout, stderr)
+
+    def test_help_unknown_command(self):
+        self.assertRaises(exceptions.CommandError, self.shell, 'help foofoo')
+
+    def test_help(self):
+        required = [
+            '.*?^usage: ',
+            '.*?^\s+container-stop\s+Stop a container.',
+            '.*?^See "magnum help COMMAND" for help on a specific command',
+        ]
+        stdout, stderr = self.shell('help')
+        for r in required:
+            self.assertThat((stdout + stderr),
+                            matchers.MatchesRegex(r, re.DOTALL | re.MULTILINE))
+
+    def test_help_on_subcommand(self):
+        required = [
+            '.*?^usage: magnum bay-create',
+            '.*?^Create a bay.',
+            '.*?^Optional arguments:',
+        ]
+        stdout, stderr = self.shell('help bay-create')
+        for r in required:
+            self.assertThat((stdout + stderr),
+                            matchers.MatchesRegex(r, re.DOTALL | re.MULTILINE))
+
+    def test_help_no_options(self):
+        required = [
+            '.*?^usage: ',
+            '.*?^\s+container-stop\s+Stop a container.',
+            '.*?^See "magnum help COMMAND" for help on a specific command',
+        ]
+        stdout, stderr = self.shell('')
+        for r in required:
+            self.assertThat((stdout + stderr),
+                            matchers.MatchesRegex(r, re.DOTALL | re.MULTILINE))
+
+    def test_bash_completion(self):
+        stdout, stderr = self.shell('bash-completion')
+        # just check we have some output
+        required = [
+            '.*--type',
+            '.*--json',
+            '.*help',
+            '.*bay-show',
+            '.*--bay-id']
+        for r in required:
+            self.assertThat((stdout + stderr),
+                            matchers.MatchesRegex(r, re.DOTALL | re.MULTILINE))
+
+    def test_no_username(self):
+        required = ('You must provide a username via either'
+                    ' --os-username or env[OS_USERNAME]')
+        self.make_env(exclude='OS_USERNAME')
+        try:
+            self.shell('bay-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args[0])
+        else:
+            self.fail('CommandError not raised')
+
+    def test_no_user_id(self):
+        required = ('You must provide a username via'
+                    ' either --os-username or env[OS_USERNAME]')
+        self.make_env(exclude='OS_USER_ID', fake_env=FAKE_ENV2)
+        try:
+            self.shell('bay-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args[0])
+        else:
+            self.fail('CommandError not raised')
+
+    def test_no_tenant_name(self):
+        required = self._msg_no_tenant_project
+        self.make_env(exclude='OS_TENANT_NAME')
+        try:
+            self.shell('bay-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args[0])
+        else:
+            self.fail('CommandError not raised')
+
+    def test_no_tenant_id(self):
+        required = self._msg_no_tenant_project
+        self.make_env(exclude='OS_TENANT_ID', fake_env=FAKE_ENV3)
+        try:
+            self.shell('bay-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args[0])
+        else:
+            self.fail('CommandError not raised')
+
+    def test_no_auth_url(self):
+        required = ('You must provide an auth url'
+                    ' via either --os-auth-url or env[OS_AUTH_URL] or'
+                    ' specify an auth_system which defines a default url'
+                    ' with --os-auth-system or env[OS_AUTH_SYSTEM]',)
+        self.make_env(exclude='OS_AUTH_URL')
+        try:
+            self.shell('bay-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args)
+        else:
+            self.fail('CommandError not raised')
+
+    # FIXME(madhuri) Remove this harcoded v1 Client class.
+    #                In future, when a new version of API will
+    #                introduce, this needs to be dynamic then.
+    @mock.patch('magnumclient.v1.client.Client')
+    def test_service_type(self, mock_client):
+        self.make_env()
+        self.shell('bay-list')
+        _, client_kwargs = mock_client.call_args_list[0]
+        self.assertEqual('container', client_kwargs['service_type'])
+
+    @mock.patch('sys.stdin', side_effect=mock.MagicMock)
+    @mock.patch('getpass.getpass', side_effect=EOFError)
+    def test_no_password(self, mock_getpass, mock_stdin):
+        required = ('Expecting a password provided'
+                    ' via either --os-password, env[OS_PASSWORD],'
+                    ' or prompted response',)
+        self.make_env(exclude='OS_PASSWORD')
+        try:
+            self.shell('bay-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args)
+        else:
+            self.fail('CommandError not raised')
+
+    @mock.patch('sys.argv', ['magnum'])
+    @mock.patch('sys.stdout', six.StringIO())
+    @mock.patch('sys.stderr', six.StringIO())
+    def test_main_noargs(self):
+        # Ensure that main works with no command-line arguments
+        try:
+            magnumclient.shell.main()
+        except SystemExit:
+            self.fail('Unexpected SystemExit')
+
+        # We expect the normal usage as a result
+        self.assertIn('Command-line interface to the OpenStack Magnum API',
+                      sys.stdout.getvalue())
+
+
+class ShellTestKeystoneV3(ShellTest):
+    def make_env(self, exclude=None, fake_env=FAKE_ENV):
+        if 'OS_AUTH_URL' in fake_env:
+            fake_env.update({'OS_AUTH_URL': 'http://no.where/v3'})
+        env = dict((k, v) for k, v in fake_env.items() if k != exclude)
+        self.useFixture(fixtures.MonkeyPatch('os.environ', env))
+
+    def register_keystone_discovery_fixture(self, mreq):
+        v3_url = "http://no.where/v3"
+        v3_version = fixture.V3Discovery(v3_url)
+        mreq.register_uri(
+            'GET', v3_url, json=_create_ver_list([v3_version]),
+            status_code=200)
