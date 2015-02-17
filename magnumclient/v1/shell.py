@@ -18,6 +18,7 @@ import json
 import os.path
 import sys
 
+from magnumclient.common import utils as magnum_utils
 from magnumclient.openstack.common import cliutils as utils
 
 
@@ -99,6 +100,27 @@ def do_bay_delete(cs, args):
 def do_bay_show(cs, args):
     """Show details about the given bay."""
     bay = cs.bays.get(args.id)
+    _show_bay(bay)
+
+
+@utils.arg('bay', metavar='<bay id>', help="UUID of bay")
+@utils.arg(
+    'op',
+    metavar='<op>',
+    choices=['add', 'replace', 'remove'],
+    help="Operations: 'add', 'replace' or 'remove'")
+@utils.arg(
+    'attributes',
+    metavar='<path=value>',
+    nargs='+',
+    action='append',
+    default=[],
+    help="Attributes to add/replace or remove "
+         "(only PATH is necessary on remove)")
+def do_bay_update(cs, args):
+    """Update information about the given bay."""
+    patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
+    bay = cs.bays.update(args.bay, patch)
     _show_bay(bay)
 
 

@@ -16,6 +16,7 @@
 #    under the License.
 
 from magnumclient.common import utils
+from magnumclient.openstack.common.apiclient import exceptions as exc
 from magnumclient.tests import utils as test_utils
 
 
@@ -32,3 +33,65 @@ class CommonFiltersTest(test_utils.BaseTestCase):
         for key in ('marker', 'sort_key', 'sort_dir'):
             result = utils.common_filters(**{key: 'test'})
             self.assertEqual(['%s=test' % key], result)
+
+
+class SplitAndDeserializeTest(test_utils.BaseTestCase):
+
+    def test_split_and_deserialize(self):
+        ret = utils.split_and_deserialize('str=foo')
+        self.assertEqual(('str', 'foo'), ret)
+
+        ret = utils.split_and_deserialize('int=1')
+        self.assertEqual(('int', 1), ret)
+
+        ret = utils.split_and_deserialize('bool=false')
+        self.assertEqual(('bool', False), ret)
+
+        ret = utils.split_and_deserialize('list=[1, "foo", 2]')
+        self.assertEqual(('list', [1, "foo", 2]), ret)
+
+        ret = utils.split_and_deserialize('dict={"foo": 1}')
+        self.assertEqual(('dict', {"foo": 1}), ret)
+
+        ret = utils.split_and_deserialize('str_int="1"')
+        self.assertEqual(('str_int', "1"), ret)
+
+    def test_split_and_deserialize_fail(self):
+        self.assertRaises(exc.CommandError,
+                          utils.split_and_deserialize, 'foo:bar')
+
+
+class ArgsArrayToPatchTest(test_utils.BaseTestCase):
+
+    def test_args_array_to_patch(self):
+        my_args = {
+            'attributes': ['str=foo', 'int=1', 'bool=true',
+                           'list=[1, 2, 3]', 'dict={"foo": "bar"}'],
+            'op': 'add',
+        }
+        patch = utils.args_array_to_patch(my_args['op'],
+                                          my_args['attributes'])
+        self.assertEqual([{'op': 'add', 'value': 'foo', 'path': '/str'},
+                          {'op': 'add', 'value': 1, 'path': '/int'},
+                          {'op': 'add', 'value': True, 'path': '/bool'},
+                          {'op': 'add', 'value': [1, 2, 3], 'path': '/list'},
+                          {'op': 'add', 'value': {"foo": "bar"},
+                           'path': '/dict'}], patch)
+
+    def test_args_array_to_patch_format_error(self):
+        my_args = {
+            'attributes': ['foobar'],
+            'op': 'add',
+        }
+        self.assertRaises(exc.CommandError, utils.args_array_to_patch,
+                          my_args['op'], my_args['attributes'])
+
+    def test_args_array_to_patch_remove(self):
+        my_args = {
+            'attributes': ['/foo', 'extra/bar'],
+            'op': 'remove',
+        }
+        patch = utils.args_array_to_patch(my_args['op'],
+                                          my_args['attributes'])
+        self.assertEqual([{'op': 'remove', 'path': '/foo'},
+                          {'op': 'remove', 'path': '/extra/bar'}], patch)

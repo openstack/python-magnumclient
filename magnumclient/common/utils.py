@@ -15,6 +15,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import json
+
+from magnumclient.openstack.common._i18n import _
+from magnumclient.openstack.common.apiclient import exceptions as exc
+
 
 def common_filters(marker=None, limit=None, sort_key=None, sort_dir=None):
     """Generate common filters for any list request.
@@ -35,3 +40,41 @@ def common_filters(marker=None, limit=None, sort_key=None, sort_dir=None):
     if sort_dir is not None:
         filters.append('sort_dir=%s' % sort_dir)
     return filters
+
+
+def split_and_deserialize(string):
+    """Split and try to JSON deserialize a string.
+
+    Gets a string with the KEY=VALUE format, split it (using '=' as the
+    separator) and try to JSON deserialize the VALUE.
+    :returns: A tuple of (key, value).
+    """
+    try:
+        key, value = string.split("=", 1)
+    except ValueError:
+        raise exc.CommandError(_('Attributes must be a list of '
+                                 'PATH=VALUE not "%s"') % string)
+    try:
+        value = json.loads(value)
+    except ValueError:
+        pass
+
+    return (key, value)
+
+
+def args_array_to_patch(op, attributes):
+    patch = []
+    for attr in attributes:
+        # Sanitize
+        if not attr.startswith('/'):
+            attr = '/' + attr
+        if op in ['add', 'replace']:
+            path, value = split_and_deserialize(attr)
+            patch.append({'op': op, 'path': path, 'value': value})
+
+        elif op == "remove":
+            # For remove only the key is needed
+            patch.append({'op': op, 'path': attr})
+        else:
+            raise exc.CommandError(_('Unknown PATCH operation: %s') % op)
+    return patch
