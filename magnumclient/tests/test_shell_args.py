@@ -73,25 +73,37 @@ class TestCommandLineArgument(utils.TestCase):
                                '--node-count 123')
         self.assertTrue(mock_create.called)
 
+        self._test_arg_success('bay-create --baymodel-id xxx')
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_success('bay-create --name test --baymodel-id xxx')
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_success('bay-create --baymodel-id xxx --node-count 123')
+        self.assertTrue(mock_create.called)
+
     @mock.patch('magnumclient.v1.bays.BayManager.create')
     def test_bay_create_success_only_baymodel_arg(self, mock_create):
         self._test_arg_success('bay-create --baymodel-id xxx')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.create')
-    def test_bay_create_success_only_name(self, mock_create):
-        self._test_arg_success('bay-create --name test')
-        self.assertTrue(mock_create.called)
+    def test_bay_create_failure_only_name(self, mock_create):
+        self._test_arg_failure('bay-create --name test',
+                               self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.create')
-    def test_bay_create_success_only_node_count(self, mock_create):
-        self._test_arg_success('bay-create --node-count 1')
-        self.assertTrue(mock_create.called)
+    def test_bay_create_failure_only_node_count(self, mock_create):
+        self._test_arg_failure('bay-create --node-count 1',
+                               self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.create')
-    def test_bay_create_success_no_arg(self, mock_create):
-        self._test_arg_success('bay-create')
-        self.assertTrue(mock_create.called)
+    def test_bay_create_failure_no_arg(self, mock_create):
+        self._test_arg_failure('bay-create',
+                               self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.delete')
     def test_bay_delete_success(self, mock_delete):

@@ -68,6 +68,7 @@ def do_bay_list(cs, args):
            metavar='<name>',
            help='Name of the bay to create.')
 @utils.arg('--baymodel-id',
+           required=True,
            metavar='<baymodel_id>',
            help='The bay model ID.')
 @utils.arg('--node-count',
