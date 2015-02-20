@@ -16,12 +16,19 @@
 import copy
 import datetime
 import os
+import sys
 
 import fixtures
 import six
 import testtools
 
 from magnumclient.common import httpclient as http
+from magnumclient import shell
+
+FAKE_ENV = {'OS_USERNAME': 'username',
+            'OS_PASSWORD': 'password',
+            'OS_TENANT_NAME': 'tenant_name',
+            'OS_AUTH_URL': 'http://no.where/v2.0'}
 
 
 class BaseTestCase(testtools.TestCase):
@@ -127,3 +134,27 @@ class TestCase(testtools.TestCase):
                 os.environ.get('OS_STDERR_CAPTURE') == '1'):
             stderr = self.useFixture(fixtures.StringStream('stderr')).stream
             self.useFixture(fixtures.MonkeyPatch('sys.stderr', stderr))
+
+    def make_env(self, exclude=None, fake_env=FAKE_ENV):
+        env = dict((k, v) for k, v in fake_env.items() if k != exclude)
+        self.useFixture(fixtures.MonkeyPatch('os.environ', env))
+
+    def shell(self, argstr, exitcodes=(0,)):
+        orig = sys.stdout
+        orig_stderr = sys.stderr
+        try:
+            sys.stdout = six.StringIO()
+            sys.stderr = six.StringIO()
+            _shell = shell.OpenStackMagnumShell()
+            _shell.main(argstr.split())
+        except SystemExit:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            self.assertIn(exc_value.code, exitcodes)
+        finally:
+            stdout = sys.stdout.getvalue()
+            sys.stdout.close()
+            sys.stdout = orig
+            stderr = sys.stderr.getvalue()
+            sys.stderr.close()
+            sys.stderr = orig_stderr
+        return (stdout, stderr)

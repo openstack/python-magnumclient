@@ -68,35 +68,11 @@ class ShellTest(utils.TestCase):
                               " via --os-tenant-name, --os-tenant-id,"
                               " env[OS_TENANT_NAME] or env[OS_TENANT_ID]")
 
-    def make_env(self, exclude=None, fake_env=FAKE_ENV):
-        env = dict((k, v) for k, v in fake_env.items() if k != exclude)
-        self.useFixture(fixtures.MonkeyPatch('os.environ', env))
-
     def setUp(self):
         super(ShellTest, self).setUp()
         self.nc_util = mock.patch(
             'magnumclient.openstack.common.cliutils.isunauthenticated').start()
         self.nc_util.return_value = False
-
-    def shell(self, argstr, exitcodes=(0,)):
-        orig = sys.stdout
-        orig_stderr = sys.stderr
-        try:
-            sys.stdout = six.StringIO()
-            sys.stderr = six.StringIO()
-            _shell = magnumclient.shell.OpenStackMagnumShell()
-            _shell.main(argstr.split())
-        except SystemExit:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            self.assertIn(exc_value.code, exitcodes)
-        finally:
-            stdout = sys.stdout.getvalue()
-            sys.stdout.close()
-            sys.stdout = orig
-            stderr = sys.stderr.getvalue()
-            sys.stderr.close()
-            sys.stderr = orig_stderr
-        return (stdout, stderr)
 
     def test_help_unknown_command(self):
         self.assertRaises(exceptions.CommandError, self.shell, 'help foofoo')
