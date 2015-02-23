@@ -193,8 +193,19 @@ class TestCommandLineArgument(utils.TestCase):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--dns-nameserver test_dns '
-                               '--flavor-id test_flavor')
-        self.assertTrue(mock_create.calle)
+                               '--flavor-id test_flavor '
+                               '--fixed-network public '
+                               '--master-flavor-id test_flavor '
+                               '--docker-volume-size 10')
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_success('baymodel-create '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--name test ')
+
+        self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_success_with_master_flavor(self, mock_create):
@@ -205,34 +216,48 @@ class TestCommandLineArgument(utils.TestCase):
                                '--external-network-id test_net '
                                '--dns-nameserver test_dns '
                                '--master-flavor-id test_flavor')
-        self.assertTrue(mock_create.calle)
-
-    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
-    def test_baymodel_create_success_no_arg(self, mock_create):
-        self._test_arg_success('baymodel-create')
-        self.assertTrue(mock_create.called)
-
-    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
-    def test_baymodel_create_success_few_arg(self, mock_create):
-        self._test_arg_success('baymodel-create '
-                               '--name test')
-        self.assertTrue(mock_create.called)
-
-        self._test_arg_success('baymodel-create '
-                               '--image-id test')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_docker_vol_size_success(self, mock_create):
         self._test_arg_success('baymodel-create '
-                               '--name test --docker-volume-size 4514')
+                               '--name test --docker-volume-size 4514 '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               )
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_fixed_network_success(self, mock_create):
         self._test_arg_success('baymodel-create '
-                               '--name test --fixed-network private')
+                               '--name test --fixed-network private '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image ')
         self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_failure_few_arg(self, mock_create):
+        self._test_arg_failure('baymodel-create '
+                               '--name test', self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('baymodel-create '
+                               '--image-id test', self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('baymodel-create '
+                               '--keypair-id test', self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('baymodel-create '
+                               '--external-network-id test',
+                               self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('baymodel-create', self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
     def test_baymodel_show_success(self, mock_show):
