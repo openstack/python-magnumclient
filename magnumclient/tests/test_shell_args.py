@@ -211,6 +211,12 @@ class TestCommandLineArgument(utils.TestCase):
                                '--image-id test')
         self.assertTrue(mock_create.called)
 
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_docker_vol_size_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test --docker-volume-size 4514')
+        self.assertTrue(mock_create.called)
+
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
     def test_baymodel_show_success(self, mock_show):
         self._test_arg_success('baymodel-show xxx')

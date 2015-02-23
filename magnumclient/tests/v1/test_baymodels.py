@@ -29,6 +29,7 @@ BAYMODEL1 = {'id': 123,
              'keypair_id': 'keypair1',
              'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e21',
              'dns_nameserver': '8.8.1.1',
+             'docker_volume_size': '71',
              }
 BAYMODEL2 = {'id': 124,
              'uuid': '66666666-7777-8888-9999-000000000002',
@@ -38,6 +39,7 @@ BAYMODEL2 = {'id': 124,
              'keypair_id': 'keypair2',
              'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e22',
              'dns_nameserver': '8.8.1.2',
+             'docker_volume_size': '50',
              }
 
 CREATE_BAYMODEL = copy.deepcopy(BAYMODEL1)
@@ -101,6 +103,8 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(BAYMODEL1['name'], baymodel.name)
         self.assertEqual(BAYMODEL1['image_id'], baymodel.image_id)
+        self.assertEqual(BAYMODEL1['docker_volume_size'],
+                         baymodel.docker_volume_size)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)
@@ -109,6 +113,8 @@ class BayModelManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(baymodel)
+        self.assertEqual(BAYMODEL1['docker_volume_size'],
+                         baymodel.docker_volume_size)
 
     def test_baymodel_delete(self):
         baymodel = self.mgr.delete(BAYMODEL1['id'])

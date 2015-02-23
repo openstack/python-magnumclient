@@ -85,12 +85,15 @@ class ShellTest(base.TestCase):
         args.external_network_id = external_network_id
         dns_nameserver = "test_dns_nameserver"
         args.dns_nameserver = dns_nameserver
+        docker_volume_size = "2051"
+        args.docker_volume_size = docker_volume_size
 
         shell.do_baymodel_create(client_mock, args)
         client_mock.baymodels.create.assert_called_once_with(
             name=name, image_id=image_id, flavor_id=flavor_id,
             keypair_id=keypair_id, external_network_id=external_network_id,
-            dns_nameserver=dns_nameserver)
+            dns_nameserver=dns_nameserver,
+            docker_volume_size=docker_volume_size)
 
     def test_do_baymodel_delete(self):
         client_mock = mock.MagicMock()
