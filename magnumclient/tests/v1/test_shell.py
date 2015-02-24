@@ -56,7 +56,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         bay_id = 'id'
-        args.id = bay_id
+        args.id = [bay_id]
 
         shell.do_bay_delete(client_mock, args)
         client_mock.bays.delete.assert_called_once_with(bay_id)
@@ -96,7 +96,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         baymodel_id = 'id'
-        args.id = baymodel_id
+        args.id = [baymodel_id]
 
         shell.do_baymodel_delete(client_mock, args)
         client_mock.baymodels.delete.assert_called_once_with(baymodel_id)
@@ -161,7 +161,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         pod_id = 'id'
-        args.id = pod_id
+        args.id = [pod_id]
 
         shell.do_pod_delete(client_mock, args)
         client_mock.pods.delete.assert_called_once_with(pod_id)
@@ -200,7 +200,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         rc_id = 'id'
-        args.id = rc_id
+        args.id = [rc_id]
 
         shell.do_rc_delete(client_mock, args)
         client_mock.rcs.delete.assert_called_once_with(rc_id)
@@ -239,7 +239,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
-        args.id = service_id
+        args.id = [service_id]
 
         shell.do_service_delete(client_mock, args)
         client_mock.services.delete.assert_called_once_with(service_id)
@@ -273,7 +273,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = "container_id"
-        args.id = container_id
+        args.id = [container_id]
 
         shell.do_container_delete(client_mock, args)
         client_mock.containers.delete.assert_called_once_with(container_id)
@@ -292,7 +292,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = container_id
+        args.id = [container_id]
 
         shell.do_container_reboot(client_mock, args)
         client_mock.containers.reboot.assert_called_once_with(container_id)
@@ -301,7 +301,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = container_id
+        args.id = [container_id]
 
         shell.do_container_stop(client_mock, args)
         client_mock.containers.stop.assert_called_once_with(container_id)
@@ -310,7 +310,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = container_id
+        args.id = [container_id]
 
         shell.do_container_start(client_mock, args)
         client_mock.containers.start.assert_called_once_with(container_id)
@@ -319,7 +319,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = container_id
+        args.id = [container_id]
 
         shell.do_container_pause(client_mock, args)
         client_mock.containers.pause.assert_called_once_with(container_id)
@@ -328,7 +328,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = container_id
+        args.id = [container_id]
 
         shell.do_container_unpause(client_mock, args)
         client_mock.containers.unpause.assert_called_once_with(container_id)

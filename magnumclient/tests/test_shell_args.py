@@ -115,6 +115,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_bay_delete_success(self, mock_delete):
         self._test_arg_success('bay-delete xxx')
         self.assertTrue(mock_delete.called)
+        self.assertEqual(1, mock_delete.call_count)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.delete')
+    def test_bay_delete_multiple_id_success(self, mock_delete):
+        self._test_arg_success('bay-delete xxx xyz')
+        self.assertTrue(mock_delete.called)
+        self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.bays.BayManager.delete')
     def test_bay_delete_failure_no_arg(self, mock_delete):
@@ -218,6 +225,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_baymodel_delete_success(self, mock_delete):
         self._test_arg_success('baymodel-delete xxx')
         self.assertTrue(mock_delete.called)
+        self.assertEqual(1, mock_delete.call_count)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.delete')
+    def test_baymodel_delete_multiple_id_success(self, mock_delete):
+        self._test_arg_success('baymodel-delete xxx xyz')
+        self.assertTrue(mock_delete.called)
+        self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.delete')
     def test_baymodel_delete_failure_no_arg(self, mock_delete):
@@ -290,6 +304,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_pod_delete_success(self, mock_delete):
         self._test_arg_success('pod-delete xxx')
         self.assertTrue(mock_delete.called)
+        self.assertEqual(1, mock_delete.call_count)
+
+    @mock.patch('magnumclient.v1.pods.PodManager.delete')
+    def test_pod_delete_multiple_id_success(self, mock_delete):
+        self._test_arg_success('pod-delete xxx xyz')
+        self.assertTrue(mock_delete.called)
+        self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.pods.PodManager.delete')
     def test_pod_delete_failure_no_arg(self, mock_delete):
@@ -351,6 +372,13 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.delete')
+    def test_rc_delete_multiple_id_success(self, mock_delete):
+        self._test_arg_success('rc-delete xxx xyz')
+        self.assertTrue(mock_delete.called)
+        self.assertEqual(2, mock_delete.call_count)
+
+    @mock.patch('magnumclient.v1.replicationcontrollers.'
+                'ReplicationControllerManager.delete')
     def test_rc_delete_failure_no_arg(self, mock_delete):
         self._test_arg_failure('rc-delete', self._few_argument_error)
         self.assertFalse(mock_delete.called)
@@ -398,6 +426,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_service_delete_success(self, mock_delete):
         self._test_arg_success('service-delete xxx')
         self.assertTrue(mock_delete.called)
+        self.assertEqual(1, mock_delete.call_count)
+
+    @mock.patch('magnumclient.v1.services.ServiceManager.delete')
+    def test_service_delete_multiple_id_success(self, mock_delete):
+        self._test_arg_success('service-delete xxx xyz')
+        self.assertTrue(mock_delete.called)
+        self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.delete')
     def test_service_delete_failure_no_arg(self, mock_delete):
@@ -439,6 +474,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_container_delete_success(self, mock_delete):
         self._test_arg_success('container-delete xxx')
         self.assertTrue(mock_delete.called)
+        self.assertEqual(1, mock_delete.call_count)
+
+    @mock.patch('magnumclient.v1.containers.ContainerManager.delete')
+    def test_container_delete_multiple_id_success(self, mock_delete):
+        self._test_arg_success('container-delete xxx xyz')
+        self.assertTrue(mock_delete.called)
+        self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.delete')
     def test_container_delete_failure_no_arg(self, mock_delete):
@@ -459,6 +501,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_container_reboot_success(self, mock_reboot):
         self._test_arg_success('container-reboot xxx')
         self.assertTrue(mock_reboot.called)
+        self.assertEqual(1, mock_reboot.call_count)
+
+    @mock.patch('magnumclient.v1.containers.ContainerManager.reboot')
+    def test_container_reboot_multiple_id_success(self, mock_reboot):
+        self._test_arg_success('container-reboot xxx xyz')
+        self.assertTrue(mock_reboot.called)
+        self.assertEqual(2, mock_reboot.call_count)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.reboot')
     def test_container_reboot_failure_no_arg(self, mock_reboot):
@@ -469,6 +518,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_container_stop_success(self, mock_stop):
         self._test_arg_success('container-stop xxx')
         self.assertTrue(mock_stop.called)
+        self.assertEqual(1, mock_stop.call_count)
+
+    @mock.patch('magnumclient.v1.containers.ContainerManager.stop')
+    def test_container_stop_multiple_id_success(self, mock_stop):
+        self._test_arg_success('container-stop xxx xyz')
+        self.assertTrue(mock_stop.called)
+        self.assertEqual(2, mock_stop.call_count)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.stop')
     def test_container_stop_failure_no_arg(self, mock_stop):
@@ -479,6 +535,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_container_start_success(self, mock_start):
         self._test_arg_success('container-start xxx')
         self.assertTrue(mock_start.called)
+        self.assertEqual(1, mock_start.call_count)
+
+    @mock.patch('magnumclient.v1.containers.ContainerManager.start')
+    def test_container_start_multiple_id_success(self, mock_start):
+        self._test_arg_success('container-start xxx xyz')
+        self.assertTrue(mock_start.called)
+        self.assertEqual(2, mock_start.call_count)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.start')
     def test_container_start_failure_no_arg(self, mock_start):
@@ -489,6 +552,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_container_pause_success(self, mock_pause):
         self._test_arg_success('container-pause xxx')
         self.assertTrue(mock_pause.called)
+        self.assertEqual(1, mock_pause.call_count)
+
+    @mock.patch('magnumclient.v1.containers.ContainerManager.pause')
+    def test_container_multiple_id_pause_success(self, mock_pause):
+        self._test_arg_success('container-pause xxx xyz')
+        self.assertTrue(mock_pause.called)
+        self.assertEqual(2, mock_pause.call_count)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.pause')
     def test_container_pause_failure_no_arg(self, mock_pause):
@@ -499,6 +569,13 @@ class TestCommandLineArgument(utils.TestCase):
     def test_container_unpause_success(self, mock_unpause):
         self._test_arg_success('container-unpause xxx')
         self.assertTrue(mock_unpause.called)
+        self.assertEqual(1, mock_unpause.call_count)
+
+    @mock.patch('magnumclient.v1.containers.ContainerManager.unpause')
+    def test_container_unpause_multiple_id_success(self, mock_unpause):
+        self._test_arg_success('container-unpause xxx xyz')
+        self.assertTrue(mock_unpause.called)
+        self.assertEqual(2, mock_unpause.call_count)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.unpause')
     def test_container_unpause_failure_no_arg(self, mock_unpause):

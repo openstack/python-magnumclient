@@ -87,10 +87,16 @@ def do_bay_create(cs, args):
 
 @utils.arg('id',
            metavar='<bay_id>',
-           help='ID of the bay to delete.')
+           nargs='+',
+           help='ID of the (bay)s to delete.')
 def do_bay_delete(cs, args):
-    """Delete a bay."""
-    cs.bays.delete(args.id)
+    """Delete specified bay."""
+    for id in args.id:
+        try:
+            cs.bays.delete(id)
+        except Exception as e:
+            print("Delete for bay %(bay)s failed: %(e)s" %
+                  {'bay': id, 'e': e})
 
 
 @utils.arg('id',
@@ -159,10 +165,16 @@ def do_baymodel_create(cs, args):
 
 @utils.arg('id',
            metavar='<baymodel_id>',
-           help='ID of the baymodel to delete.')
+           nargs='+',
+           help='ID of the (baymodel)s to delete.')
 def do_baymodel_delete(cs, args):
-    """Delete a baymodel."""
-    cs.baymodels.delete(args.id)
+    """Delete specified baymodel."""
+    for id in args.id:
+        try:
+            cs.baymodels.delete(id)
+        except Exception as e:
+            print("Delete for baymodel %(baymodel)s failed: %(e)s" %
+                  {'baymodel': id, 'e': e})
 
 
 @utils.arg('id',
@@ -241,10 +253,16 @@ def do_pod_create(cs, args):
 
 @utils.arg('id',
            metavar='<pod_id>',
-           help='ID of the pod to delete.')
+           nargs='+',
+           help='ID of the (pod)s to delete.')
 def do_pod_delete(cs, args):
-    """Delete a pod."""
-    cs.pods.delete(args.id)
+    """Delete specified pod."""
+    for id in args.id:
+        try:
+            cs.pods.delete(id)
+        except Exception as e:
+            print("Delete for pod %(pod)s failed: %(e)s" %
+                  {'pod': id, 'e': e})
     pass
 
 
@@ -293,10 +311,16 @@ def do_rc_create(cs, args):
 
 @utils.arg('id',
            metavar='<rc_id>',
-           help='ID of the replication controller to delete.')
+           nargs='+',
+           help='ID of the replication (controller)s to delete.')
 def do_rc_delete(cs, args):
-    """Delete a replication controller."""
-    cs.rcs.delete(args.id)
+    """Delete specified replication controller."""
+    for id in args.id:
+        try:
+            cs.rcs.delete(id)
+        except Exception as e:
+            print("Delete for rc %(rc)s failed: %(e)s" %
+                  {'rc': id, 'e': e})
 
 
 @utils.arg('id',
@@ -342,10 +366,16 @@ def do_service_create(cs, args):
 
 @utils.arg('id',
            metavar='<service_id>',
-           help='ID of the service to delete.')
+           nargs='+',
+           help='ID of the (service)s to delete.')
 def do_service_delete(cs, args):
-    """Delete a service."""
-    cs.services.delete(args.id)
+    """Delete specified service."""
+    for id in args.id:
+        try:
+            cs.services.delete(id)
+        except Exception as e:
+            print("Delete for service %(service)s failed: %(e)s" %
+                  {'service': id, 'e': e})
 
 
 @utils.arg('id',
@@ -380,10 +410,16 @@ def do_container_list(cs, args):
 
 @utils.arg('id',
            metavar='<container_id>',
-           help='ID of the container to delete.')
+           nargs='+',
+           help='ID of the (container)s to delete.')
 def do_container_delete(cs, args):
-    """Delete a container."""
-    cs.containers.delete(args.id)
+    """Delete specified container."""
+    for id in args.id:
+        try:
+            cs.containers.delete(id)
+        except Exception as e:
+            print("Delete for container %(container)s failed: %(e)s" %
+                  {'container': id, 'e': e})
 
 
 @utils.arg('id',
@@ -404,42 +440,72 @@ def do_container_show(cs, args):
 
 @utils.arg('id',
            metavar='<container_id>',
-           help='ID of the container to start.')
+           nargs='+',
+           help='ID of the (container)s to start.')
 def do_container_reboot(cs, args):
-    """Reboot a container."""
-    cs.containers.reboot(args.id)
+    """Reboot specified container."""
+    for id in args.id:
+        try:
+            cs.containers.reboot(id)
+        except Exception as e:
+            print("Reboot for container %(container)s failed: %(e)s" %
+                  {'container': id, 'e': e})
 
 
 @utils.arg('id',
            metavar='<container_id>',
-           help='ID of the container to start.')
+           nargs='+',
+           help='ID of the (container)s to start.')
 def do_container_stop(cs, args):
-    """Stop a container."""
-    cs.containers.stop(args.id)
+    """Stop specified container."""
+    for id in args.id:
+        try:
+            cs.containers.stop(id)
+        except Exception as e:
+            print("Stop for container %(container)s failed: %(e)s" %
+                  {'container': id, 'e': e})
 
 
 @utils.arg('id',
            metavar='<container_id>',
-           help='ID of the container to start.')
+           nargs='+',
+           help='ID of the (container)s to start.')
 def do_container_start(cs, args):
-    """Start a container."""
-    cs.containers.start(args.id)
+    """Start specified container."""
+    for id in args.id:
+        try:
+            cs.containers.start(id)
+        except Exception as e:
+            print("Start for container %(container)s failed: %(e)s" %
+                  {'container': id, 'e': e})
 
 
 @utils.arg('id',
            metavar='<container_id>',
-           help='ID of the container to start.')
+           nargs='+',
+           help='ID of the (container)s to start.')
 def do_container_pause(cs, args):
-    """Pause a container."""
-    cs.containers.pause(args.id)
+    """Pause specified container."""
+    for id in args.id:
+        try:
+            cs.containers.pause(id)
+        except Exception as e:
+            print("Pause for container %(container)s failed: %(e)s" %
+                  {'container': id, 'e': e})
 
 
 @utils.arg('id',
            metavar='<container_id>',
-           help='ID of the container to start.')
+           nargs='+',
+           help='ID of the (container)s to start.')
 def do_container_unpause(cs, args):
-    """Unpause a container."""
-    cs.containers.unpause(args.id)
+    """Unpause specified container."""
+    for id in args.id:
+        try:
+            cs.containers.unpause(id)
+        except Exception as e:
+            print("Unpause for container %(container)s failed: %(e)s" %
+                  {'container': id, 'e': e})
 
 
 @utils.arg('id',
