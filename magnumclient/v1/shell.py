@@ -59,7 +59,7 @@ def _show_service(service):
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list()
-    columns = ('uuid', 'name', 'node_count')
+    columns = ('uuid', 'name', 'node_count', 'status')
     utils.print_list(bays, columns,
                      {'versions': _print_list_field('versions')})
 
