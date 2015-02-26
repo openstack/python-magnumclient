@@ -143,6 +143,10 @@ def do_bay_update(cs, args):
            metavar='<external_network_id>',
            help='The external Neutron network ID to connect to this bay'
            ' model.')
+@utils.arg('--fixed-network',
+           metavar='<fixed_network>',
+           help='The private Neutron network name to connect to this bay'
+           ' model.')
 @utils.arg('--dns-nameserver',
            metavar='<dns_nameserver>',
            help='The DNS nameserver to use for this Bay.')
@@ -160,6 +164,7 @@ def do_baymodel_create(cs, args):
     opts['image_id'] = args.image_id
     opts['keypair_id'] = args.keypair_id
     opts['external_network_id'] = args.external_network_id
+    opts['fixed_network'] = args.fixed_network
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
 

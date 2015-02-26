@@ -16,8 +16,8 @@ from magnumclient import exceptions
 
 
 CREATION_ATTRIBUTES = ['name', 'image_id', 'flavor_id', 'keypair_id',
-                       'external_network_id', 'dns_nameserver',
-                       'docker_volume_size']
+                       'external_network_id', 'fixed_network',
+                       'dns_nameserver', 'docker_volume_size']
 
 
 class BayModel(base.Resource):

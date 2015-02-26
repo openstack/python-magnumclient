@@ -28,6 +28,7 @@ BAYMODEL1 = {'id': 123,
              'flavor_id': 'm1.small',
              'keypair_id': 'keypair1',
              'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e21',
+             'fixed_network': 'private',
              'dns_nameserver': '8.8.1.1',
              'docker_volume_size': '71',
              }
@@ -38,6 +39,7 @@ BAYMODEL2 = {'id': 124,
              'flavor_id': 'm2.small',
              'keypair_id': 'keypair2',
              'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e22',
+             'fixed_network': 'private2',
              'dns_nameserver': '8.8.1.2',
              'docker_volume_size': '50',
              }
@@ -105,6 +107,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['image_id'], baymodel.image_id)
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
+        self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)
