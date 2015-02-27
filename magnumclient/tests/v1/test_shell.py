@@ -79,6 +79,8 @@ class ShellTest(base.TestCase):
         args.image_id = image_id
         flavor_id = "test_flavor"
         args.flavor_id = flavor_id
+        master_flavor_id = "test_master_flavor"
+        args.master_flavor_id = master_flavor_id
         keypair_id = "test_keypair"
         args.keypair_id = keypair_id
         external_network_id = "test_external_network_id"
@@ -93,7 +95,8 @@ class ShellTest(base.TestCase):
         shell.do_baymodel_create(client_mock, args)
         client_mock.baymodels.create.assert_called_once_with(
             name=name, image_id=image_id, flavor_id=flavor_id,
-            keypair_id=keypair_id, external_network_id=external_network_id,
+            master_flavor_id=master_flavor_id, keypair_id=keypair_id,
+            external_network_id=external_network_id,
             docker_volume_size=docker_volume_size,
             fixed_network=fixed_network, dns_nameserver=dns_nameserver)
 

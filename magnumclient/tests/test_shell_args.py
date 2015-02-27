@@ -197,6 +197,17 @@ class TestCommandLineArgument(utils.TestCase):
         self.assertTrue(mock_create.calle)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_success_with_master_flavor(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test '
+                               '--image-id test_image '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--dns-nameserver test_dns '
+                               '--master-flavor-id test_flavor')
+        self.assertTrue(mock_create.calle)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_success_no_arg(self, mock_create):
         self._test_arg_success('baymodel-create')
         self.assertTrue(mock_create.called)
