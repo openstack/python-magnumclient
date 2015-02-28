@@ -159,7 +159,7 @@ def do_bay_update(cs, args):
            'of the bay.')
 @utils.arg('--docker-volume-size',
            metavar='<docker_volume_size>',
-           help='The size of the docker volume to use')
+           help='Specify the size of the docker volume to use.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
     opts = {}
