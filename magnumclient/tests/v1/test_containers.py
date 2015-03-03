@@ -106,7 +106,7 @@ fake_responses = {
     {
         'GET': (
             {},
-            CONTAINER1,
+            {'output': 'login now'},
         ),
     },
     '/v1/containers/%s/execute?command=ls' % CONTAINER1['id']:

@@ -112,7 +112,7 @@ class ContainerManager(base.Manager):
         resp, body = self.api.json_request(method,
                                            self._path(id) + action,
                                            **kwargs)
-        return resp
+        return resp, body
 
     def start(self, id):
         return self._action(id, '/start')
@@ -130,7 +130,7 @@ class ContainerManager(base.Manager):
         return self._action(id, '/unpause')
 
     def logs(self, id):
-        return self._action(id, '/logs', method='GET')
+        return self._action(id, '/logs', method='GET')[1]['output']
 
     def execute(self, id, command):
         return self._action(id, '/execute', qparams={'command': command})

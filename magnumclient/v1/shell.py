@@ -527,7 +527,8 @@ def do_container_unpause(cs, args):
            help='ID of the container to start.')
 def do_container_logs(cs, args):
     """Get logs of a container."""
-    cs.containers.logs(args.id)
+    logs = cs.containers.logs(args.id)
+    print(logs)
 
 
 @utils.arg('id',
