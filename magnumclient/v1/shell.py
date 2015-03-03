@@ -133,32 +133,40 @@ def do_bay_update(cs, args):
            metavar='<name>',
            help='Name of the bay to create.')
 @utils.arg('--image-id',
+           required=True,
            metavar='<image_id>',
            help='The name or UUID of the base image to customize for the bay.')
 @utils.arg('--keypair-id',
+           required=True,
            metavar='<keypair_id>',
            help='The name or UUID of the SSH keypair to load into the'
            ' Bay nodes.')
 @utils.arg('--external-network-id',
+           required=True,
            metavar='<external_network_id>',
            help='The external Neutron network ID to connect to this bay'
            ' model.')
 @utils.arg('--fixed-network',
            metavar='<fixed_network>',
+           default='private',
            help='The private Neutron network name to connect to this bay'
            ' model.')
 @utils.arg('--dns-nameserver',
            metavar='<dns_nameserver>',
+           default='8.8.8.8',
            help='The DNS nameserver to use for this Bay.')
 @utils.arg('--flavor-id',
            metavar='<flavor_id>',
+           default='m1.medium',
            help='The nova flavor id to use when launching the bay.')
 @utils.arg('--master-flavor-id',
            metavar='<master_flavor_id>',
+           default='m1.small',
            help='The nova flavor id to use when launching the master node'
            'of the bay.')
 @utils.arg('--docker-volume-size',
            metavar='<docker_volume_size>',
+           default=20,
            help='Specify the size of the docker volume to use.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
