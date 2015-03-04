@@ -133,4 +133,5 @@ class ContainerManager(base.Manager):
         return self._action(id, '/logs', method='GET')[1]['output']
 
     def execute(self, id, command):
-        return self._action(id, '/execute', qparams={'command': command})
+        return self._action(id, '/execute',
+                            qparams={'command': command})[1]['output']

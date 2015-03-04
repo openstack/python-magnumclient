@@ -548,4 +548,5 @@ def do_container_logs(cs, args):
            help='The command to execute')
 def do_container_execute(cs, args):
     """Execute command in a container."""
-    cs.containers.execute(args.id, args.command)
+    output = cs.containers.execute(args.id, args.command)
+    print(output)

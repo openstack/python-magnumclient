@@ -113,7 +113,7 @@ fake_responses = {
     {
         'PUT': (
             {},
-            CONTAINER1,
+            {'output': '/home'},
         ),
     },
 }
@@ -216,19 +216,19 @@ class ContainerManagerTest(testtools.TestCase):
         self.assertTrue(container)
 
     def test_container_logs(self):
-        container = self.mgr.logs(CONTAINER1['id'])
+        logs = self.mgr.logs(CONTAINER1['id'])
         expect = [
             ('GET', '/v1/containers/%s/logs' % CONTAINER1['id'],
                     {'Content-Length': '0'}, None),
         ]
         self.assertEqual(expect, self.api.calls)
-        self.assertTrue(container)
+        self.assertEqual('login now', logs)
 
     def test_container_execute(self):
-        container = self.mgr.execute(CONTAINER1['id'], 'ls')
+        output = self.mgr.execute(CONTAINER1['id'], 'ls')
         expect = [
             ('PUT', '/v1/containers/%s/execute?command=ls' % CONTAINER1['id'],
                     {'Content-Length': '0'}, None),
         ]
         self.assertEqual(expect, self.api.calls)
-        self.assertTrue(container)
+        self.assertEqual('/home', output)
