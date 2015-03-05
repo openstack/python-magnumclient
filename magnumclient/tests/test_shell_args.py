@@ -238,6 +238,17 @@ class TestCommandLineArgument(utils.TestCase):
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_ssh_authorized_key_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--ssh-authorized-key test_key '
+                               )
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_failure_few_arg(self, mock_create):
         self._test_arg_failure('baymodel-create '
                                '--name test', self._mandatory_arg_error)
