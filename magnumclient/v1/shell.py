@@ -85,13 +85,13 @@ def do_bay_create(cs, args):
     _show_baymodel(bay)
 
 
-@utils.arg('id',
-           metavar='<bay_id>',
+@utils.arg('bay',
+           metavar='<bay>',
            nargs='+',
-           help='ID of the (bay)s to delete.')
+           help='ID or name of the (bay)s to delete.')
 def do_bay_delete(cs, args):
     """Delete specified bay."""
-    for id in args.id:
+    for id in args.bay:
         try:
             cs.bays.delete(id)
         except Exception as e:
@@ -99,12 +99,12 @@ def do_bay_delete(cs, args):
                   {'bay': id, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<bay_id>',
-           help='ID of the bay to show.')
+@utils.arg('bay',
+           metavar='<bay>',
+           help='ID or name of the bay to show.')
 def do_bay_show(cs, args):
     """Show details about the given bay."""
-    bay = cs.bays.get(args.id)
+    bay = cs.bays.get(args.bay)
     _show_bay(bay)
 
 

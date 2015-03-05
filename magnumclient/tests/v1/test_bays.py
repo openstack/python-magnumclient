@@ -78,6 +78,21 @@ fake_responses = {
             UPDATED_BAY,
         ),
     },
+    '/v1/bays/%s' % BAY1['name']:
+    {
+        'GET': (
+            {},
+            BAY1
+        ),
+        'DELETE': (
+            {},
+            None,
+        ),
+        'PATCH': (
+            {},
+            UPDATED_BAY,
+        ),
+    },
 }
 
 
@@ -96,10 +111,19 @@ class BayManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertThat(bays, matchers.HasLength(2))
 
-    def test_bay_show(self):
+    def test_bay_show_by_id(self):
         bay = self.mgr.get(BAY1['id'])
         expect = [
             ('GET', '/v1/bays/%s' % BAY1['id'], {}, None)
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(BAY1['name'], bay.name)
+        self.assertEqual(BAY1['baymodel_id'], bay.baymodel_id)
+
+    def test_bay_show_by_name(self):
+        bay = self.mgr.get(BAY1['name'])
+        expect = [
+            ('GET', '/v1/bays/%s' % BAY1['name'], {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(BAY1['name'], bay.name)
@@ -113,10 +137,18 @@ class BayManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(bay)
 
-    def test_bay_delete(self):
+    def test_bay_delete_by_id(self):
         bay = self.mgr.delete(BAY1['id'])
         expect = [
             ('DELETE', '/v1/bays/%s' % BAY1['id'], {}, None),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertIsNone(bay)
+
+    def test_bay_delete_by_name(self):
+        bay = self.mgr.delete(BAY1['name'])
+        expect = [
+            ('DELETE', '/v1/bays/%s' % BAY1['name'], {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(bay)
