@@ -273,27 +273,27 @@ def do_pod_create(cs, args):
     pass
 
 
-@utils.arg('id',
-           metavar='<pod_id>',
+@utils.arg('pods',
+           metavar='<pods>',
            nargs='+',
-           help='ID of the (pod)s to delete.')
+           help='ID or name of the (pod)s to delete.')
 def do_pod_delete(cs, args):
     """Delete specified pod."""
-    for id in args.id:
+    for pod in args.pods:
         try:
-            cs.pods.delete(id)
+            cs.pods.delete(pod)
         except Exception as e:
             print("Delete for pod %(pod)s failed: %(e)s" %
-                  {'pod': id, 'e': e})
+                  {'pod': pod, 'e': e})
     pass
 
 
-@utils.arg('id',
-           metavar='<pod_id>',
-           help='ID of the pod to show.')
+@utils.arg('pod',
+           metavar='<pod>',
+           help='ID or name of the pod to show.')
 def do_pod_show(cs, args):
     """Show details about the given pod."""
-    pod = cs.pods.get(args.id)
+    pod = cs.pods.get(args.pod)
     _show_pod(pod)
 
 
