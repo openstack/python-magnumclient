@@ -148,7 +148,6 @@ def do_bay_update(cs, args):
            ' model.')
 @utils.arg('--fixed-network',
            metavar='<fixed_network>',
-           default='private',
            help='The private Neutron network name to connect to this bay'
            ' model.')
 @utils.arg('--dns-nameserver',
@@ -161,12 +160,10 @@ def do_bay_update(cs, args):
            help='The nova flavor id to use when launching the bay.')
 @utils.arg('--master-flavor-id',
            metavar='<master_flavor_id>',
-           default='m1.small',
            help='The nova flavor id to use when launching the master node'
            'of the bay.')
 @utils.arg('--docker-volume-size',
            metavar='<docker_volume_size>',
-           default=20,
            help='Specify the size of the docker volume to use.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
