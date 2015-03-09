@@ -169,7 +169,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         pod_id = 'id'
-        args.id = [pod_id]
+        args.pods = [pod_id]
 
         shell.do_pod_delete(client_mock, args)
         client_mock.pods.delete.assert_called_once_with(pod_id)
@@ -178,7 +178,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         pod_id = 'id'
-        args.id = pod_id
+        args.pod = pod_id
 
         shell.do_pod_show(client_mock, args)
         client_mock.pods.get.assert_called_once_with(pod_id)
