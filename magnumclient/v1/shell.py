@@ -150,6 +150,9 @@ def do_bay_update(cs, args):
            metavar='<fixed_network>',
            help='The private Neutron network name to connect to this bay'
            ' model.')
+@utils.arg('--ssh-authorized-key',
+           metavar='<ssh_authorized_key>',
+           help='The SSH authorized key to use')
 @utils.arg('--dns-nameserver',
            metavar='<dns_nameserver>',
            default='8.8.8.8',
@@ -177,6 +180,7 @@ def do_baymodel_create(cs, args):
     opts['fixed_network'] = args.fixed_network
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
+    opts['ssh_authorized_key'] = args.ssh_authorized_key
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)

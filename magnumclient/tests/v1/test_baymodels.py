@@ -32,6 +32,13 @@ BAYMODEL1 = {'id': 123,
              'fixed_network': 'private',
              'dns_nameserver': '8.8.1.1',
              'docker_volume_size': '71',
+             'ssh_authorized_key': 'ssh-rsa AAAAB3NaC1yc2EAAAADAABAAABAQC'
+                                   '0XRqg3tm+jlsOKGO81lPDH+KaSJs8qegZHtQw'
+                                   '3Q7wvmjUqszP/H6NC/m+qiGp/sTitomSofMam'
+                                   'YucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
+                                   'Ma71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
+                                   '8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
+                                   'v0Zio4VeFrfpytB8RtZBN digambar@magnum'
              }
 BAYMODEL2 = {'id': 124,
              'uuid': '66666666-7777-8888-9999-000000000002',
@@ -44,6 +51,13 @@ BAYMODEL2 = {'id': 124,
              'fixed_network': 'private2',
              'dns_nameserver': '8.8.1.2',
              'docker_volume_size': '50',
+             'ssh_authorized_key': 'ssh-rsa AAAAB3NzaC1ycEAAAADAQABAAABAQC'
+                                   'v0XRqg3tm+jlsOKGO81lPDH+KaSJs8qegZHtQw'
+                                   'n3Q7wvmjUqszP/H6NC/m+qiGp/sTitomSofMam'
+                                   'DYucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
+                                   'KMa71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
+                                   'X8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
+                                   'Jv0Zio4VeFrfpytB8RtZBN digambar@magnum'
              }
 
 CREATE_BAYMODEL = copy.deepcopy(BAYMODEL1)
@@ -110,6 +124,8 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
+        self.assertEqual(BAYMODEL1['ssh_authorized_key'],
+                         baymodel.ssh_authorized_key)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)
