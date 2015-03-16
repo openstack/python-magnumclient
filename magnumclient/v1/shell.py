@@ -387,26 +387,26 @@ def do_service_create(cs, args):
     _show_service(service)
 
 
-@utils.arg('id',
-           metavar='<service_id>',
+@utils.arg('services',
+           metavar='<services>',
            nargs='+',
-           help='ID of the (service)s to delete.')
+           help='ID or name of the (service)s to delete.')
 def do_service_delete(cs, args):
     """Delete specified service."""
-    for id in args.id:
+    for service in args.services:
         try:
-            cs.services.delete(id)
+            cs.services.delete(service)
         except Exception as e:
             print("Delete for service %(service)s failed: %(e)s" %
-                  {'service': id, 'e': e})
+                  {'service': service, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<service_id>',
-           help='ID of the service to show.')
+@utils.arg('service',
+           metavar='<service>',
+           help='ID or name of the service to show.')
 def do_service_show(cs, args):
     """Show details about the given service."""
-    service = cs.services.get(args.id)
+    service = cs.services.get(args.service)
     _show_service(service)
 
 

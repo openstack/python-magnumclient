@@ -250,7 +250,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
-        args.id = [service_id]
+        args.services = [service_id]
 
         shell.do_service_delete(client_mock, args)
         client_mock.services.delete.assert_called_once_with(service_id)
@@ -259,7 +259,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
-        args.id = service_id
+        args.service = service_id
 
         shell.do_service_show(client_mock, args)
         client_mock.services.get.assert_called_once_with(service_id)

@@ -71,6 +71,21 @@ fake_responses = {
             UPDATED_SVC,
         ),
     },
+    '/v1/services/%s' % SERVICE1['name']:
+    {
+        'GET': (
+            {},
+            SERVICE1
+        ),
+        'DELETE': (
+            {},
+            None,
+        ),
+        'PATCH': (
+            {},
+            UPDATED_SVC,
+        ),
+    },
 }
 
 
@@ -89,10 +104,19 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertThat(services, matchers.HasLength(2))
 
-    def test_service_show(self):
+    def test_service_show_by_id(self):
         service = self.mgr.get(SERVICE1['id'])
         expect = [
             ('GET', '/v1/services/%s' % SERVICE1['id'], {}, None)
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(SERVICE1['name'], service.name)
+        self.assertEqual(SERVICE1['ip'], service.ip)
+
+    def test_service_show_by_name(self):
+        service = self.mgr.get(SERVICE1['name'])
+        expect = [
+            ('GET', '/v1/services/%s' % SERVICE1['name'], {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(SERVICE1['name'], service.name)
@@ -106,10 +130,18 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(service)
 
-    def test_service_delete(self):
+    def test_service_delete_by_id(self):
         service = self.mgr.delete(SERVICE1['id'])
         expect = [
             ('DELETE', '/v1/services/%s' % SERVICE1['id'], {}, None),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertIsNone(service)
+
+    def test_service_delete_by_name(self):
+        service = self.mgr.delete(SERVICE1['name'])
+        expect = [
+            ('DELETE', '/v1/services/%s' % SERVICE1['name'], {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(service)
