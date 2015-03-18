@@ -95,6 +95,21 @@ fake_responses = {
             UPDATED_BAYMODEL,
         ),
     },
+    '/v1/baymodels/%s' % BAYMODEL1['name']:
+    {
+        'GET': (
+            {},
+            BAYMODEL1
+        ),
+        'DELETE': (
+            {},
+            None,
+        ),
+        'PATCH': (
+            {},
+            UPDATED_BAYMODEL,
+        ),
+    },
 }
 
 
@@ -113,10 +128,24 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertThat(baymodels, matchers.HasLength(2))
 
-    def test_baymodel_show(self):
+    def test_baymodel_show_by_id(self):
         baymodel = self.mgr.get(BAYMODEL1['id'])
         expect = [
             ('GET', '/v1/baymodels/%s' % BAYMODEL1['id'], {}, None)
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(BAYMODEL1['name'], baymodel.name)
+        self.assertEqual(BAYMODEL1['image_id'], baymodel.image_id)
+        self.assertEqual(BAYMODEL1['docker_volume_size'],
+                         baymodel.docker_volume_size)
+        self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
+        self.assertEqual(BAYMODEL1['ssh_authorized_key'],
+                         baymodel.ssh_authorized_key)
+
+    def test_baymodel_show_by_name(self):
+        baymodel = self.mgr.get(BAYMODEL1['name'])
+        expect = [
+            ('GET', '/v1/baymodels/%s' % BAYMODEL1['name'], {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(BAYMODEL1['name'], baymodel.name)
@@ -137,10 +166,18 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
 
-    def test_baymodel_delete(self):
+    def test_baymodel_delete_by_id(self):
         baymodel = self.mgr.delete(BAYMODEL1['id'])
         expect = [
             ('DELETE', '/v1/baymodels/%s' % BAYMODEL1['id'], {}, None),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertIsNone(baymodel)
+
+    def test_baymodel_delete_by_name(self):
+        baymodel = self.mgr.delete(BAYMODEL1['name'])
+        expect = [
+            ('DELETE', '/v1/baymodels/%s' % BAYMODEL1['name'], {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(baymodel)
