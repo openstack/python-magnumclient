@@ -211,7 +211,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         rc_id = 'id'
-        args.id = [rc_id]
+        args.rcs = [rc_id]
 
         shell.do_rc_delete(client_mock, args)
         client_mock.rcs.delete.assert_called_once_with(rc_id)
@@ -220,7 +220,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         rc_id = 'id'
-        args.id = rc_id
+        args.rc = rc_id
 
         shell.do_rc_show(client_mock, args)
         client_mock.rcs.get.assert_called_once_with(rc_id)
