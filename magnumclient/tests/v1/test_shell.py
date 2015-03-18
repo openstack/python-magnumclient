@@ -107,7 +107,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         baymodel_id = 'id'
-        args.id = [baymodel_id]
+        args.baymodels = [baymodel_id]
 
         shell.do_baymodel_delete(client_mock, args)
         client_mock.baymodels.delete.assert_called_once_with(baymodel_id)
@@ -116,7 +116,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         baymodel_id = 'id'
-        args.id = baymodel_id
+        args.baymodel = baymodel_id
 
         shell.do_baymodel_show(client_mock, args)
         client_mock.baymodels.get.assert_called_once_with(baymodel_id)

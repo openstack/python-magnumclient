@@ -186,26 +186,26 @@ def do_baymodel_create(cs, args):
     _show_baymodel(baymodel)
 
 
-@utils.arg('id',
-           metavar='<baymodel_id>',
+@utils.arg('baymodels',
+           metavar='<baymodels>',
            nargs='+',
-           help='ID of the (baymodel)s to delete.')
+           help='ID or name of the (baymodel)s to delete.')
 def do_baymodel_delete(cs, args):
     """Delete specified baymodel."""
-    for id in args.id:
+    for baymodel in args.baymodels:
         try:
-            cs.baymodels.delete(id)
+            cs.baymodels.delete(baymodel)
         except Exception as e:
             print("Delete for baymodel %(baymodel)s failed: %(e)s" %
-                  {'baymodel': id, 'e': e})
+                  {'baymodel': baymodel, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<baymodel_id>',
+@utils.arg('baymodel',
+           metavar='<baymodel>',
            help='ID of the baymodel to show.')
 def do_baymodel_show(cs, args):
     """Show details about the given baymodel."""
-    baymodel = cs.baymodels.get(args.id)
+    baymodel = cs.baymodels.get(args.baymodel)
     _show_baymodel(baymodel)
 
 
