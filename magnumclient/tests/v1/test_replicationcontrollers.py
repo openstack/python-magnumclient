@@ -69,6 +69,21 @@ fake_responses = {
             UPDATED_RC,
         ),
     },
+    '/v1/rcs/%s' % RC1['name']:
+    {
+        'GET': (
+            {},
+            RC1
+        ),
+        'DELETE': (
+            {},
+            None,
+        ),
+        'PATCH': (
+            {},
+            UPDATED_RC,
+        ),
+    },
 }
 
 
@@ -87,10 +102,19 @@ class RCManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertThat(rcs, matchers.HasLength(2))
 
-    def test_rc_show(self):
+    def test_rc_show_by_id(self):
         rc = self.mgr.get(RC1['id'])
         expect = [
             ('GET', '/v1/rcs/%s' % RC1['id'], {}, None)
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(RC1['name'], rc.name)
+        self.assertEqual(RC1['replicas'], rc.replicas)
+
+    def test_rc_show_by_name(self):
+        rc = self.mgr.get(RC1['name'])
+        expect = [
+            ('GET', '/v1/rcs/%s' % RC1['name'], {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(RC1['name'], rc.name)
@@ -104,10 +128,18 @@ class RCManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(rc)
 
-    def test_rc_delete(self):
+    def test_rc_delete_by_id(self):
         rc = self.mgr.delete(RC1['id'])
         expect = [
             ('DELETE', '/v1/rcs/%s' % RC1['id'], {}, None),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertIsNone(rc)
+
+    def test_rc_delete_by_name(self):
+        rc = self.mgr.delete(RC1['name'])
+        expect = [
+            ('DELETE', '/v1/rcs/%s' % RC1['name'], {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(rc)

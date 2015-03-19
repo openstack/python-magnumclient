@@ -332,26 +332,26 @@ def do_rc_create(cs, args):
     _show_rc(rc)
 
 
-@utils.arg('id',
-           metavar='<rc_id>',
+@utils.arg('rcs',
+           metavar='<rcs>',
            nargs='+',
-           help='ID of the replication (controller)s to delete.')
+           help='ID or name of the replication (controller)s to delete.')
 def do_rc_delete(cs, args):
     """Delete specified replication controller."""
-    for id in args.id:
+    for rc in args.rcs:
         try:
-            cs.rcs.delete(id)
+            cs.rcs.delete(rc)
         except Exception as e:
             print("Delete for rc %(rc)s failed: %(e)s" %
-                  {'rc': id, 'e': e})
+                  {'rc': rc, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<rc_id>',
-           help='ID of the replication controller to show.')
+@utils.arg('rc',
+           metavar='<rc>',
+           help='ID or name of the replication controller to show.')
 def do_rc_show(cs, args):
     """Show details about the given replication controller."""
-    rc = cs.rcs.get(args.id)
+    rc = cs.rcs.get(args.rc)
     _show_rc(rc)
 
 
