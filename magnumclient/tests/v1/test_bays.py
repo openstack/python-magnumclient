@@ -26,8 +26,8 @@ BAY1 = {'id': 123,
         'name': 'bay1',
         'baymodel_id': 'e74c40e0-d825-11e2-a28f-0800200c9a61',
         'stack_id': '5d12f6fd-a196-4bf0-ae4c-1f639a523a51',
-        'master_address': '172.17.2.1',
-        'minions_address': ['172.17.2.3'],
+        'api_address': '172.17.2.1',
+        'node_addresses': ['172.17.2.3'],
         'node_count': 2,
         }
 BAY2 = {'id': 124,
@@ -35,8 +35,8 @@ BAY2 = {'id': 124,
         'name': 'bay2',
         'baymodel_id': 'e74c40e0-d825-11e2-a28f-0800200c9a62',
         'stack_id': '5d12f6fd-a196-4bf0-ae4c-1f639a523a52',
-        'master_address': '172.17.2.2',
-        'minions_address': ['172.17.2.4'],
+        'api_address': '172.17.2.2',
+        'node_addresses': ['172.17.2.4'],
         'node_count': 2,
         }
 
@@ -44,8 +44,8 @@ CREATE_BAY = copy.deepcopy(BAY1)
 del CREATE_BAY['id']
 del CREATE_BAY['uuid']
 del CREATE_BAY['stack_id']
-del CREATE_BAY['master_address']
-del CREATE_BAY['minions_address']
+del CREATE_BAY['api_address']
+del CREATE_BAY['node_addresses']
 
 UPDATED_BAY = copy.deepcopy(BAY1)
 NEW_NAME = 'newbay'
