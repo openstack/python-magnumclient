@@ -26,6 +26,7 @@ from __future__ import print_function
 import argparse
 import getpass
 import logging
+import os
 import sys
 
 from oslo.utils import encodeutils
@@ -250,6 +251,12 @@ class OpenStackMagnumShell(object):
                             action='store_true',
                             help="Use the auth token cache. Defaults to False "
                             "if env[OS_CACHE] is not set.")
+
+        parser.add_argument('--os-region-name',
+                            metavar='<region-name>',
+                            default=os.environ.get('OS_REGION_NAME'),
+                            help='Region name. Default=env[OS_REGION_NAME].')
+
 
 # TODO(mattf) - add get_timings support to Client
 #        parser.add_argument('--timings',
@@ -506,6 +513,7 @@ class OpenStackMagnumShell(object):
                                 project_name=os_tenant_name,
                                 auth_url=os_auth_url,
                                 service_type=service_type,
+                                region_name=args.os_region_name,
                                 magnum_url=bypass_url)
 
         args.func(self.cs, args)
