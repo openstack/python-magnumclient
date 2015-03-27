@@ -314,15 +314,17 @@ def do_rc_list(cs, args):
            metavar='<manifest>',
            help='File path of the replication controller file to use for '
                 'creating replication controllers.')
-@utils.arg('--bay-id',
+@utils.arg('--bay',
            required=True,
-           metavar='<bay_id>',
-           help='The bay ID.')
+           metavar='<bay>',
+           help='ID or name of the bay.')
 def do_rc_create(cs, args):
     """Create a replication controller."""
+    bay = cs.bays.get(args.bay)
+
     opts = {}
     opts['manifest_url'] = args.manifest_url
-    opts['bay_uuid'] = args.bay_id
+    opts['bay_uuid'] = bay.uuid
 
     if args.manifest is not None and os.path.isfile(args.manifest):
         with open(args.manifest, 'r') as f:
