@@ -30,7 +30,7 @@ class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, magnum_url=None,
                  endpoint_type='publicURL', service_type='container',
-                 input_auth_token=None):
+                 region_name=None, input_auth_token=None):
 
         if not input_auth_token:
             keystone = self.get_keystone_client(username=username,
@@ -50,7 +50,8 @@ class Client(object):
                                                 token=input_auth_token,
                                                 project_id=project_id,
                                                 project_name=project_name)
-            catalog = keystone.service_catalog.get_endpoints(service_type)
+            catalog = keystone.service_catalog.get_endpoints(
+                service_type, region_name=region_name)
             if service_type in catalog:
                 for e_type, endpoint in catalog.get(service_type)[0].items():
                     if str(e_type).lower() == str(endpoint_type).lower():

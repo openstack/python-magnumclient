@@ -63,6 +63,7 @@ class ParserTest(utils.TestCase):
 
 
 class ShellTest(utils.TestCase):
+    AUTH_URL = utils.FAKE_ENV['OS_AUTH_URL']
 
     _msg_no_tenant_project = ("You must provide a tenant name or tenant id"
                               " via --os-tenant-name, --os-tenant-id,"
@@ -216,11 +217,36 @@ class ShellTest(utils.TestCase):
         self.assertIn('Command-line interface to the OpenStack Magnum API',
                       sys.stdout.getvalue())
 
+    @mock.patch('magnumclient.v1.client.Client')
+    def _test_main_region(self, command, expected_region_name, mock_client):
+        self.shell(command)
+        mock_client.assert_called_once_with(
+            username='username', api_key='password',
+            project_id='', project_name='tenant_name',
+            auth_url=self.AUTH_URL, service_type='container',
+            region_name=expected_region_name, magnum_url=None)
+
+    def test_main_option_region(self):
+        self.make_env()
+        self._test_main_region('--os-region-name=myregion bay-list',
+                               'myregion')
+
+    def test_main_env_region(self):
+        fake_env = dict(utils.FAKE_ENV, OS_REGION_NAME='myregion')
+        self.make_env(fake_env=fake_env)
+        self._test_main_region('bay-list', 'myregion')
+
+    def test_main_no_region(self):
+        self.make_env()
+        self._test_main_region('bay-list', None)
+
 
 class ShellTestKeystoneV3(ShellTest):
+    AUTH_URL = 'http://no.where/v3'
+
     def make_env(self, exclude=None, fake_env=FAKE_ENV):
         if 'OS_AUTH_URL' in fake_env:
-            fake_env.update({'OS_AUTH_URL': 'http://no.where/v3'})
+            fake_env.update({'OS_AUTH_URL': self.AUTH_URL})
         env = dict((k, v) for k, v in fake_env.items() if k != exclude)
         self.useFixture(fixtures.MonkeyPatch('os.environ', env))
 
