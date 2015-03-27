@@ -465,10 +465,11 @@ class TestCommandLineArgument(utils.TestCase):
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.services.ServiceManager.create')
-    def test_service_create_success(self, mock_create):
+    def test_service_create_success(self, mock_create, mock_get):
         self._test_arg_success('service-create '
-                               '--bay-id xxx '
+                               '--bay xxx '
                                '--manifest test '
                                '--manifest-url test_url')
         self.assertTrue(mock_create.called)

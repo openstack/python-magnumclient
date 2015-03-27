@@ -369,15 +369,17 @@ def do_service_list(cs, args):
 @utils.arg('--manifest',
            metavar='<manifest>',
            help='File path of the service file to use for creating services.')
-@utils.arg('--bay-id',
+@utils.arg('--bay',
            required=True,
-           metavar='<bay_id>',
-           help='The bay ID.')
+           metavar='<bay>',
+           help='Id or name of the bay.')
 def do_service_create(cs, args):
     """Create a service."""
+    bay = cs.bays.get(args.bay)
+
     opts = {}
     opts['manifest_url'] = args.manifest_url
-    opts['bay_uuid'] = args.bay_id
+    opts['bay_uuid'] = bay.uuid
 
     if args.manifest is not None and os.path.isfile(args.manifest):
         with open(args.manifest, 'r') as f:
