@@ -156,17 +156,21 @@ class ShellTest(base.TestCase):
 
     def test_do_pod_create(self):
         client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        client_mock.bays.get.return_value = bay
+
         args = mock.MagicMock()
         manifest_url = "test_url"
         args.manifest_url = manifest_url
-        bay_id = "xxx"
-        args.bay_id = bay_id
+        bay_id_or_name = "xxx"
+        args.bay = bay_id_or_name
         manifest = "test_manifest"
         args.manifest = manifest
 
         shell.do_pod_create(client_mock, args)
         client_mock.pods.create.assert_called_once_with(
-            manifest_url=manifest_url, bay_uuid=bay_id)
+            manifest_url=manifest_url, bay_uuid=bay.uuid)
 
     def test_do_pod_delete(self):
         client_mock = mock.MagicMock()
