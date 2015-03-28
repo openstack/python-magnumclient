@@ -73,24 +73,26 @@ class TestCommandLineArgument(utils.TestCase):
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
     @mock.patch('magnumclient.v1.bays.BayManager.create')
-    def test_bay_create_success(self, mock_create):
-        self._test_arg_success('bay-create --name test --baymodel-id xxx '
+    def test_bay_create_success(self, mock_create, mock_get):
+        self._test_arg_success('bay-create --name test --baymodel xxx '
                                '--node-count 123')
         self.assertTrue(mock_create.called)
 
-        self._test_arg_success('bay-create --baymodel-id xxx')
+        self._test_arg_success('bay-create --baymodel xxx')
         self.assertTrue(mock_create.called)
 
-        self._test_arg_success('bay-create --name test --baymodel-id xxx')
+        self._test_arg_success('bay-create --name test --baymodel xxx')
         self.assertTrue(mock_create.called)
 
-        self._test_arg_success('bay-create --baymodel-id xxx --node-count 123')
+        self._test_arg_success('bay-create --baymodel xxx --node-count 123')
         self.assertTrue(mock_create.called)
 
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
     @mock.patch('magnumclient.v1.bays.BayManager.create')
-    def test_bay_create_success_only_baymodel_arg(self, mock_create):
-        self._test_arg_success('bay-create --baymodel-id xxx')
+    def test_bay_create_success_only_baymodel_arg(self, mock_create, mock_get):
+        self._test_arg_success('bay-create --baymodel xxx')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.create')

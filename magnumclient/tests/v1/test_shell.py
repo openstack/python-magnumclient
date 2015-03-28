@@ -40,17 +40,21 @@ class ShellTest(base.TestCase):
 
     def test_do_bay_create(self):
         client_mock = mock.MagicMock()
+        baymodel = mock.MagicMock()
+        baymodel.uuid = 'uuid'
+        client_mock.baymodels.get.return_value = baymodel
+
         args = mock.MagicMock()
         node_count = 1
         args.node_count = node_count
         name = "test_bay"
         args.name = name
-        baymodel_id = "test_baymodel_id"
-        args.baymodel_id = baymodel_id
+        baymodel_id_or_name = "test_baymodel_id"
+        args.baymodel = baymodel_id_or_name
 
         shell.do_bay_create(client_mock, args)
         client_mock.bays.create.assert_called_once_with(
-            name=name, node_count=node_count, baymodel_id=baymodel_id)
+            name=name, node_count=node_count, baymodel_id=baymodel.uuid)
 
     def test_do_bay_delete(self):
         client_mock = mock.MagicMock()
