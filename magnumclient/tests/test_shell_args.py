@@ -337,16 +337,18 @@ class TestCommandLineArgument(utils.TestCase):
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.pods.PodManager.create')
-    def test_pod_create_success(self, mock_list):
+    def test_pod_create_success(self, mock_list, mock_get):
         self._test_arg_success('pod-create '
-                               '--bay-id xxx '
+                               '--bay xxx '
                                '--manifest test '
                                '--manifest-url test_url')
         self.assertTrue(mock_list.called)
 
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.pods.PodManager.create')
-    def test_pod_create_failure_few_arg(self, mock_list):
+    def test_pod_create_failure_few_arg(self, mock_list, mock_get):
         self._test_arg_failure('pod-create '
                                '--manifest test '
                                '--manifest-url test_url',
@@ -354,7 +356,7 @@ class TestCommandLineArgument(utils.TestCase):
         self.assertFalse(mock_list.called)
 
         self._test_arg_failure('pod-create '
-                               'bay-id xxx '
+                               'bay xxx '
                                '--manifest-url test_url',
                                self._mandatory_arg_error)
         self.assertFalse(mock_list.called)
