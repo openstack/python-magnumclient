@@ -119,7 +119,7 @@ class ShellTest(utils.TestCase):
             '.*--json',
             '.*help',
             '.*bay-show',
-            '.*--bay-id']
+            '.*--bay']
         for r in required:
             self.assertThat((stdout + stderr),
                             matchers.MatchesRegex(r, re.DOTALL | re.MULTILINE))
