@@ -74,6 +74,22 @@ class ShellTest(base.TestCase):
         shell.do_bay_show(client_mock, args)
         client_mock.bays.get.assert_called_once_with(bay_id)
 
+    def test_do_bay_update(self):
+        client_mock = mock.MagicMock()
+        args = mock.MagicMock()
+        bay_id = 'id'
+        args.bay = bay_id
+        op = 'add'
+        args.op = op
+        attributes = 'node_count=2'
+        args.attributes = attributes
+        shell.magnum_utils.args_array_to_patch = mock.MagicMock()
+        patch = [{'path': '/node_count', 'value': 2, 'op': 'add'}]
+        shell.magnum_utils.args_array_to_patch.return_value = patch
+
+        shell.do_bay_update(client_mock, args)
+        client_mock.bays.update.assert_called_once_with(bay_id, patch)
+
     def test_do_baymodel_create(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()

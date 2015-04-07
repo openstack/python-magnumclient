@@ -110,7 +110,7 @@ def do_bay_show(cs, args):
     _show_bay(bay)
 
 
-@utils.arg('bay', metavar='<bay id>', help="UUID of bay")
+@utils.arg('bay', metavar='<bay>', help="UUID or name of bay")
 @utils.arg(
     'op',
     metavar='<op>',
