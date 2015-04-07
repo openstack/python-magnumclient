@@ -43,7 +43,6 @@ class Client(object):
         if not input_auth_token:
             raise RuntimeError("Not Authorized")
 
-        magnum_catalog_url = magnum_url
         if not magnum_url:
             keystone = keystone or self.get_keystone_client(
                 username=username,
@@ -52,15 +51,10 @@ class Client(object):
                 token=input_auth_token,
                 project_id=project_id,
                 project_name=project_name)
-            catalog = keystone.service_catalog.get_endpoints(
-                service_type, region_name=region_name)
-            if service_type in catalog:
-                for e_type, endpoint in catalog.get(service_type)[0].items():
-                    if str(e_type).lower() == str(endpoint_type).lower():
-                        magnum_catalog_url = endpoint
-                        break
-        if not magnum_catalog_url:
-            raise RuntimeError("Could not find Magnum endpoint in catalog")
+            magnum_url = keystone.service_catalog.url_for(
+                service_type=service_type,
+                endpoint_type=endpoint_type,
+                region_name=region_name)
 
         http_cli_kwargs = {
             'token': input_auth_token,
@@ -76,8 +70,7 @@ class Client(object):
             # 'key_file': kwargs.get('key_file'),
             'auth_ref': None,
         }
-        self.http_client = httpclient.HTTPClient(magnum_catalog_url,
-                                                 **http_cli_kwargs)
+        self.http_client = httpclient.HTTPClient(magnum_url, **http_cli_kwargs)
         self.bays = bays.BayManager(self.http_client)
         self.baymodels = baymodels.BayModelManager(self.http_client)
         self.containers = containers.ContainerManager(self.http_client)
