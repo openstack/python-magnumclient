@@ -103,10 +103,3 @@ class Client(object):
         self.keystone_client.authenticate()
 
         return self.keystone_client
-
-    @staticmethod
-    def get_projects_list(keystone_client):
-        if isinstance(keystone_client, keystone_client_v2.Client):
-            return keystone_client.tenants
-
-        return keystone_client.projects
