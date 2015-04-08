@@ -74,12 +74,7 @@ class ClientTest(testtools.TestCase):
             auth_url='authurl')
 
     def _test_get_keystone_client(self, auth_url, keystone_client):
-        class FakeClient(client.Client):
-            def __init__(self):
-                # Disable parent __init__
-                pass
-
-        FakeClient().get_keystone_client(
+        client.Client.get_keystone_client(
             username='user', api_key='pass', project_name='prj',
             auth_url=auth_url)
         self.assertTrue(keystone_client.called)
