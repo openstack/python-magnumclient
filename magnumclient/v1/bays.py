@@ -88,7 +88,8 @@ class BayManager(base.Manager):
             if key in CREATION_ATTRIBUTES:
                 new[key] = value
             else:
-                raise exceptions.InvalidAttribute()
+                raise exceptions.InvalidAttribute(
+                    "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
         return self._create(self._path(), new)
 
     def delete(self, id):

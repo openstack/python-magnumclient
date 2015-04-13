@@ -17,6 +17,7 @@ import copy
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import services
 
@@ -129,6 +130,15 @@ class ServiceManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(service)
+
+    def test_service_create_fail(self):
+        CREATE_SVC_FAIL = copy.deepcopy(CREATE_SVC)
+        CREATE_SVC_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegexp(exceptions.InvalidAttribute,
+                                ("Key must be in %s" %
+                                 ','.join(services.CREATION_ATTRIBUTES)),
+                                self.mgr.create, **CREATE_SVC_FAIL)
+        self.assertEqual([], self.api.calls)
 
     def test_service_delete_by_id(self):
         service = self.mgr.delete(SERVICE1['id'])

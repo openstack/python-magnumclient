@@ -17,6 +17,7 @@ import copy
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import bays
 
@@ -136,6 +137,15 @@ class BayManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(bay)
+
+    def test_bay_create_fail(self):
+        CREATE_BAY_FAIL = copy.deepcopy(CREATE_BAY)
+        CREATE_BAY_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegexp(exceptions.InvalidAttribute,
+                                ("Key must be in %s" %
+                                 ','.join(bays.CREATION_ATTRIBUTES)),
+                                self.mgr.create, **CREATE_BAY_FAIL)
+        self.assertEqual([], self.api.calls)
 
     def test_bay_delete_by_id(self):
         bay = self.mgr.delete(BAY1['id'])

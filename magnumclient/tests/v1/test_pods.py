@@ -17,6 +17,7 @@ import copy
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import pods
 
@@ -129,6 +130,15 @@ class PodManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(pod)
+
+    def test_pod_create_fail(self):
+        CREATE_POD_FAIL = copy.deepcopy(CREATE_POD)
+        CREATE_POD_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegexp(exceptions.InvalidAttribute,
+                                ("Key must be in %s" %
+                                 ','.join(pods.CREATION_ATTRIBUTES)),
+                                self.mgr.create, **CREATE_POD_FAIL)
+        self.assertEqual([], self.api.calls)
 
     def test_pod_delete_by_id(self):
         pod = self.mgr.delete(POD1['id'])

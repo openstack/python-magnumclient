@@ -17,9 +17,9 @@ import copy
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import baymodels
-
 
 BAYMODEL1 = {'id': 123,
              'uuid': '66666666-7777-8888-9999-000000000001',
@@ -165,6 +165,15 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertTrue(baymodel)
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
+
+    def test_baymodel_create_fail(self):
+        CREATE_BAYMODEL_FAIL = copy.deepcopy(CREATE_BAYMODEL)
+        CREATE_BAYMODEL_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegexp(exceptions.InvalidAttribute,
+                                ("Key must be in %s" %
+                                 ','.join(baymodels.CREATION_ATTRIBUTES)),
+                                self.mgr.create, **CREATE_BAYMODEL_FAIL)
+        self.assertEqual([], self.api.calls)
 
     def test_baymodel_delete_by_id(self):
         baymodel = self.mgr.delete(BAYMODEL1['id'])

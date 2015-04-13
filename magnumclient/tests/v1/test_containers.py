@@ -17,6 +17,7 @@ import copy
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import containers
 
@@ -150,6 +151,15 @@ class ContainerManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(container)
+
+    def test_container_create_fail(self):
+        CREATE_CONTAINER_FAIL = copy.deepcopy(CREATE_CONTAINER)
+        CREATE_CONTAINER_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegexp(exceptions.InvalidAttribute,
+                                ("Key must be in %s" %
+                                 ','.join(containers.CREATION_ATTRIBUTES)),
+                                self.mgr.create, **CREATE_CONTAINER_FAIL)
+        self.assertEqual([], self.api.calls)
 
     def test_container_delete(self):
         container = self.mgr.delete(CONTAINER1['id'])

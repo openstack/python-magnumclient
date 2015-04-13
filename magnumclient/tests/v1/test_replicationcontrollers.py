@@ -17,6 +17,7 @@ import copy
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import replicationcontrollers as rcs
 
@@ -127,6 +128,15 @@ class RCManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(rc)
+
+    def test_rc_create_fail(self):
+        CREATE_RC_FAIL = copy.deepcopy(CREATE_RC)
+        CREATE_RC_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegexp(exceptions.InvalidAttribute,
+                                ("Key must be in %s" %
+                                 ','.join(rcs.CREATION_ATTRIBUTES)),
+                                self.mgr.create, **CREATE_RC_FAIL)
+        self.assertEqual([], self.api.calls)
 
     def test_rc_delete_by_id(self):
         rc = self.mgr.delete(RC1['id'])

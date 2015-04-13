@@ -17,6 +17,7 @@ import copy
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import nodes
 
@@ -104,6 +105,15 @@ class NodeManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(node)
+
+    def test_node_create_fail(self):
+        CREATE_NODE_FAIL = copy.deepcopy(CREATE_NODE)
+        CREATE_NODE_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegexp(exceptions.InvalidAttribute,
+                                ("Key must be in %s" %
+                                 ','.join(nodes.CREATION_ATTRIBUTES)),
+                                self.mgr.create, **CREATE_NODE_FAIL)
+        self.assertEqual([], self.api.calls)
 
     def test_node_delete(self):
         node = self.mgr.delete(NODE1['id'])
