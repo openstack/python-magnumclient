@@ -421,6 +421,32 @@ def do_service_create(cs, args):
     _show_service(service)
 
 
+@utils.arg('service', metavar='<service>', help="UUID or name of service")
+@utils.arg(
+    'op',
+    metavar='<op>',
+    choices=['add', 'replace', 'remove'],
+    help="Operations: 'add', 'replace' or 'remove'")
+@utils.arg(
+    'attributes',
+    metavar='<path=value>',
+    nargs='+',
+    action='append',
+    default=[],
+    help="Attributes to add/replace or remove "
+         "(only PATH is necessary on remove)")
+def do_service_update(cs, args):
+    """Update information about the given service."""
+    patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
+    p = patch[0]
+    if p['path'] == '/manifest' and os.path.isfile(p['value']):
+        with open(p['value'], 'r') as f:
+            p['value'] = f.read()
+
+    service = cs.services.update(args.service, patch)
+    _show_service(service)
+
+
 @utils.arg('services',
            metavar='<services>',
            nargs='+',
