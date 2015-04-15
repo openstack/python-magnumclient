@@ -364,6 +364,32 @@ def do_rc_create(cs, args):
     _show_rc(rc)
 
 
+@utils.arg('rc', metavar='<rc>', help="UUID or name of replication controller")
+@utils.arg(
+    'op',
+    metavar='<op>',
+    choices=['add', 'replace', 'remove'],
+    help="Operations: 'add', 'replace' or 'remove'")
+@utils.arg(
+    'attributes',
+    metavar='<path=value>',
+    nargs='+',
+    action='append',
+    default=[],
+    help="Attributes to add/replace or remove "
+         "(only PATH is necessary on remove)")
+def do_rc_update(cs, args):
+    """Update information about the given replication controller."""
+    patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
+    p = patch[0]
+    if p['path'] == '/manifest' and os.path.isfile(p['value']):
+        with open(p['value'], 'r') as f:
+            p['value'] = f.read()
+
+    rc = cs.rcs.update(args.rc, patch)
+    _show_rc(rc)
+
+
 @utils.arg('rcs',
            metavar='<rcs>',
            nargs='+',
