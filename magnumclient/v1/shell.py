@@ -74,6 +74,9 @@ def do_bay_list(cs, args):
 @utils.arg('--node-count',
            metavar='<node_count>',
            help='The bay node count.')
+@utils.arg('--swarm-token',
+           metavar='<swarm_token>',
+           help='Specify the swarm token to use.')
 def do_bay_create(cs, args):
     """Create a bay."""
     baymodel = cs.baymodels.get(args.baymodel)
@@ -82,6 +85,7 @@ def do_bay_create(cs, args):
     opts['name'] = args.name
     opts['baymodel_id'] = baymodel.uuid
     opts['node_count'] = args.node_count
+    opts['swarm_token'] = args.swarm_token
 
     bay = cs.bays.create(**opts)
     _show_baymodel(bay)

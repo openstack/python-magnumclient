@@ -47,6 +47,7 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         node_count = 1
         args.node_count = node_count
+        args.swarm_token = None
         name = "test_bay"
         args.name = name
         baymodel_id_or_name = "test_baymodel_id"
@@ -54,7 +55,29 @@ class ShellTest(base.TestCase):
 
         shell.do_bay_create(client_mock, args)
         client_mock.bays.create.assert_called_once_with(
-            name=name, node_count=node_count, baymodel_id=baymodel.uuid)
+            name=name, node_count=node_count, baymodel_id=baymodel.uuid,
+            swarm_token=None)
+
+    def test_do_bay_create_swarm_token(self):
+        client_mock = mock.MagicMock()
+        baymodel = mock.MagicMock()
+        baymodel.uuid = 'uuid'
+        client_mock.baymodels.get.return_value = baymodel
+
+        args = mock.MagicMock()
+        node_count = 1
+        args.node_count = node_count
+        swarm_token = 'c3d64efc6ccf3fdaa9915e5bf99059b5'
+        args.swarm_token = swarm_token
+        name = "test_bay"
+        args.name = name
+        baymodel_id_or_name = "test_baymodel_id"
+        args.baymodel = baymodel_id_or_name
+
+        shell.do_bay_create(client_mock, args)
+        client_mock.bays.create.assert_called_once_with(
+            name=name, node_count=node_count, baymodel_id=baymodel.uuid,
+            swarm_token=swarm_token)
 
     def test_do_bay_delete(self):
         client_mock = mock.MagicMock()

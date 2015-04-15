@@ -17,7 +17,7 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-CREATION_ATTRIBUTES = ['name', 'baymodel_id', 'node_count']
+CREATION_ATTRIBUTES = ['name', 'baymodel_id', 'node_count', 'swarm_token']
 
 
 class Bay(base.Resource):
