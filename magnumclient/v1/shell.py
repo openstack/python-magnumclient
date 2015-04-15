@@ -278,6 +278,32 @@ def do_pod_create(cs, args):
     pass
 
 
+@utils.arg('pod', metavar='<pod id>', help="UUID of pod")
+@utils.arg(
+    'op',
+    metavar='<op>',
+    choices=['add', 'replace', 'remove'],
+    help="Operations: 'add', 'replace' or 'remove'")
+@utils.arg(
+    'attributes',
+    metavar='<path=value>',
+    nargs='+',
+    action='append',
+    default=[],
+    help="Attributes to add/replace or remove "
+         "(only PATH is necessary on remove)")
+def do_pod_update(cs, args):
+    """Update information about the given pod."""
+    patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
+    p = patch[0]
+    if p['path'] == '/manifest' and os.path.isfile(p['value']):
+        with open(p['value'], 'r') as f:
+            p['value'] = f.read()
+
+    pod = cs.pods.update(args.pod, patch)
+    _show_pod(pod)
+
+
 @utils.arg('pods',
            metavar='<pods>',
            nargs='+',

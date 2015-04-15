@@ -380,6 +380,17 @@ class TestCommandLineArgument(utils.TestCase):
         self._test_arg_failure('pod-delete', self._few_argument_error)
         self.assertFalse(mock_delete.called)
 
+    @mock.patch('magnumclient.v1.pods.PodManager.update')
+    def test_pod_update_success(self, mock_update):
+        self._test_arg_success('pod-update xxx replace xxx=xxx')
+        self.assertTrue(mock_update.called)
+        self.assertEqual(1, mock_update.call_count)
+
+    @mock.patch('magnumclient.v1.pods.PodManager.update')
+    def test_pod_update_failure_no_arg(self, mock_update):
+        self._test_arg_failure('pod-update', self._few_argument_error)
+        self.assertFalse(mock_update.called)
+
     @mock.patch('magnumclient.v1.pods.PodManager.get')
     def test_pod_show_success(self, mock_show):
         self._test_arg_success('pod-show xxx')
