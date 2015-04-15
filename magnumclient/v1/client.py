@@ -32,6 +32,7 @@ class Client(object):
                  endpoint_type='publicURL', service_type='container',
                  region_name=None, input_auth_token=None):
 
+        keystone = None
         if not input_auth_token:
             keystone = self.get_keystone_client(username=username,
                                                 api_key=api_key,
@@ -44,12 +45,13 @@ class Client(object):
 
         magnum_catalog_url = magnum_url
         if not magnum_url:
-            keystone = self.get_keystone_client(username=username,
-                                                api_key=api_key,
-                                                auth_url=auth_url,
-                                                token=input_auth_token,
-                                                project_id=project_id,
-                                                project_name=project_name)
+            keystone = keystone or self.get_keystone_client(
+                username=username,
+                api_key=api_key,
+                auth_url=auth_url,
+                token=input_auth_token,
+                project_id=project_id,
+                project_name=project_name)
             catalog = keystone.service_catalog.get_endpoints(
                 service_type, region_name=region_name)
             if service_type in catalog:
