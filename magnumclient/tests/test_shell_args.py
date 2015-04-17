@@ -526,6 +526,17 @@ class TestCommandLineArgument(utils.TestCase):
         self._test_arg_failure('service-show', self._few_argument_error)
         self.assertFalse(mock_show.called)
 
+    @mock.patch('magnumclient.v1.services.ServiceManager.update')
+    def test_service_update_success(self, mock_update):
+        self._test_arg_success('service-update xxx replace xxx=xxx')
+        self.assertTrue(mock_update.called)
+        self.assertEqual(1, mock_update.call_count)
+
+    @mock.patch('magnumclient.v1.services.ServiceManager.update')
+    def test_service_update_failure_no_arg(self, mock_update):
+        self._test_arg_failure('service-update', self._few_argument_error)
+        self.assertFalse(mock_update.called)
+
     @mock.patch('magnumclient.v1.containers.ContainerManager.list')
     def test_container_list_success(self, mock_list):
         self._test_arg_success('container-list')

@@ -301,6 +301,22 @@ class ShellTest(base.TestCase):
         client_mock.services.create.assert_called_once_with(
             manifest_url=manifest_url, bay_uuid=bay.uuid)
 
+    def test_do_service_update(self):
+        client_mock = mock.MagicMock()
+        args = mock.MagicMock()
+        service_id = 'id'
+        args.service = service_id
+        op = 'replace'
+        args.op = op
+        attributes = 'manifest={}'
+        args.attributes = attributes
+        shell.magnum_utils.args_array_to_patch = mock.MagicMock()
+        patch = [{'path': '/manifest', 'value': '{}', 'op': 'replace'}]
+        shell.magnum_utils.args_array_to_patch.return_value = patch
+
+        shell.do_service_update(client_mock, args)
+        client_mock.services.update.assert_called_once_with(service_id, patch)
+
     def test_do_service_delete(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
