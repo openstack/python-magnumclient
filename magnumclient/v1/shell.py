@@ -355,6 +355,12 @@ def do_rc_list(cs, args):
 def do_rc_create(cs, args):
     """Create a replication controller."""
     bay = cs.bays.get(args.bay)
+    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
+        print('Bay status for %s is: %s. We can not create a '
+              'replication controller in bay until the status '
+              'is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+              (args.bay, bay.status))
+        return
 
     opts = {}
     opts['manifest_url'] = args.manifest_url
