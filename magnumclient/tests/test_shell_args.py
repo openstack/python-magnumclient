@@ -500,6 +500,9 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.services.ServiceManager.create')
     def test_service_create_success(self, mock_create, mock_get):
+        mockbay = mock.MagicMock()
+        mockbay.status = "CREATE_COMPLETE"
+        mock_get.return_value = mockbay
         self._test_arg_success('service-create '
                                '--bay xxx '
                                '--manifest test '
