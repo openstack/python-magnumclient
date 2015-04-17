@@ -18,7 +18,6 @@ import mock
 from testtools import matchers
 
 from magnumclient import exceptions
-from magnumclient import shell
 from magnumclient.tests import utils
 
 FAKE_ENV = {'OS_USERNAME': 'username',
@@ -50,7 +49,10 @@ class TestCommandLineArgument(utils.TestCase):
     def setUp(self):
         super(TestCommandLineArgument, self).setUp()
         self.make_env(fake_env=FAKE_ENV)
-        shell.client.Client.get_keystone_client = mock.MagicMock()
+        keystone_mock = mock.patch(
+            'magnumclient.v1.client.Client.get_keystone_client')
+        keystone_mock.start()
+        self.addCleanup(keystone_mock.stop)
 
     def _test_arg_success(self, command):
         stdout, stderr = self.shell(command)
