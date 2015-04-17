@@ -471,6 +471,19 @@ class TestCommandLineArgument(utils.TestCase):
         self._test_arg_failure('rc-show', self._few_argument_error)
         self.assertFalse(mock_show.called)
 
+    @mock.patch('magnumclient.v1.replicationcontrollers.'
+                'ReplicationControllerManager.update')
+    def test_rc_update_success(self, mock_update):
+        self._test_arg_success('rc-update xxx replace xxx=xxx')
+        self.assertTrue(mock_update.called)
+        self.assertEqual(1, mock_update.call_count)
+
+    @mock.patch('magnumclient.v1.replicationcontrollers.'
+                'ReplicationControllerManager.update')
+    def test_rc_update_failure_no_arg(self, mock_update):
+        self._test_arg_failure('rc-update', self._few_argument_error)
+        self.assertFalse(mock_update.called)
+
     @mock.patch('magnumclient.v1.services.ServiceManager.list')
     def test_service_list_success(self, mock_list):
         self._test_arg_success('service-list')
