@@ -47,7 +47,7 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         node_count = 1
         args.node_count = node_count
-        args.swarm_token = None
+        args.discovery_url = None
         name = "test_bay"
         args.name = name
         baymodel_id_or_name = "test_baymodel_id"
@@ -56,9 +56,9 @@ class ShellTest(base.TestCase):
         shell.do_bay_create(client_mock, args)
         client_mock.bays.create.assert_called_once_with(
             name=name, node_count=node_count, baymodel_id=baymodel.uuid,
-            swarm_token=None)
+            discovery_url=None)
 
-    def test_do_bay_create_swarm_token(self):
+    def test_do_bay_create_with_discovery_url(self):
         client_mock = mock.MagicMock()
         baymodel = mock.MagicMock()
         baymodel.uuid = 'uuid'
@@ -67,8 +67,8 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         node_count = 1
         args.node_count = node_count
-        swarm_token = 'c3d64efc6ccf3fdaa9915e5bf99059b5'
-        args.swarm_token = swarm_token
+        discovery_url = 'discovery_url'
+        args.discovery_url = discovery_url
         name = "test_bay"
         args.name = name
         baymodel_id_or_name = "test_baymodel_id"
@@ -77,7 +77,7 @@ class ShellTest(base.TestCase):
         shell.do_bay_create(client_mock, args)
         client_mock.bays.create.assert_called_once_with(
             name=name, node_count=node_count, baymodel_id=baymodel.uuid,
-            swarm_token=swarm_token)
+            discovery_url=discovery_url)
 
     def test_do_bay_delete(self):
         client_mock = mock.MagicMock()

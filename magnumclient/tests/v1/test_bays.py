@@ -48,14 +48,6 @@ del CREATE_BAY['stack_id']
 del CREATE_BAY['api_address']
 del CREATE_BAY['node_addresses']
 
-CREATE_BAY_SWARM = copy.deepcopy(BAY1)
-del CREATE_BAY_SWARM['id']
-del CREATE_BAY_SWARM['uuid']
-del CREATE_BAY_SWARM['stack_id']
-del CREATE_BAY_SWARM['api_address']
-del CREATE_BAY_SWARM['node_addresses']
-CREATE_BAY_SWARM['swarm_token'] = 'c3d64efc6ccf3fdaa9915e5bf99059b5'
-
 UPDATED_BAY = copy.deepcopy(BAY1)
 NEW_NAME = 'newbay'
 UPDATED_BAY['name'] = NEW_NAME
@@ -146,10 +138,13 @@ class BayManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(bay)
 
-    def test_bay_create_swarm(self):
-        bay = self.mgr.create(**CREATE_BAY_SWARM)
+    def test_bay_create_with_discovery_url(self):
+        bay_with_discovery = dict()
+        bay_with_discovery.update(CREATE_BAY)
+        bay_with_discovery['discovery_url'] = 'discovery_url'
+        bay = self.mgr.create(**bay_with_discovery)
         expect = [
-            ('POST', '/v1/bays', {}, CREATE_BAY_SWARM),
+            ('POST', '/v1/bays', {}, bay_with_discovery),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(bay)
