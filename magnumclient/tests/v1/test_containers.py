@@ -26,11 +26,13 @@ CONTAINER1 = {'id': 123,
               'uuid': '66666666-7777-8888-9999-000000000001',
               'name': 'container1',
               'image_id': 'c-image1',
+              'command': 'c-command1',
               }
 CONTAINER2 = {'id': 124,
               'uuid': '66666666-7777-8888-9999-000000000002',
               'name': 'container1',
               'image_id': 'c-image2',
+              'command': 'c-command2',
               }
 
 CREATE_CONTAINER = copy.deepcopy(CONTAINER1)
