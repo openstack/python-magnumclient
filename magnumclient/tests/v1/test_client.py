@@ -20,8 +20,6 @@ from magnumclient.v1 import client
 
 class ClientTest(testtools.TestCase):
 
-    ENDPOINTS = {'container': [{'publicURL': 'http://myurl/'}]}
-
     @mock.patch('magnumclient.common.httpclient.HTTPClient')
     @mock.patch.object(client.Client, 'get_keystone_client')
     def test_init_with_token_and_url(self, keystone_client, http_client):
@@ -34,7 +32,7 @@ class ClientTest(testtools.TestCase):
     @mock.patch.object(client.Client, 'get_keystone_client')
     def test_init_with_token(self, keystone_client, http_client):
         mocked = mock.Mock()
-        mocked.service_catalog.get_endpoints.return_value = self.ENDPOINTS
+        mocked.service_catalog.url_for.return_value = 'http://myurl/'
         keystone_client.return_value = mocked
 
         client.Client(input_auth_token='mytoken', auth_url='authurl')
@@ -50,7 +48,7 @@ class ClientTest(testtools.TestCase):
     def test_init_with_user(self, keystone_client, http_client):
         mocked = mock.Mock()
         mocked.auth_token = 'mytoken'
-        mocked.service_catalog.get_endpoints.return_value = self.ENDPOINTS
+        mocked.service_catalog.url_for.return_value = 'http://myurl/'
         keystone_client.return_value = mocked
 
         client.Client(username='user', api_key='pass', project_name='prj',
