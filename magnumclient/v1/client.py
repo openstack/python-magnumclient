@@ -86,22 +86,22 @@ class Client(object):
         self.rcs = rcs.ReplicationControllerManager(self.http_client)
         self.services = services.ServiceManager(self.http_client)
 
-    def get_keystone_client(self, username=None, api_key=None, auth_url=None,
+    @staticmethod
+    def get_keystone_client(username=None, api_key=None, auth_url=None,
                             token=None, project_id=None, project_name=None):
         if not auth_url:
                 raise RuntimeError("No auth url specified")
         imported_client = (keystone_client_v2 if "v2.0" in auth_url
                            else keystone_client_v3)
-        if not getattr(self, "keystone_client", None):
-            self.keystone_client = imported_client.Client(
-                username=username,
-                password=api_key,
-                token=token,
-                tenant_id=project_id,
-                tenant_name=project_name,
-                auth_url=auth_url,
-                endpoint=auth_url)
 
-        self.keystone_client.authenticate()
+        client = imported_client.Client(
+            username=username,
+            password=api_key,
+            token=token,
+            tenant_id=project_id,
+            tenant_name=project_name,
+            auth_url=auth_url,
+            endpoint=auth_url)
+        client.authenticate()
 
-        return self.keystone_client
+        return client
