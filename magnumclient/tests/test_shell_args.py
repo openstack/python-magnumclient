@@ -344,6 +344,9 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.pods.PodManager.create')
     def test_pod_create_success(self, mock_list, mock_get):
+        mockbay = mock.MagicMock()
+        mockbay.status = "CREATE_COMPLETE"
+        mock_get.return_value = mockbay
         self._test_arg_success('pod-create '
                                '--bay xxx '
                                '--manifest test '
