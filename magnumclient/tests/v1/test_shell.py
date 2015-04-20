@@ -263,6 +263,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         bay = mock.MagicMock()
         bay.uuid = 'uuid'
+        bay.status = 'CREATE_COMPLETE'
         client_mock.bays.get.return_value = bay
 
         args = mock.MagicMock()
@@ -276,6 +277,24 @@ class ShellTest(base.TestCase):
         shell.do_rc_create(client_mock, args)
         client_mock.rcs.create.assert_called_once_with(
             manifest_url=manifest_url, bay_uuid=bay.uuid)
+
+    def test_do_rc_create_with_bay_status_wrong(self):
+        client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        bay.status = 'XXX'
+        client_mock.bays.get.return_value = bay
+
+        args = mock.MagicMock()
+        manifest_url = "test_url"
+        args.manifest_url = manifest_url
+        bay_id_or_name = "xxx"
+        args.bay_id = bay_id_or_name
+        manifest = "test_manifest"
+        args.manifest = manifest
+
+        shell.do_rc_create(client_mock, args)
+        self.assertFalse(client_mock.rcs.create.called)
 
     def test_do_rc_update(self):
         client_mock = mock.MagicMock()

@@ -423,6 +423,10 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.create')
     def test_rc_create_success(self, mock_create, mock_get):
+        mockbay = mock.MagicMock()
+        mockbay.status = "CREATE_COMPLETE"
+        mock_get.return_value = mockbay
+
         self._test_arg_success('rc-create '
                                '--bay xxx '
                                '--manifest test '
