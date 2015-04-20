@@ -442,6 +442,11 @@ def do_service_list(cs, args):
 def do_service_create(cs, args):
     """Create a service."""
     bay = cs.bays.get(args.bay)
+    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
+        print('Bay status for %s is: %s. We can not create a service in bay '
+              'until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+              (args.bay, bay.status))
+        return
 
     opts = {}
     opts['manifest_url'] = args.manifest_url
