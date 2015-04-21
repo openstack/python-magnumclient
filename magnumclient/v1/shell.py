@@ -286,7 +286,7 @@ def do_pod_create(cs, args):
     pass
 
 
-@utils.arg('pod', metavar='<pod id>', help="UUID of pod")
+@utils.arg('pod', metavar='<pod id>', help="UUID or name of pod")
 @utils.arg(
     'op',
     metavar='<op>',
