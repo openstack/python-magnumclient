@@ -196,6 +196,7 @@ class TestCommandLineArgument(utils.TestCase):
                                '--image-id test_image '
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
+                               '--coe swarm '
                                '--dns-nameserver test_dns '
                                '--flavor-id test_flavor '
                                '--fixed-network public '
@@ -207,6 +208,7 @@ class TestCommandLineArgument(utils.TestCase):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
+                               '--coe kubernetes '
                                '--name test ')
 
         self.assertTrue(mock_create.called)
@@ -218,6 +220,7 @@ class TestCommandLineArgument(utils.TestCase):
                                '--image-id test_image '
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
+                               '--coe swarm '
                                '--dns-nameserver test_dns '
                                '--master-flavor-id test_flavor')
         self.assertTrue(mock_create.called)
@@ -229,6 +232,7 @@ class TestCommandLineArgument(utils.TestCase):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
+                               '--coe swarm'
                                )
         self.assertTrue(mock_create.called)
 
@@ -238,7 +242,8 @@ class TestCommandLineArgument(utils.TestCase):
                                '--name test --fixed-network private '
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
-                               '--image-id test_image ')
+                               '--image-id test_image '
+                               '--coe swarm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -248,6 +253,7 @@ class TestCommandLineArgument(utils.TestCase):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
+                               '--coe swarm '
                                '--ssh-authorized-key test_key '
                                )
         self.assertTrue(mock_create.called)
@@ -269,6 +275,10 @@ class TestCommandLineArgument(utils.TestCase):
         self._test_arg_failure('baymodel-create '
                                '--external-network-id test',
                                self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('baymodel-create '
+                               '--coe test', self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
 
         self._test_arg_failure('baymodel-create', self._mandatory_arg_error)

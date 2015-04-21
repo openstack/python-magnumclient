@@ -38,7 +38,8 @@ BAYMODEL1 = {'id': 123,
                                    'YucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
                                    'Ma71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
                                    '8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
-                                   'v0Zio4VeFrfpytB8RtZBN digambar@magnum'
+                                   'v0Zio4VeFrfpytB8RtZBN digambar@magnum',
+             'coe': 'swarm',
              }
 BAYMODEL2 = {'id': 124,
              'uuid': '66666666-7777-8888-9999-000000000002',
@@ -57,7 +58,8 @@ BAYMODEL2 = {'id': 124,
                                    'DYucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
                                    'KMa71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
                                    'X8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
-                                   'Jv0Zio4VeFrfpytB8RtZBN digambar@magnum'
+                                   'Jv0Zio4VeFrfpytB8RtZBN digambar@magnum',
+             'coe': 'kubernetes',
              }
 
 CREATE_BAYMODEL = copy.deepcopy(BAYMODEL1)
@@ -141,6 +143,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
         self.assertEqual(BAYMODEL1['ssh_authorized_key'],
                          baymodel.ssh_authorized_key)
+        self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
 
     def test_baymodel_show_by_name(self):
         baymodel = self.mgr.get(BAYMODEL1['name'])
@@ -155,6 +158,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
         self.assertEqual(BAYMODEL1['ssh_authorized_key'],
                          baymodel.ssh_authorized_key)
+        self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)

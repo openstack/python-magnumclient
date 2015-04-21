@@ -152,6 +152,10 @@ def do_bay_update(cs, args):
            metavar='<external_network_id>',
            help='The external Neutron network ID to connect to this bay'
            ' model.')
+@utils.arg('--coe',
+           required=True,
+           metavar='<coe>',
+           help='Specify the Container Orchestration Engine to use.')
 @utils.arg('--fixed-network',
            metavar='<fixed_network>',
            help='The private Neutron network name to connect to this bay'
@@ -187,6 +191,7 @@ def do_baymodel_create(cs, args):
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
     opts['ssh_authorized_key'] = args.ssh_authorized_key
+    opts['coe'] = args.coe
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)

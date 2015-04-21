@@ -18,7 +18,7 @@ from magnumclient import exceptions
 CREATION_ATTRIBUTES = ['name', 'image_id', 'flavor_id', 'master_flavor_id',
                        'keypair_id', 'external_network_id', 'fixed_network',
                        'dns_nameserver', 'docker_volume_size',
-                       'ssh_authorized_key']
+                       'ssh_authorized_key', 'coe']
 
 
 class BayModel(base.Resource):
