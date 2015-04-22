@@ -22,6 +22,7 @@ from magnumclient.v1 import shell
 
 container_fixture = {
     "name": "container",
+    "bay_uuid": "25d5d872-1f4e-4134-ae15-c5fa38cb09a3",
     "image_id": "image_id"
 }
 

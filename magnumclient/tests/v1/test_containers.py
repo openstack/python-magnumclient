@@ -24,12 +24,14 @@ from magnumclient.v1 import containers
 
 CONTAINER1 = {'id': 123,
               'uuid': '66666666-7777-8888-9999-000000000001',
+              'bay_uuid': '25d5d872-1f4e-4134-ae15-c5fa38cb09a3',
               'name': 'container1',
               'image_id': 'c-image1',
               'command': 'c-command1',
               }
 CONTAINER2 = {'id': 124,
               'uuid': '66666666-7777-8888-9999-000000000002',
+              'bay_uuid': '25d5d872-1f4e-4134-ae15-c5fa38cb09a3',
               'name': 'container1',
               'image_id': 'c-image2',
               'command': 'c-command2',
