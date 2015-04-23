@@ -235,6 +235,22 @@ class ShellTest(base.TestCase):
         shell.do_pod_create(client_mock, args)
         self.assertFalse(client_mock.pods.create.called)
 
+    def test_do_pod_update(self):
+        client_mock = mock.MagicMock()
+        args = mock.MagicMock()
+        pod_id = 'id'
+        args.pod = pod_id
+        op = 'add'
+        args.op = op
+        attributes = "label={'name': 'value'}"
+        args.attributes = attributes
+        shell.magnum_utils.args_array_to_patch = mock.MagicMock()
+        patch = [{'path': '/label', 'value': {'name': 'value'}, 'op': 'add'}]
+        shell.magnum_utils.args_array_to_patch.return_value = patch
+
+        shell.do_pod_update(client_mock, args)
+        client_mock.pods.update.assert_called_once_with(pod_id, patch)
+
     def test_do_pod_delete(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
