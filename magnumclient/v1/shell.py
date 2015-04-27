@@ -77,6 +77,10 @@ def do_bay_list(cs, args):
 @utils.arg('--discovery-url',
            metavar='<discovery_url>',
            help='Specifies custom discovery url for node discovery.')
+@utils.arg('--timeout',
+           metavar='<timeout>',
+           help='The timeout for bay creation in minutes. Set '
+                'to 0 for no timeout. The default is no timeout.')
 def do_bay_create(cs, args):
     """Create a bay."""
     baymodel = cs.baymodels.get(args.baymodel)
@@ -86,6 +90,7 @@ def do_bay_create(cs, args):
     opts['baymodel_id'] = baymodel.uuid
     opts['node_count'] = args.node_count
     opts['discovery_url'] = args.discovery_url
+    opts['bay_create_timeout'] = args.timeout
 
     bay = cs.bays.create(**opts)
     _show_baymodel(bay)

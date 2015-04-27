@@ -79,7 +79,7 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.bays.BayManager.create')
     def test_bay_create_success(self, mock_create, mock_get):
         self._test_arg_success('bay-create --name test --baymodel xxx '
-                               '--node-count 123')
+                               '--node-count 123 --timeout 15')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('bay-create --baymodel xxx')
@@ -89,6 +89,10 @@ class TestCommandLineArgument(utils.TestCase):
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('bay-create --baymodel xxx --node-count 123')
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_success('bay-create --baymodel xxx '
+                               '--timeout 15')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
@@ -106,6 +110,12 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.bays.BayManager.create')
     def test_bay_create_failure_only_node_count(self, mock_create):
         self._test_arg_failure('bay-create --node-count 1',
+                               self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.create')
+    def test_bay_create_failure_only_bay_create_timeout(self, mock_create):
+        self._test_arg_failure('bay-create --timeout 15',
                                self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
 

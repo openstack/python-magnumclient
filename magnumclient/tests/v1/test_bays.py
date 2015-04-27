@@ -149,6 +149,17 @@ class BayManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(bay)
 
+    def test_bay_create_with_bay_create_timeout(self):
+        bay_with_timeout = dict()
+        bay_with_timeout.update(CREATE_BAY)
+        bay_with_timeout['bay_create_timeout'] = '15'
+        bay = self.mgr.create(**bay_with_timeout)
+        expect = [
+            ('POST', '/v1/bays', {}, bay_with_timeout),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(bay)
+
     def test_bay_create_fail(self):
         CREATE_BAY_FAIL = copy.deepcopy(CREATE_BAY)
         CREATE_BAY_FAIL["wrong_key"] = "wrong"
