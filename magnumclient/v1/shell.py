@@ -45,6 +45,7 @@ def _show_node(node):
 
 
 def _show_pod(pod):
+    del pod._info['links']
     utils.print_dict(pod._info)
 
 
