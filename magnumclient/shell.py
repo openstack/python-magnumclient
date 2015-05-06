@@ -29,8 +29,8 @@ import logging
 import os
 import sys
 
-from oslo.utils import encodeutils
-from oslo.utils import strutils
+from oslo_utils import encodeutils
+from oslo_utils import strutils
 import six
 
 HAS_KEYRING = False
