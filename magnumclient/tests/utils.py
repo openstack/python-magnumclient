@@ -97,7 +97,7 @@ class FakeResponse(object):
         return self.body.read(amt)
 
 
-class FakeServiceCatalog():
+class FakeServiceCatalog(object):
     def url_for(self, endpoint_type, service_type, attr=None,
                 filter_value=None):
         if attr == 'region' and filter_value:
@@ -106,7 +106,7 @@ class FakeServiceCatalog():
             return 'http://localhost:6385/v1/f14b41234'
 
 
-class FakeKeystone():
+class FakeKeystone(object):
     service_catalog = FakeServiceCatalog()
     timestamp = datetime.datetime.utcnow() + datetime.timedelta(days=5)
 
