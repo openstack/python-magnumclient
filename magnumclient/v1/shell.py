@@ -547,123 +547,123 @@ def do_container_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
-@utils.arg('id',
-           metavar='<container_id>',
+@utils.arg('containers',
+           metavar='<container>',
            nargs='+',
-           help='ID of the (container)s to delete.')
+           help='ID or name of the (container)s to delete.')
 def do_container_delete(cs, args):
-    """Delete specified container."""
-    for id in args.id:
+    """Delete specified containers."""
+    for container in args.containers:
         try:
-            cs.containers.delete(id)
+            cs.containers.delete(container)
         except Exception as e:
             print("Delete for container %(container)s failed: %(e)s" %
-                  {'container': id, 'e': e})
+                  {'container': container, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<container_id>',
-           help='ID of the container to show.')
+@utils.arg('container',
+           metavar='<container>',
+           help='ID or name of the container to show.')
 @utils.arg('--json',
            action='store_true',
            default=False,
            help='Print JSON representation of the container.')
 def do_container_show(cs, args):
     """Show details of a container."""
-    container = cs.containers.get(args.id)
+    container = cs.containers.get(args.container)
     if args.json:
         print(json.dumps(container._info))
     else:
         _show_container(container)
 
 
-@utils.arg('id',
-           metavar='<container_id>',
+@utils.arg('containers',
+           metavar='<container>',
            nargs='+',
-           help='ID of the (container)s to start.')
+           help='ID or name of the (container)s to start.')
 def do_container_reboot(cs, args):
-    """Reboot specified container."""
-    for id in args.id:
+    """Reboot specified containers."""
+    for container in args.containers:
         try:
-            cs.containers.reboot(id)
+            cs.containers.reboot(container)
         except Exception as e:
             print("Reboot for container %(container)s failed: %(e)s" %
-                  {'container': id, 'e': e})
+                  {'container': container, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<container_id>',
+@utils.arg('containers',
+           metavar='<container>',
            nargs='+',
-           help='ID of the (container)s to start.')
+           help='ID or name of the (container)s to start.')
 def do_container_stop(cs, args):
-    """Stop specified container."""
-    for id in args.id:
+    """Stop specified containers."""
+    for container in args.containers:
         try:
-            cs.containers.stop(id)
+            cs.containers.stop(container)
         except Exception as e:
             print("Stop for container %(container)s failed: %(e)s" %
-                  {'container': id, 'e': e})
+                  {'container': container, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<container_id>',
+@utils.arg('containers',
+           metavar='<container>',
            nargs='+',
            help='ID of the (container)s to start.')
 def do_container_start(cs, args):
-    """Start specified container."""
-    for id in args.id:
+    """Start specified containers."""
+    for container in args.containers:
         try:
-            cs.containers.start(id)
+            cs.containers.start(container)
         except Exception as e:
             print("Start for container %(container)s failed: %(e)s" %
-                  {'container': id, 'e': e})
+                  {'container': container, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<container_id>',
+@utils.arg('containers',
+           metavar='<container>',
            nargs='+',
-           help='ID of the (container)s to start.')
+           help='ID or name of the (container)s to start.')
 def do_container_pause(cs, args):
-    """Pause specified container."""
-    for id in args.id:
+    """Pause specified containers."""
+    for container in args.containers:
         try:
-            cs.containers.pause(id)
+            cs.containers.pause(container)
         except Exception as e:
             print("Pause for container %(container)s failed: %(e)s" %
-                  {'container': id, 'e': e})
+                  {'container': container, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<container_id>',
+@utils.arg('containers',
+           metavar='<container>',
            nargs='+',
-           help='ID of the (container)s to start.')
+           help='ID or name of the (container)s to start.')
 def do_container_unpause(cs, args):
-    """Unpause specified container."""
-    for id in args.id:
+    """Unpause specified containers."""
+    for container in args.containers:
         try:
-            cs.containers.unpause(id)
+            cs.containers.unpause(container)
         except Exception as e:
             print("Unpause for container %(container)s failed: %(e)s" %
-                  {'container': id, 'e': e})
+                  {'container': container, 'e': e})
 
 
-@utils.arg('id',
-           metavar='<container_id>',
-           help='ID of the container to start.')
+@utils.arg('container',
+           metavar='<container>',
+           help='ID or name of the container to start.')
 def do_container_logs(cs, args):
     """Get logs of a container."""
-    logs = cs.containers.logs(args.id)
+    logs = cs.containers.logs(args.container)
     print(logs)
 
 
-@utils.arg('id',
-           metavar='<container_id>',
-           help='ID of the container to start.')
+@utils.arg('container',
+           metavar='<container>',
+           help='ID or name of the container to start.')
 @utils.arg('--command',
            required=True,
            metavar='<command>',
            help='The command to execute')
 def do_container_execute(cs, args):
     """Execute command in a container."""
-    output = cs.containers.execute(args.id, args.command)
+    output = cs.containers.execute(args.container, args.command)
     print(output)

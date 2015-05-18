@@ -471,7 +471,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = "container_id"
-        args.id = [container_id]
+        args.containers = [container_id]
 
         shell.do_container_delete(client_mock, args)
         client_mock.containers.delete.assert_called_once_with(container_id)
@@ -480,7 +480,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = "container_id"
-        args.id = container_id
+        args.container = container_id
         args.json = None
 
         shell.do_container_show(client_mock, args)
@@ -490,7 +490,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = [container_id]
+        args.containers = [container_id]
 
         shell.do_container_reboot(client_mock, args)
         client_mock.containers.reboot.assert_called_once_with(container_id)
@@ -499,7 +499,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = [container_id]
+        args.containers = [container_id]
 
         shell.do_container_stop(client_mock, args)
         client_mock.containers.stop.assert_called_once_with(container_id)
@@ -508,7 +508,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = [container_id]
+        args.containers = [container_id]
 
         shell.do_container_start(client_mock, args)
         client_mock.containers.start.assert_called_once_with(container_id)
@@ -517,7 +517,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = [container_id]
+        args.containers = [container_id]
 
         shell.do_container_pause(client_mock, args)
         client_mock.containers.pause.assert_called_once_with(container_id)
@@ -526,7 +526,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = [container_id]
+        args.containers = [container_id]
 
         shell.do_container_unpause(client_mock, args)
         client_mock.containers.unpause.assert_called_once_with(container_id)
@@ -535,7 +535,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = container_id
+        args.container = container_id
 
         shell.do_container_logs(client_mock, args)
         client_mock.containers.logs.assert_called_once_with(container_id)
@@ -544,7 +544,7 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
-        args.id = container_id
+        args.container = container_id
         command = 'ls'
         args.command = command
 

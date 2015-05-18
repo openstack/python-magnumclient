@@ -72,7 +72,29 @@ fake_responses = {
             UPDATED_CONTAINER,
         ),
     },
+    '/v1/containers/%s' % CONTAINER1['name']:
+    {
+        'GET': (
+            {},
+            CONTAINER1
+        ),
+        'DELETE': (
+            {},
+            None,
+        ),
+        'PATCH': (
+            {},
+            UPDATED_CONTAINER,
+        ),
+    },
     '/v1/containers/%s/start' % CONTAINER1['id']:
+    {
+        'PUT': (
+            {},
+            CONTAINER1,
+        ),
+    },
+    '/v1/containers/%s/start' % CONTAINER1['name']:
     {
         'PUT': (
             {},
@@ -86,7 +108,21 @@ fake_responses = {
             CONTAINER1,
         ),
     },
+    '/v1/containers/%s/stop' % CONTAINER1['name']:
+    {
+        'PUT': (
+            {},
+            CONTAINER1,
+        ),
+    },
     '/v1/containers/%s/pause' % CONTAINER1['id']:
+    {
+        'PUT': (
+            {},
+            CONTAINER1,
+        ),
+    },
+    '/v1/containers/%s/pause' % CONTAINER1['name']:
     {
         'PUT': (
             {},
@@ -100,7 +136,21 @@ fake_responses = {
             CONTAINER1,
         ),
     },
+    '/v1/containers/%s/unpause' % CONTAINER1['name']:
+    {
+        'PUT': (
+            {},
+            CONTAINER1,
+        ),
+    },
     '/v1/containers/%s/reboot' % CONTAINER1['id']:
+    {
+        'PUT': (
+            {},
+            CONTAINER1,
+        ),
+    },
+    '/v1/containers/%s/reboot' % CONTAINER1['name']:
     {
         'PUT': (
             {},
@@ -114,7 +164,21 @@ fake_responses = {
             {'output': 'login now'},
         ),
     },
+    '/v1/containers/%s/logs' % CONTAINER1['name']:
+    {
+        'GET': (
+            {},
+            {'output': 'login now'},
+        ),
+    },
     '/v1/containers/%s/execute?command=ls' % CONTAINER1['id']:
+    {
+        'PUT': (
+            {},
+            {'output': '/home'},
+        ),
+    },
+    '/v1/containers/%s/execute?command=ls' % CONTAINER1['name']:
     {
         'PUT': (
             {},
