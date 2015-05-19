@@ -73,10 +73,10 @@ def do_bay_list(cs, args):
            metavar='<baymodel>',
            help='ID or name of the baymodel.')
 @utils.arg('--node-count',
-           metavar='<node_count>',
+           metavar='<node-count>',
            help='The bay node count.')
 @utils.arg('--discovery-url',
-           metavar='<discovery_url>',
+           metavar='<discovery-url>',
            help='Specifies custom discovery url for node discovery.')
 @utils.arg('--timeout',
            metavar='<timeout>',
@@ -146,16 +146,16 @@ def do_bay_update(cs, args):
            help='Name of the bay to create.')
 @utils.arg('--image-id',
            required=True,
-           metavar='<image_id>',
+           metavar='<image-id>',
            help='The name or UUID of the base image to customize for the bay.')
 @utils.arg('--keypair-id',
            required=True,
-           metavar='<keypair_id>',
+           metavar='<keypair-id>',
            help='The name or UUID of the SSH keypair to load into the'
            ' Bay nodes.')
 @utils.arg('--external-network-id',
            required=True,
-           metavar='<external_network_id>',
+           metavar='<external-network-id>',
            help='The external Neutron network ID to connect to this bay'
            ' model.')
 @utils.arg('--coe',
@@ -163,26 +163,26 @@ def do_bay_update(cs, args):
            metavar='<coe>',
            help='Specify the Container Orchestration Engine to use.')
 @utils.arg('--fixed-network',
-           metavar='<fixed_network>',
+           metavar='<fixed-network>',
            help='The private Neutron network name to connect to this bay'
            ' model.')
 @utils.arg('--ssh-authorized-key',
-           metavar='<ssh_authorized_key>',
+           metavar='<ssh-authorized-key>',
            help='The SSH authorized key to use')
 @utils.arg('--dns-nameserver',
-           metavar='<dns_nameserver>',
+           metavar='<dns-nameserver>',
            default='8.8.8.8',
            help='The DNS nameserver to use for this Bay.')
 @utils.arg('--flavor-id',
-           metavar='<flavor_id>',
+           metavar='<flavor-id>',
            default='m1.medium',
            help='The nova flavor id to use when launching the bay.')
 @utils.arg('--master-flavor-id',
-           metavar='<master_flavor_id>',
+           metavar='<master-flavor-id>',
            help='The nova flavor id to use when launching the master node'
            'of the bay.')
 @utils.arg('--docker-volume-size',
-           metavar='<docker_volume_size>',
+           metavar='<docker-volume-size>',
            help='Specify the size of the docker volume to use.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
@@ -246,7 +246,7 @@ def do_node_list(cs, args):
            metavar='<type>',
            help='Type of node to create (virt or bare).')
 @utils.arg('--image-id',
-           metavar='<image_id>',
+           metavar='<image-id>',
            help='The name or UUID of the base image to use for the node.')
 def do_node_create(cs, args):
     """Create a node."""
@@ -267,7 +267,7 @@ def do_pod_list(cs, args):
 
 
 @utils.arg('--manifest-url',
-           metavar='<manifest_url>',
+           metavar='<manifest-url>',
            help='Name/URL of the pod file to use for creating PODs.')
 @utils.arg('--manifest',
            metavar='<manifest>',
@@ -297,7 +297,7 @@ def do_pod_create(cs, args):
     pass
 
 
-@utils.arg('pod', metavar='<pod id>', help="UUID or name of pod")
+@utils.arg('pod', metavar='<pod-id>', help="UUID or name of pod")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -356,7 +356,7 @@ def do_rc_list(cs, args):
 
 
 @utils.arg('--manifest-url',
-           metavar='<manifest_url>',
+           metavar='<manifest-url>',
            help='Name/URL of the replication controller file to use for '
                 'creating replication controllers.')
 @utils.arg('--manifest',
@@ -447,7 +447,7 @@ def do_service_list(cs, args):
 
 
 @utils.arg('--manifest-url',
-           metavar='<manifest_url>',
+           metavar='<manifest-url>',
            help='Name/URL of the serivce file to use for creating services.')
 @utils.arg('--manifest',
            metavar='<manifest>',
