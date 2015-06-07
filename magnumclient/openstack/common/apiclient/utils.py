@@ -25,11 +25,11 @@
 ########################################################################
 
 from oslo_utils import encodeutils
+from oslo_utils import uuidutils
 import six
 
 from magnumclient.openstack.common._i18n import _
 from magnumclient.openstack.common.apiclient import exceptions
-from magnumclient.openstack.common import uuidutils
 
 
 def find_resource(manager, name_or_id, **find_args):
