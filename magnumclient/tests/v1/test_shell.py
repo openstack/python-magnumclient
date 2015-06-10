@@ -540,7 +540,7 @@ class ShellTest(base.TestCase):
         shell.do_container_logs(client_mock, args)
         client_mock.containers.logs.assert_called_once_with(container_id)
 
-    def test_do_container_execute(self):
+    def test_do_container_exec(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         container_id = 'id'
@@ -548,6 +548,6 @@ class ShellTest(base.TestCase):
         command = 'ls'
         args.command = command
 
-        shell.do_container_execute(client_mock, args)
+        shell.do_container_exec(client_mock, args)
         client_mock.containers.execute.assert_called_once_with(
             container_id, command)

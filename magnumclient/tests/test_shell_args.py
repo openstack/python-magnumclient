@@ -727,21 +727,21 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.execute')
     def test_container_execute_success(self, mock_execute):
-        self._test_arg_success('container-execute xxx '
+        self._test_arg_success('container-exec xxx '
                                '--command ls')
         self.assertTrue(mock_execute.called)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.execute')
     def test_container_execute_failure_no_option(self, mock_execute):
-        self._test_arg_failure('container-execute xxx',
+        self._test_arg_failure('container-exec xxx',
                                self._mandatory_arg_error)
         self.assertFalse(mock_execute.called)
 
-        self._test_arg_failure('container-execute --command ls',
+        self._test_arg_failure('container-exec --command ls',
                                self._few_argument_error)
         self.assertFalse(mock_execute.called)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.execute')
     def test_container_execute_failure_no_arg(self, mock_execute):
-        self._test_arg_failure('container-execute', self._few_argument_error)
+        self._test_arg_failure('container-exec', self._few_argument_error)
         self.assertFalse(mock_execute.called)

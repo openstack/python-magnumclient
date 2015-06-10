@@ -663,7 +663,7 @@ def do_container_logs(cs, args):
            required=True,
            metavar='<command>',
            help='The command to execute')
-def do_container_execute(cs, args):
+def do_container_exec(cs, args):
     """Execute command in a container."""
     output = cs.containers.execute(args.container, args.command)
     print(output)
