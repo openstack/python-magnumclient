@@ -12,19 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-
 import mock
 
 from magnumclient.tests import base
 from magnumclient.v1 import shell
-
-
-container_fixture = {
-    "name": "container",
-    "bay_uuid": "25d5d872-1f4e-4134-ae15-c5fa38cb09a3",
-    "image_id": "image_id"
-}
 
 
 class ShellTest(base.TestCase):
@@ -453,12 +444,24 @@ class ShellTest(base.TestCase):
 
     def test_do_container_create(self):
         client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        bay.status = "CREATE_COMPLETE"
+        client_mock.bays.get.return_value = bay
+
         args = mock.MagicMock()
-        args.json.read.return_value = json.dumps(container_fixture)
+        name = "containe1"
+        args.name = name
+        image_id = "test_image_id"
+        args.image_id = image_id
+        bay_id_or_name = "xxx"
+        args.bay_id = bay_id_or_name
+        command = "test_command"
+        args.command = command
 
         shell.do_container_create(client_mock, args)
         client_mock.containers.create.assert_called_once_with(
-            **container_fixture)
+            name=name, image_id=image_id, bay_uuid=bay.uuid, command=command)
 
     def test_do_container_list(self):
         client_mock = mock.MagicMock()

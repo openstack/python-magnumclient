@@ -13,10 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
 import json
 import os.path
-import sys
 
 from magnumclient.common import utils as magnum_utils
 from magnumclient.openstack.common import cliutils as utils
@@ -529,14 +527,33 @@ def do_service_show(cs, args):
 #
 # Containers
 
-@utils.arg('--json',
-           default=sys.stdin,
-           type=argparse.FileType('r'),
-           help='JSON representation of container.')
+@utils.arg('--name',
+           metavar='<name>',
+           help='name of the container')
+@utils.arg('--image_id',
+           metavar='<image_id>',
+           help='ID of the image')
+@utils.arg('--bay',
+           required=True,
+           metavar='<bay>',
+           help='ID or name of the bay.')
+@utils.arg('--command',
+           metavar='<command>',
+           help='Send command to the container')
 def do_container_create(cs, args):
     """Create a container."""
-    container = json.loads(args.json.read())
-    _show_container(cs.containers.create(**container))
+    bay = cs.bays.get(args.bay)
+    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
+        print('Bay status for %s is: %s. We can not create a %s there'
+              ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+              (bay.uuid, bay.status, "pod"))
+        return
+    opts = {}
+    opts['name'] = args.name
+    opts['image_id'] = args.image_id
+    opts['bay_uuid'] = bay.uuid
+    opts['command'] = args.command
+    _show_container(cs.containers.create(**opts))
 
 
 def do_container_list(cs, args):
