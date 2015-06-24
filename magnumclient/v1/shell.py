@@ -530,9 +530,9 @@ def do_service_show(cs, args):
 @utils.arg('--name',
            metavar='<name>',
            help='name of the container')
-@utils.arg('--image_id',
-           metavar='<image_id>',
-           help='ID of the image')
+@utils.arg('--image',
+           metavar='<image>',
+           help='name or ID of the image')
 @utils.arg('--bay',
            required=True,
            metavar='<bay>',
@@ -550,7 +550,7 @@ def do_container_create(cs, args):
         return
     opts = {}
     opts['name'] = args.name
-    opts['image_id'] = args.image_id
+    opts['image'] = args.image
     opts['bay_uuid'] = bay.uuid
     opts['command'] = args.command
     _show_container(cs.containers.create(**opts))

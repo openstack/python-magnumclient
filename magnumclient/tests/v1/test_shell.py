@@ -452,8 +452,8 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         name = "containe1"
         args.name = name
-        image_id = "test_image_id"
-        args.image_id = image_id
+        image = "test_image"
+        args.image = image
         bay_id_or_name = "xxx"
         args.bay_id = bay_id_or_name
         command = "test_command"
@@ -461,7 +461,7 @@ class ShellTest(base.TestCase):
 
         shell.do_container_create(client_mock, args)
         client_mock.containers.create.assert_called_once_with(
-            name=name, image_id=image_id, bay_uuid=bay.uuid, command=command)
+            name=name, image=image, bay_uuid=bay.uuid, command=command)
 
     def test_do_container_list(self):
         client_mock = mock.MagicMock()

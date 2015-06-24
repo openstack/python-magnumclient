@@ -26,14 +26,14 @@ CONTAINER1 = {'id': 123,
               'uuid': '66666666-7777-8888-9999-000000000001',
               'bay_uuid': '25d5d872-1f4e-4134-ae15-c5fa38cb09a3',
               'name': 'container1',
-              'image_id': 'c-image1',
+              'image': 'c-image1',
               'command': 'c-command1',
               }
 CONTAINER2 = {'id': 124,
               'uuid': '66666666-7777-8888-9999-000000000002',
               'bay_uuid': '25d5d872-1f4e-4134-ae15-c5fa38cb09a3',
               'name': 'container1',
-              'image_id': 'c-image2',
+              'image': 'c-image2',
               'command': 'c-command2',
               }
 
@@ -210,7 +210,7 @@ class ContainerManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(CONTAINER1['name'], container.name)
-        self.assertEqual(CONTAINER1['image_id'], container.image_id)
+        self.assertEqual(CONTAINER1['image'], container.image)
 
     def test_container_create(self):
         container = self.mgr.create(**CREATE_CONTAINER)
