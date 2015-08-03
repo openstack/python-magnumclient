@@ -91,6 +91,10 @@ class TestCommandLineArgument(utils.TestCase):
         self._test_arg_success('bay-create --baymodel xxx --node-count 123')
         self.assertTrue(mock_create.called)
 
+        self._test_arg_success('bay-create --baymodel xxx --node-count 123 '
+                               '--master-count 123')
+        self.assertTrue(mock_create.called)
+
         self._test_arg_success('bay-create --baymodel xxx '
                                '--timeout 15')
         self.assertTrue(mock_create.called)

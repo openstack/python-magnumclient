@@ -30,6 +30,7 @@ BAY1 = {'id': 123,
         'api_address': '172.17.2.1',
         'node_addresses': ['172.17.2.3'],
         'node_count': 2,
+        'master_count': 1,
         }
 BAY2 = {'id': 124,
         'uuid': '66666666-7777-8888-9999-000000000002',
@@ -39,6 +40,7 @@ BAY2 = {'id': 124,
         'api_address': '172.17.2.2',
         'node_addresses': ['172.17.2.4'],
         'node_count': 2,
+        'master_count': 1,
         }
 
 CREATE_BAY = copy.deepcopy(BAY1)
