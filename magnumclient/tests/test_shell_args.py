@@ -269,6 +269,39 @@ class TestCommandLineArgument(utils.TestCase):
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_http_proxy_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test --fixed-network private '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm '
+                               '--http-proxy http_proxy ')
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_https_proxy_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test --fixed-network private '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm '
+                               '--https-proxy https_proxy ')
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_no_proxy_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test --fixed-network private '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm '
+                               '--no-proxy no_proxy ')
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_failure_few_arg(self, mock_create):
         self._test_arg_failure('baymodel-create '
                                '--name test', self._mandatory_arg_error)
