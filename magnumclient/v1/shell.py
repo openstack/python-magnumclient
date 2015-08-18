@@ -58,7 +58,7 @@ def _show_service(service):
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list()
-    columns = ('uuid', 'name', 'node_count', 'status')
+    columns = ('uuid', 'name', 'node_count', 'master_count', 'status')
     utils.print_list(bays, columns,
                      {'versions': _print_list_field('versions')})
 
@@ -73,6 +73,10 @@ def do_bay_list(cs, args):
 @utils.arg('--node-count',
            metavar='<node-count>',
            help='The bay node count.')
+@utils.arg('--master-count',
+           metavar='<master-count>',
+           default=1,
+           help='The number of master nodes for the bay.')
 @utils.arg('--discovery-url',
            metavar='<discovery-url>',
            help='Specifies custom discovery url for node discovery.')
@@ -88,6 +92,7 @@ def do_bay_create(cs, args):
     opts['name'] = args.name
     opts['baymodel_id'] = baymodel.uuid
     opts['node_count'] = args.node_count
+    opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url
     opts['bay_create_timeout'] = args.timeout
 

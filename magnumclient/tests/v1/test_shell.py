@@ -39,6 +39,7 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         node_count = 1
         args.node_count = node_count
+        args.master_count = None
         args.discovery_url = None
         name = "test_bay"
         args.name = name
@@ -49,7 +50,7 @@ class ShellTest(base.TestCase):
         shell.do_bay_create(client_mock, args)
         client_mock.bays.create.assert_called_once_with(
             name=name, node_count=node_count, baymodel_id=baymodel.uuid,
-            discovery_url=None, bay_create_timeout=None)
+            discovery_url=None, bay_create_timeout=None, master_count=None)
 
     def test_do_bay_create_with_discovery_url(self):
         client_mock = mock.MagicMock()
@@ -60,6 +61,7 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         node_count = 1
         args.node_count = node_count
+        args.master_count = None
         discovery_url = 'discovery_url'
         args.discovery_url = discovery_url
         name = "test_bay"
@@ -71,7 +73,8 @@ class ShellTest(base.TestCase):
         shell.do_bay_create(client_mock, args)
         client_mock.bays.create.assert_called_once_with(
             name=name, node_count=node_count, baymodel_id=baymodel.uuid,
-            discovery_url=discovery_url, bay_create_timeout=None)
+            discovery_url=discovery_url, bay_create_timeout=None,
+            master_count=None)
 
     def test_do_bay_create_with_bay_create_timeout(self):
         client_mock = mock.MagicMock()
@@ -82,6 +85,7 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         node_count = 1
         args.node_count = node_count
+        args.master_count = None
         name = "test_bay"
         args.name = name
         baymodel_id_or_name = "test_baymodel_id"
@@ -93,7 +97,31 @@ class ShellTest(base.TestCase):
         shell.do_bay_create(client_mock, args)
         client_mock.bays.create.assert_called_once_with(
             name=name, node_count=node_count, baymodel_id=baymodel.uuid,
-            discovery_url=None, bay_create_timeout=bay_create_timeout)
+            discovery_url=None, bay_create_timeout=bay_create_timeout,
+            master_count=None)
+
+    def test_do_bay_create_with_master_node_count(self):
+        client_mock = mock.MagicMock()
+        baymodel = mock.MagicMock()
+        baymodel.uuid = 'uuid'
+        client_mock.baymodels.get.return_value = baymodel
+
+        args = mock.MagicMock()
+        node_count = 1
+        args.node_count = node_count
+        master_count = 1
+        args.master_count = master_count
+        args.discovery_url = None
+        name = "test_bay"
+        args.name = name
+        baymodel_id_or_name = "test_baymodel_id"
+        args.baymodel = baymodel_id_or_name
+        args.timeout = None
+
+        shell.do_bay_create(client_mock, args)
+        client_mock.bays.create.assert_called_once_with(
+            name=name, node_count=node_count, baymodel_id=baymodel.uuid,
+            discovery_url=None, bay_create_timeout=None, master_count=1)
 
     def test_do_bay_delete(self):
         client_mock = mock.MagicMock()
