@@ -200,6 +200,11 @@ def do_bay_update(cs, args):
 @utils.arg('--no-proxy',
            metavar='<no-proxy>',
            help='The no_proxy address to use for nodes in bay.')
+@utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2...>',
+           action='append', default=[],
+           help='Arbitrary labels in the form of key=value pairs '
+                'to associate with a baymodel. '
+                'May be used multiple times.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
     opts = {}
@@ -218,6 +223,7 @@ def do_baymodel_create(cs, args):
     opts['http_proxy'] = args.http_proxy
     opts['https_proxy'] = args.https_proxy
     opts['no_proxy'] = args.no_proxy
+    opts['labels'] = magnum_utils.format_labels(args.labels)
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)

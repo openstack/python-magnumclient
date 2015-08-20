@@ -14,6 +14,7 @@
 
 import mock
 
+from magnumclient.common import utils as magnum_utils
 from magnumclient.tests import base
 from magnumclient.v1 import shell
 
@@ -190,6 +191,8 @@ class ShellTest(base.TestCase):
         args.https_proxy = 'https_proxy'
         no_proxy = 'no_proxy'
         args.no_proxy = no_proxy
+        labels = ['key1=val1']
+        args.labels = labels
 
         shell.do_baymodel_create(client_mock, args)
         client_mock.baymodels.create.assert_called_once_with(
@@ -200,7 +203,8 @@ class ShellTest(base.TestCase):
             fixed_network=fixed_network, dns_nameserver=dns_nameserver,
             ssh_authorized_key=ssh_authorized_key, coe=coe,
             http_proxy=http_proxy, https_proxy=https_proxy,
-            no_proxy=no_proxy, network_driver=network_driver)
+            no_proxy=no_proxy, network_driver=network_driver,
+            labels=magnum_utils.format_labels(labels))
 
     def test_do_baymodel_delete(self):
         client_mock = mock.MagicMock()
@@ -297,10 +301,10 @@ class ShellTest(base.TestCase):
         args.pod = pod_id
         op = 'add'
         args.op = op
-        attributes = "label={'name': 'value'}"
+        attributes = "labels={'name': 'value'}"
         args.attributes = attributes
         shell.magnum_utils.args_array_to_patch = mock.MagicMock()
-        patch = [{'path': '/label', 'value': {'name': 'value'}, 'op': 'add'}]
+        patch = [{'path': '/labels', 'value': {'name': 'value'}, 'op': 'add'}]
         shell.magnum_utils.args_array_to_patch.return_value = patch
 
         shell.do_pod_update(client_mock, args)
