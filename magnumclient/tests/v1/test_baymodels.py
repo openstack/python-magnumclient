@@ -38,7 +38,7 @@ BAYMODEL1 = {'id': 123,
                                    'YucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
                                    'Ma71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
                                    '8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
-                                   'v0Zio4VeFrfpytB8RtZBN digambar@magnum',
+                                   'v0Zio4VeFrfpytB8RtAAA test1234@magnum',
              'coe': 'swarm',
              }
 BAYMODEL2 = {'id': 124,
@@ -58,7 +58,7 @@ BAYMODEL2 = {'id': 124,
                                    'DYucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
                                    'KMa71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
                                    'X8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
-                                   'Jv0Zio4VeFrfpytB8RtZBN digambar@magnum',
+                                   'Jv0Zio4VeFrfpytB8RtAAA test1234@magnum',
              'coe': 'kubernetes',
              }
 
