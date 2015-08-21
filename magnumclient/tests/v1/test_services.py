@@ -97,7 +97,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.api = utils.FakeAPI(fake_responses)
         self.mgr = services.ServiceManager(self.api)
 
-    def test_service_list(self):
+    def test_coe_service_list(self):
         services = self.mgr.list()
         expect = [
             ('GET', '/v1/services', {}, None),
@@ -105,7 +105,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertThat(services, matchers.HasLength(2))
 
-    def test_service_show_by_id(self):
+    def test_coe_service_show_by_id(self):
         service = self.mgr.get(SERVICE1['id'])
         expect = [
             ('GET', '/v1/services/%s' % SERVICE1['id'], {}, None)
@@ -114,7 +114,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(SERVICE1['name'], service.name)
         self.assertEqual(SERVICE1['ip'], service.ip)
 
-    def test_service_show_by_name(self):
+    def test_coe_service_show_by_name(self):
         service = self.mgr.get(SERVICE1['name'])
         expect = [
             ('GET', '/v1/services/%s' % SERVICE1['name'], {}, None)
@@ -123,7 +123,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(SERVICE1['name'], service.name)
         self.assertEqual(SERVICE1['ip'], service.ip)
 
-    def test_service_create(self):
+    def test_coe_service_create(self):
         service = self.mgr.create(**CREATE_SVC)
         expect = [
             ('POST', '/v1/services', {}, CREATE_SVC),
@@ -131,7 +131,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(service)
 
-    def test_service_create_fail(self):
+    def test_coe_service_create_fail(self):
         CREATE_SVC_FAIL = copy.deepcopy(CREATE_SVC)
         CREATE_SVC_FAIL["wrong_key"] = "wrong"
         self.assertRaisesRegexp(exceptions.InvalidAttribute,
@@ -140,7 +140,7 @@ class ServiceManagerTest(testtools.TestCase):
                                 self.mgr.create, **CREATE_SVC_FAIL)
         self.assertEqual([], self.api.calls)
 
-    def test_service_delete_by_id(self):
+    def test_coe_service_delete_by_id(self):
         service = self.mgr.delete(SERVICE1['id'])
         expect = [
             ('DELETE', '/v1/services/%s' % SERVICE1['id'], {}, None),
@@ -148,7 +148,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(service)
 
-    def test_service_delete_by_name(self):
+    def test_coe_service_delete_by_name(self):
         service = self.mgr.delete(SERVICE1['name'])
         expect = [
             ('DELETE', '/v1/services/%s' % SERVICE1['name'], {}, None),
@@ -156,7 +156,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(service)
 
-    def test_service_update(self):
+    def test_coe_service_update(self):
         patch = {'op': 'replace',
                  'value': NEW_SELECTOR,
                  'path': '/selector'}

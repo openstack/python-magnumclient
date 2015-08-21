@@ -51,7 +51,7 @@ def _show_rc(rc):
     utils.print_dict(rc._info)
 
 
-def _show_service(service):
+def _show_coe_service(service):
     utils.print_dict(service._info)
 
 
@@ -436,7 +436,7 @@ def do_rc_show(cs, args):
     _show_rc(rc)
 
 
-def do_service_list(cs, args):
+def do_coe_service_list(cs, args):
     """Print a list of services."""
     services = cs.services.list()
     columns = ('uuid', 'name', 'bay_uuid')
@@ -454,7 +454,7 @@ def do_service_list(cs, args):
            required=True,
            metavar='<bay>',
            help='Id or name of the bay.')
-def do_service_create(cs, args):
+def do_coe_service_create(cs, args):
     """Create a service."""
     bay = cs.bays.get(args.bay)
     if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
@@ -472,7 +472,7 @@ def do_service_create(cs, args):
             opts['manifest'] = f.read()
 
     service = cs.services.create(**opts)
-    _show_service(service)
+    _show_coe_service(service)
 
 
 @utils.arg('service', metavar='<service>', help="UUID or name of service")
@@ -489,7 +489,7 @@ def do_service_create(cs, args):
     default=[],
     help="Attributes to add/replace or remove "
          "(only PATH is necessary on remove)")
-def do_service_update(cs, args):
+def do_coe_service_update(cs, args):
     """Update information about the given service."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
     p = patch[0]
@@ -498,14 +498,14 @@ def do_service_update(cs, args):
             p['value'] = f.read()
 
     service = cs.services.update(args.service, patch)
-    _show_service(service)
+    _show_coe_service(service)
 
 
 @utils.arg('services',
            metavar='<services>',
            nargs='+',
            help='ID or name of the (service)s to delete.')
-def do_service_delete(cs, args):
+def do_coe_service_delete(cs, args):
     """Delete specified service."""
     for service in args.services:
         try:
@@ -518,10 +518,10 @@ def do_service_delete(cs, args):
 @utils.arg('service',
            metavar='<service>',
            help='ID or name of the service to show.')
-def do_service_show(cs, args):
+def do_coe_service_show(cs, args):
     """Show details about the given service."""
     service = cs.services.get(args.service)
-    _show_service(service)
+    _show_coe_service(service)
 
 
 #

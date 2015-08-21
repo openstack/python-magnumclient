@@ -514,72 +514,72 @@ class TestCommandLineArgument(utils.TestCase):
         self.assertFalse(mock_update.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.list')
-    def test_service_list_success(self, mock_list):
-        self._test_arg_success('service-list')
+    def test_coe_service_list_success(self, mock_list):
+        self._test_arg_success('coe-service-list')
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.list')
-    def test_service_list_failure(self, mock_list):
-        self._test_arg_failure('service-list --wrong',
+    def test_coe_service_list_failure(self, mock_list):
+        self._test_arg_failure('coe-service-list --wrong',
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.services.ServiceManager.create')
-    def test_service_create_success(self, mock_create, mock_get):
+    def test_coe_service_create_success(self, mock_create, mock_get):
         mockbay = mock.MagicMock()
         mockbay.status = "CREATE_COMPLETE"
         mock_get.return_value = mockbay
-        self._test_arg_success('service-create '
+        self._test_arg_success('coe-service-create '
                                '--bay xxx '
                                '--manifest test '
                                '--manifest-url test_url')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.create')
-    def test_service_create_failure_few_arg(self, mock_create):
-        self._test_arg_failure('service-create '
+    def test_coe_service_create_failure_few_arg(self, mock_create):
+        self._test_arg_failure('coe-service-create '
                                '--manifest test '
                                '--manifest-url test_url',
                                self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.delete')
-    def test_service_delete_success(self, mock_delete):
-        self._test_arg_success('service-delete xxx')
+    def test_coe_service_delete_success(self, mock_delete):
+        self._test_arg_success('coe-service-delete xxx')
         self.assertTrue(mock_delete.called)
         self.assertEqual(1, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.delete')
-    def test_service_delete_multiple_id_success(self, mock_delete):
-        self._test_arg_success('service-delete xxx xyz')
+    def test_coe_service_delete_multiple_id_success(self, mock_delete):
+        self._test_arg_success('coe-service-delete xxx xyz')
         self.assertTrue(mock_delete.called)
         self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.delete')
-    def test_service_delete_failure_no_arg(self, mock_delete):
-        self._test_arg_failure('service-delete', self._few_argument_error)
+    def test_coe_service_delete_failure_no_arg(self, mock_delete):
+        self._test_arg_failure('coe-service-delete', self._few_argument_error)
         self.assertFalse(mock_delete.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.get')
-    def test_service_show_success(self, mock_show):
-        self._test_arg_success('service-show xxx')
+    def test_coe_service_show_success(self, mock_show):
+        self._test_arg_success('coe-service-show xxx')
         self.assertTrue(mock_show.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.get')
-    def test_service_show_failure_no_arg(self, mock_show):
-        self._test_arg_failure('service-show', self._few_argument_error)
+    def test_coe_service_show_failure_no_arg(self, mock_show):
+        self._test_arg_failure('coe-service-show', self._few_argument_error)
         self.assertFalse(mock_show.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.update')
-    def test_service_update_success(self, mock_update):
-        self._test_arg_success('service-update xxx replace xxx=xxx')
+    def test_coe_service_update_success(self, mock_update):
+        self._test_arg_success('coe-service-update xxx replace xxx=xxx')
         self.assertTrue(mock_update.called)
         self.assertEqual(1, mock_update.call_count)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.update')
-    def test_service_update_failure_no_arg(self, mock_update):
-        self._test_arg_failure('service-update', self._few_argument_error)
+    def test_coe_service_update_failure_no_arg(self, mock_update):
+        self._test_arg_failure('coe-service-update', self._few_argument_error)
         self.assertFalse(mock_update.called)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.list')
