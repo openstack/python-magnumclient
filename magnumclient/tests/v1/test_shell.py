@@ -182,7 +182,12 @@ class ShellTest(base.TestCase):
         args.ssh_authorized_key = ssh_authorized_key
         coe = 'swarm'
         args.coe = coe
-
+        http_proxy = 'http_proxy'
+        args.http_proxy = http_proxy
+        https_proxy = 'https_proxy'
+        args.https_proxy = 'https_proxy'
+        no_proxy = 'no_proxy'
+        args.no_proxy = no_proxy
         shell.do_baymodel_create(client_mock, args)
         client_mock.baymodels.create.assert_called_once_with(
             name=name, image_id=image_id, flavor_id=flavor_id,
@@ -190,7 +195,9 @@ class ShellTest(base.TestCase):
             external_network_id=external_network_id,
             docker_volume_size=docker_volume_size,
             fixed_network=fixed_network, dns_nameserver=dns_nameserver,
-            ssh_authorized_key=ssh_authorized_key, coe=coe)
+            ssh_authorized_key=ssh_authorized_key, coe=coe,
+            http_proxy=http_proxy, https_proxy=https_proxy,
+            no_proxy=no_proxy)
 
     def test_do_baymodel_delete(self):
         client_mock = mock.MagicMock()

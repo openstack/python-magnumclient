@@ -187,6 +187,15 @@ def do_bay_update(cs, args):
 @utils.arg('--docker-volume-size',
            metavar='<docker-volume-size>',
            help='Specify the size of the docker volume to use.')
+@utils.arg('--http-proxy',
+           metavar='<http-proxy>',
+           help='The http_proxy address to use for nodes in bay.')
+@utils.arg('--https-proxy',
+           metavar='<https-proxy>',
+           help='The https_proxy address to use for nodes in bay.')
+@utils.arg('--no-proxy',
+           metavar='<no-proxy>',
+           help='The no_proxy address to use for nodes in bay.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
     opts = {}
@@ -201,6 +210,9 @@ def do_baymodel_create(cs, args):
     opts['docker_volume_size'] = args.docker_volume_size
     opts['ssh_authorized_key'] = args.ssh_authorized_key
     opts['coe'] = args.coe
+    opts['http_proxy'] = args.http_proxy
+    opts['https_proxy'] = args.https_proxy
+    opts['no_proxy'] = args.no_proxy
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)

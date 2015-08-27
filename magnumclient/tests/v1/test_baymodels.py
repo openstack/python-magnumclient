@@ -40,6 +40,9 @@ BAYMODEL1 = {'id': 123,
                                    '8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
                                    'v0Zio4VeFrfpytB8RtAAA test1234@magnum',
              'coe': 'swarm',
+             'http_proxy': 'http_proxy',
+             'https_proxy': 'https_proxy',
+             'no_proxy': 'no_proxy',
              }
 BAYMODEL2 = {'id': 124,
              'uuid': '66666666-7777-8888-9999-000000000002',
@@ -144,6 +147,9 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['ssh_authorized_key'],
                          baymodel.ssh_authorized_key)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
+        self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
+        self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
+        self.assertEqual(BAYMODEL1['no_proxy'], baymodel.no_proxy)
 
     def test_baymodel_show_by_name(self):
         baymodel = self.mgr.get(BAYMODEL1['name'])
@@ -159,6 +165,9 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['ssh_authorized_key'],
                          baymodel.ssh_authorized_key)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
+        self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
+        self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
+        self.assertEqual(BAYMODEL1['no_proxy'], baymodel.no_proxy)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)
