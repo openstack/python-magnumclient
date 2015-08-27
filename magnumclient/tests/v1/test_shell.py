@@ -392,14 +392,14 @@ class ShellTest(base.TestCase):
         shell.do_rc_show(client_mock, args)
         client_mock.rcs.get.assert_called_once_with(rc_id)
 
-    def test_do_service_list(self):
+    def test_do_coe_service_list(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
 
-        shell.do_service_list(client_mock, args)
+        shell.do_coe_service_list(client_mock, args)
         client_mock.services.list.assert_called_once_with()
 
-    def test_do_service_create(self):
+    def test_do_coe_service_create(self):
         client_mock = mock.MagicMock()
         bay = mock.MagicMock()
         bay.uuid = 'uuid'
@@ -414,7 +414,7 @@ class ShellTest(base.TestCase):
         manifest = "test_manifest"
         args.manifest = manifest
 
-        shell.do_service_create(client_mock, args)
+        shell.do_coe_service_create(client_mock, args)
         client_mock.services.create.assert_called_once_with(
             manifest_url=manifest_url, bay_uuid=bay.uuid)
 
@@ -433,10 +433,10 @@ class ShellTest(base.TestCase):
         manifest = "test_manifest"
         args.manifest = manifest
 
-        shell.do_service_create(client_mock, args)
+        shell.do_coe_service_create(client_mock, args)
         self.assertFalse(client_mock.services.create.called)
 
-    def test_do_service_update(self):
+    def test_do_coe_service_update(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
@@ -449,25 +449,25 @@ class ShellTest(base.TestCase):
         patch = [{'path': '/manifest', 'value': '{}', 'op': 'replace'}]
         shell.magnum_utils.args_array_to_patch.return_value = patch
 
-        shell.do_service_update(client_mock, args)
+        shell.do_coe_service_update(client_mock, args)
         client_mock.services.update.assert_called_once_with(service_id, patch)
 
-    def test_do_service_delete(self):
+    def test_do_coe_service_delete(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
         args.services = [service_id]
 
-        shell.do_service_delete(client_mock, args)
+        shell.do_coe_service_delete(client_mock, args)
         client_mock.services.delete.assert_called_once_with(service_id)
 
-    def test_do_service_show(self):
+    def test_do_coe_service_show(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
         args.service = service_id
 
-        shell.do_service_show(client_mock, args)
+        shell.do_coe_service_show(client_mock, args)
         client_mock.services.get.assert_called_once_with(service_id)
 
     def test_do_container_create(self):
