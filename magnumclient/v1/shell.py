@@ -182,7 +182,7 @@ def do_bay_update(cs, args):
            help='The nova flavor id to use when launching the bay.')
 @utils.arg('--master-flavor-id',
            metavar='<master-flavor-id>',
-           help='The nova flavor id to use when launching the master node'
+           help='The nova flavor id to use when launching the master node '
            'of the bay.')
 @utils.arg('--docker-volume-size',
            metavar='<docker-volume-size>',
