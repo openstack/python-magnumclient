@@ -169,6 +169,10 @@ def do_bay_update(cs, args):
            metavar='<fixed-network>',
            help='The private Neutron network name to connect to this bay'
            ' model.')
+@utils.arg('--network-driver',
+           metavar='<network-driver>',
+           help='The network driver name for instantiating container'
+           ' networks.')
 @utils.arg('--ssh-authorized-key',
            metavar='<ssh-authorized-key>',
            help='The SSH authorized key to use')
@@ -206,6 +210,7 @@ def do_baymodel_create(cs, args):
     opts['keypair_id'] = args.keypair_id
     opts['external_network_id'] = args.external_network_id
     opts['fixed_network'] = args.fixed_network
+    opts['network_driver'] = args.network_driver
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
     opts['ssh_authorized_key'] = args.ssh_authorized_key

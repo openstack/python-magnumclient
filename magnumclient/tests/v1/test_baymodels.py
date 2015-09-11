@@ -30,6 +30,7 @@ BAYMODEL1 = {'id': 123,
              'keypair_id': 'keypair1',
              'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e21',
              'fixed_network': 'private',
+             'network_driver': 'libnetwork',
              'dns_nameserver': '8.8.1.1',
              'docker_volume_size': '71',
              'ssh_authorized_key': 'ssh-rsa AAAAB3NaC1yc2EAAAADAABAAABAQC'
@@ -53,6 +54,7 @@ BAYMODEL2 = {'id': 124,
              'keypair_id': 'keypair2',
              'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e22',
              'fixed_network': 'private2',
+             'network_driver': 'flannel',
              'dns_nameserver': '8.8.1.2',
              'docker_volume_size': '50',
              'ssh_authorized_key': 'ssh-rsa AAAAB3NzaC1ycEAAAADAQABAAABAQC'
@@ -150,6 +152,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
         self.assertEqual(BAYMODEL1['no_proxy'], baymodel.no_proxy)
+        self.assertEqual(BAYMODEL1['network_driver'], baymodel.network_driver)
 
     def test_baymodel_show_by_name(self):
         baymodel = self.mgr.get(BAYMODEL1['name'])
@@ -168,6 +171,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
         self.assertEqual(BAYMODEL1['no_proxy'], baymodel.no_proxy)
+        self.assertEqual(BAYMODEL1['network_driver'], baymodel.network_driver)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)
