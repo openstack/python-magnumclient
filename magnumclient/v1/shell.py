@@ -454,7 +454,7 @@ def do_rc_show(cs, args):
 
 
 def do_coe_service_list(cs, args):
-    """Print a list of services."""
+    """Print a list of coe services."""
     services = cs.services.list()
     columns = ('uuid', 'name', 'bay_uuid')
     utils.print_list(services, columns,
@@ -472,7 +472,7 @@ def do_coe_service_list(cs, args):
            metavar='<bay>',
            help='Id or name of the bay.')
 def do_coe_service_create(cs, args):
-    """Create a service."""
+    """Create a coe service."""
     bay = cs.bays.get(args.bay)
     if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
         print('Bay status for %s is: %s. We can not create a service in bay '
@@ -507,7 +507,7 @@ def do_coe_service_create(cs, args):
     help="Attributes to add/replace or remove "
          "(only PATH is necessary on remove)")
 def do_coe_service_update(cs, args):
-    """Update information about the given service."""
+    """Update information about the given coe service."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
     p = patch[0]
     if p['path'] == '/manifest' and os.path.isfile(p['value']):
@@ -523,7 +523,7 @@ def do_coe_service_update(cs, args):
            nargs='+',
            help='ID or name of the (service)s to delete.')
 def do_coe_service_delete(cs, args):
-    """Delete specified service."""
+    """Delete specified coe service(s)."""
     for service in args.services:
         try:
             cs.services.delete(service)
@@ -536,7 +536,7 @@ def do_coe_service_delete(cs, args):
            metavar='<service>',
            help='ID or name of the service to show.')
 def do_coe_service_show(cs, args):
-    """Show details about the given service."""
+    """Show details about the given coe service."""
     service = cs.services.get(args.service)
     _show_coe_service(service)
 
