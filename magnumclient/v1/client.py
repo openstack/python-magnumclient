@@ -19,6 +19,7 @@ from keystoneclient.v3 import client as keystone_client_v3
 from magnumclient.common import httpclient
 from magnumclient.v1 import baymodels
 from magnumclient.v1 import bays
+from magnumclient.v1 import certificates
 from magnumclient.v1 import containers
 from magnumclient.v1 import nodes
 from magnumclient.v1 import pods
@@ -72,6 +73,7 @@ class Client(object):
         }
         self.http_client = httpclient.HTTPClient(magnum_url, **http_cli_kwargs)
         self.bays = bays.BayManager(self.http_client)
+        self.certificates = certificates.CertificateManager(self.http_client)
         self.baymodels = baymodels.BayModelManager(self.http_client)
         self.containers = containers.ContainerManager(self.http_client)
         self.nodes = nodes.NodeManager(self.http_client)
