@@ -214,6 +214,7 @@ class TestCommandLineArgument(utils.TestCase):
                                '--dns-nameserver test_dns '
                                '--flavor-id test_flavor '
                                '--fixed-network public '
+                               '--network-driver test_driver '
                                '--master-flavor-id test_flavor '
                                '--docker-volume-size 10')
         self.assertTrue(mock_create.called)
@@ -254,6 +255,16 @@ class TestCommandLineArgument(utils.TestCase):
     def test_baymodel_create_fixed_network_success(self, mock_create):
         self._test_arg_success('baymodel-create '
                                '--name test --fixed-network private '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm')
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_network_driver_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test --network-driver test_driver '
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
