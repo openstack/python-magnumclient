@@ -78,3 +78,32 @@ def args_array_to_patch(op, attributes):
         else:
             raise exc.CommandError(_('Unknown PATCH operation: %s') % op)
     return patch
+
+
+def format_labels(lbls, parse_comma=True):
+    '''Reformat labels into dict of format expected by the API.'''
+
+    if not lbls:
+        return {}
+
+    if parse_comma:
+        # expect multiple invocations of --labels but fall back
+        # to , delimited if only one --labels is specified
+        if len(lbls) == 1:
+            lbls = lbls[0].split(',')
+
+    labels = {}
+    for l in lbls:
+        try:
+            (k, v) = l.split(('='), 1)
+        except ValueError:
+            raise exc.CommandError(_('labels must be a list of KEY=VALUE '
+                                     'not %s') % l)
+        if k not in labels:
+            labels[k] = v
+        else:
+            if not isinstance(labels[k], list):
+                labels[k] = [labels[k]]
+            labels[k].append(v)
+
+    return labels

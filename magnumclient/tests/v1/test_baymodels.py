@@ -44,6 +44,7 @@ BAYMODEL1 = {'id': 123,
              'http_proxy': 'http_proxy',
              'https_proxy': 'https_proxy',
              'no_proxy': 'no_proxy',
+             'labels': 'key1=val1,key11=val11',
              }
 BAYMODEL2 = {'id': 124,
              'uuid': '66666666-7777-8888-9999-000000000002',
@@ -65,6 +66,7 @@ BAYMODEL2 = {'id': 124,
                                    'X8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
                                    'Jv0Zio4VeFrfpytB8RtAAA test1234@magnum',
              'coe': 'kubernetes',
+             'labels': 'key2=val2,key22=val22',
              }
 
 CREATE_BAYMODEL = copy.deepcopy(BAYMODEL1)
@@ -153,6 +155,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
         self.assertEqual(BAYMODEL1['no_proxy'], baymodel.no_proxy)
         self.assertEqual(BAYMODEL1['network_driver'], baymodel.network_driver)
+        self.assertEqual(BAYMODEL1['labels'], baymodel.labels)
 
     def test_baymodel_show_by_name(self):
         baymodel = self.mgr.get(BAYMODEL1['name'])
@@ -172,6 +175,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
         self.assertEqual(BAYMODEL1['no_proxy'], baymodel.no_proxy)
         self.assertEqual(BAYMODEL1['network_driver'], baymodel.network_driver)
+        self.assertEqual(BAYMODEL1['labels'], baymodel.labels)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)

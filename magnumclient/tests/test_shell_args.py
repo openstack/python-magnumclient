@@ -215,6 +215,7 @@ class TestCommandLineArgument(utils.TestCase):
                                '--flavor-id test_flavor '
                                '--fixed-network public '
                                '--network-driver test_driver '
+                               '--labels key=val '
                                '--master-flavor-id test_flavor '
                                '--docker-volume-size 10')
         self.assertTrue(mock_create.called)
@@ -314,6 +315,39 @@ class TestCommandLineArgument(utils.TestCase):
                                '--image-id test_image '
                                '--coe swarm '
                                '--no-proxy no_proxy ')
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_labels_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test '
+                               '--labels key=val '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm')
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_separate_labels_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test '
+                               '--labels key1=val1 '
+                               '--labels key2=val2 '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm')
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_combined_labels_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test '
+                               '--labels key1=val1,key2=val2 '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
