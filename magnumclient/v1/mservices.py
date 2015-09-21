@@ -1,5 +1,3 @@
-# Copyright 2014 NEC Corporation.  All rights reserved.
-#
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -14,28 +12,25 @@
 
 from magnumclient.common import base
 from magnumclient.common import utils
-from magnumclient import exceptions
-
-CREATION_ATTRIBUTES = ['bay_uuid', 'manifest', 'manifest_url']
 
 
-class Service(base.Resource):
+class MService(base.Resource):
     def __repr__(self):
-        return "<COE-Service %s>" % self._info
+        return "<Service %s>" % self._info
 
 
-class ServiceManager(base.Manager):
-    resource_class = Service
+class MServiceManager(base.Manager):
+    resource_class = MService
 
     @staticmethod
     def _path(id=None):
-        return '/v1/services/%s' % id if id else '/v1/services'
+        return '/v1/mservices/%s' % id if id else '/v1/mservices'
 
     def list(self, marker=None, limit=None, sort_key=None,
              sort_dir=None, detail=False):
-        """Retrieve a list of services.
+        """Retrieve list of magnum services.
 
-        :param marker: Optional, the UUID of a services, eg the last
+        :param marker: Optional, the ID of a magnum service, eg the last
                        services from a previous result set. Return
                        the next result set.
         :param limit: The maximum number of results to return per
@@ -56,8 +51,8 @@ class ServiceManager(base.Manager):
                        about services.
 
         :returns: A list of services.
-
         """
+
         if limit is not None:
             limit = int(limit)
 
@@ -70,29 +65,7 @@ class ServiceManager(base.Manager):
             path += '?' + '&'.join(filters)
 
         if limit is None:
-            return self._list(self._path(path), "services")
+            return self._list(self._path(path), "mservices")
         else:
-            return self._list_pagination(self._path(path), "services",
+            return self._list_pagination(self._path(path), "mservices",
                                          limit=limit)
-
-    def get(self, service_id):
-        try:
-            return self._list(self._path(service_id))[0]
-        except IndexError:
-            return None
-
-    def create(self, **kwargs):
-        new = {}
-        for (key, value) in kwargs.items():
-            if key in CREATION_ATTRIBUTES:
-                new[key] = value
-            else:
-                raise exceptions.InvalidAttribute(
-                    "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
-        return self._create(self._path(), new)
-
-    def delete(self, service_id):
-        return self._delete(self._path(service_id))
-
-    def update(self, service_id, patch):
-        return self._update(self._path(service_id), patch)

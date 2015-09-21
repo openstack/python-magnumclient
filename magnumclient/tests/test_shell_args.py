@@ -827,3 +827,9 @@ class TestCommandLineArgument(utils.TestCase):
     def test_container_execute_failure_no_arg(self, mock_execute):
         self._test_arg_failure('container-exec', self._few_argument_error)
         self.assertFalse(mock_execute.called)
+
+    @mock.patch('magnumclient.v1.mservices.MServiceManager.list')
+    def test_magnum_service_list_failure(self, mock_list):
+        self._test_arg_failure('service-list --wrong',
+                               self._unrecognized_arg_error)
+        self.assertFalse(mock_list.called)

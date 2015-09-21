@@ -472,6 +472,14 @@ def do_coe_service_list(cs, args):
                      {'versions': _print_list_field('versions')})
 
 
+def do_service_list(cs, args):
+    """Print a list of magnum services."""
+    mservices = cs.mservices.list()
+    columns = ('id', 'host', 'binary', 'state')
+    utils.print_list(mservices, columns,
+                     {'versions': _print_list_field('versions')})
+
+
 @utils.arg('--manifest-url',
            metavar='<manifest-url>',
            help='Name/URL of the serivce file to use for creating services.')
