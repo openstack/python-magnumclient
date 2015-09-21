@@ -186,6 +186,21 @@ def print_list(objs, fields, formatters=None, sortby_index=0,
         print(encodeutils.safe_encode(pt.get_string(**kwargs)))
 
 
+def keys_and_vals_to_strs(dictionary):
+    """Recursively convert a dictionary's keys and values to strings.
+
+    :param dictionary: dictionary whose keys/vals are to be converted to strs
+    """
+    def to_str(k_or_v):
+        if isinstance(k_or_v, dict):
+            return keys_and_vals_to_strs(k_or_v)
+        elif isinstance(k_or_v, unicode):
+            return str(k_or_v)
+        else:
+            return k_or_v
+    return dict((to_str(k), to_str(v)) for k, v in dictionary.items())
+
+
 def print_dict(dct, dict_property="Property", wrap=0):
     """Print a `dict` as a table of two columns.
 
@@ -198,7 +213,7 @@ def print_dict(dct, dict_property="Property", wrap=0):
     for k, v in six.iteritems(dct):
         # convert dict to str to check length
         if isinstance(v, dict):
-            v = six.text_type(v)
+            v = six.text_type(keys_and_vals_to_strs(v))
         if wrap > 0:
             v = textwrap.fill(six.text_type(v), wrap)
         # if value has a newline, add in multiple rows
