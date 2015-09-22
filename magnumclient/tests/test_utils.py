@@ -15,8 +15,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import six
+
 from magnumclient.common import utils
 from magnumclient.openstack.common.apiclient import exceptions as exc
+from magnumclient.openstack.common import cliutils
 from magnumclient.tests import utils as test_utils
 
 
@@ -172,3 +175,12 @@ class FormatLabelsTest(test_utils.BaseTestCase):
                                utils.format_labels, labels)
         self.assertEqual('labels must be a list of KEY=VALUE '
                          'not K22.2.2.2', str(ex))
+
+
+class CliUtilsTest(test_utils.BaseTestCase):
+
+    def test_keys_and_vals_to_strs(self):
+        dict_in = {u'a': u'1', u'b': {u'x': 1, 'y': u'2', u'z': u'3'}, 'c': 7}
+        dict_exp = {'a': '1', 'b': {'x': 1, 'y': '2', 'z': '3'}, 'c': 7}
+        dict_out = cliutils.keys_and_vals_to_strs(dict_in)
+        self.assertEqual(six.text_type(dict_exp), six.text_type(dict_out))
