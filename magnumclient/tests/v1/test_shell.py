@@ -307,6 +307,8 @@ class ShellTest(base.TestCase):
         args.no_proxy = no_proxy
         labels = ['key1=val1']
         args.labels = labels
+        insecure = True
+        args.insecure = insecure
 
         shell.do_baymodel_create(client_mock, args)
         client_mock.baymodels.create.assert_called_once_with(
@@ -318,7 +320,8 @@ class ShellTest(base.TestCase):
             ssh_authorized_key=ssh_authorized_key, coe=coe,
             http_proxy=http_proxy, https_proxy=https_proxy,
             no_proxy=no_proxy, network_driver=network_driver,
-            labels=magnum_utils.format_labels(labels))
+            labels=magnum_utils.format_labels(labels),
+            insecure=insecure)
 
     def test_do_baymodel_delete(self):
         client_mock = mock.MagicMock()
