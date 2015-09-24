@@ -13,6 +13,7 @@
 #    under the License.
 
 import mock
+from mock import mock_open
 
 from magnumclient.common import utils as magnum_utils
 from magnumclient.tests import base
@@ -157,6 +158,119 @@ class ShellTest(base.TestCase):
 
         shell.do_bay_update(client_mock, args)
         client_mock.bays.update.assert_called_once_with(bay_id, patch)
+
+    @mock.patch('os.path.isfile')
+    def test_do_ca_show(self, mock_isfile):
+        mock_isfile.return_value = True
+
+        client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        bay.status = 'CREATE_COMPLETE'
+        client_mock.bays.get.return_value = bay
+
+        args = mock.MagicMock()
+        bay_id_or_name = "xxx"
+        args.bay = bay_id_or_name
+
+        shell.do_ca_show(client_mock, args)
+
+        client_mock.certificates.get.assert_called_once_with(
+            bay_uuid=bay.uuid)
+
+    @mock.patch('os.path.isfile')
+    def test_do_ca_show_wrong_status(self, mock_isfile):
+        mock_isfile.return_value = True
+
+        client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        bay.status = 'XXX'
+        client_mock.bays.get.return_value = bay
+
+        args = mock.MagicMock()
+        bay_id_or_name = "xxx"
+        args.bay = bay_id_or_name
+
+        shell.do_ca_show(client_mock, args)
+
+        self.assertFalse(client_mock.certificates.get.called)
+
+    @mock.patch('os.path.isfile')
+    def test_do_ca_sign(self, mock_isfile):
+        mock_isfile.return_value = True
+
+        client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        bay.status = 'CREATE_COMPLETE'
+        client_mock.bays.get.return_value = bay
+
+        args = mock.MagicMock()
+        bay_id_or_name = "xxx"
+        args.bay = bay_id_or_name
+        csr = "test_csr"
+        args.csr = csr
+
+        fake_csr = 'fake-csr'
+        mock_o = mock_open(read_data=fake_csr)
+        with mock.patch.object(shell, 'open', mock_o):
+            shell.do_ca_sign(client_mock, args)
+
+            mock_isfile.assert_called_once_with(csr)
+            mock_o.assert_called_once_with(csr, 'r')
+            client_mock.certificates.create.assert_called_once_with(
+                csr=fake_csr, bay_uuid=bay.uuid)
+
+    @mock.patch('os.path.isfile')
+    def test_do_ca_sign_wrong_status(self, mock_isfile):
+        mock_isfile.return_value = True
+
+        client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        bay.status = 'XXX'
+        client_mock.bays.get.return_value = bay
+
+        args = mock.MagicMock()
+        bay_id_or_name = "xxx"
+        args.bay = bay_id_or_name
+        csr = "test_csr"
+        args.csr = csr
+
+        fake_csr = 'fake-csr'
+        mock_o = mock_open(read_data=fake_csr)
+        with mock.patch.object(shell, 'open', mock_o):
+            shell.do_ca_sign(client_mock, args)
+
+            self.assertFalse(mock_isfile.called)
+            self.assertFalse(mock_o.called)
+            self.assertFalse(client_mock.certificates.create.called)
+
+    @mock.patch('os.path.isfile')
+    def test_do_ca_sign_not_file(self, mock_isfile):
+        mock_isfile.return_value = False
+
+        client_mock = mock.MagicMock()
+        bay = mock.MagicMock()
+        bay.uuid = 'uuid'
+        bay.status = 'CREATE_COMPLETE'
+        client_mock.bays.get.return_value = bay
+
+        args = mock.MagicMock()
+        bay_id_or_name = "xxx"
+        args.bay = bay_id_or_name
+        csr = "test_csr"
+        args.csr = csr
+
+        fake_csr = 'fake-csr'
+        mock_o = mock_open(read_data=fake_csr)
+        with mock.patch.object(shell, 'open', mock_o):
+            shell.do_ca_sign(client_mock, args)
+
+            mock_isfile.assert_called_once_with(csr)
+            self.assertFalse(mock_o.called)
+            self.assertFalse(client_mock.certificates.create.called)
 
     def test_do_baymodel_create(self):
         client_mock = mock.MagicMock()

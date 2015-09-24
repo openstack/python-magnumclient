@@ -33,6 +33,10 @@ def _show_bay(bay):
     utils.print_dict(bay._info)
 
 
+def _show_cert(certificate):
+    print(certificate.pem)
+
+
 def _show_baymodel(baymodel):
     del baymodel._info['links']
     utils.print_dict(baymodel._info)
@@ -258,6 +262,56 @@ def do_baymodel_list(cs, args):
     columns = ('uuid', 'name')
     utils.print_list(nodes, columns,
                      {'versions': _print_list_field('versions')})
+
+
+@utils.arg('--bay',
+           required=True,
+           metavar='<bay>',
+           help='ID or name of the bay.')
+def do_ca_show(cs, args):
+    bay = cs.bays.get(args.bay)
+    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
+        print('Bay status for %s is: %s. We can not create a %s there'
+              ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+              (bay.uuid, bay.status, 'certificate'))
+        return
+
+    opts = {
+        'bay_uuid': bay.uuid
+    }
+
+    cert = cs.certificates.get(**opts)
+    _show_cert(cert)
+
+
+@utils.arg('--csr',
+           metavar='<csr>',
+           help='File path of the csr file to send to Magnum to get signed.')
+@utils.arg('--bay',
+           required=True,
+           metavar='<bay>',
+           help='ID or name of the bay.')
+def do_ca_sign(cs, args):
+    bay = cs.bays.get(args.bay)
+    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
+        print('Bay status for %s is: %s. We can not create a %s there'
+              ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+              (bay.uuid, bay.status, 'certificate'))
+        return
+
+    opts = {
+        'bay_uuid': bay.uuid
+    }
+
+    if args.csr is None or not os.path.isfile(args.csr):
+        print('A CSR must be provided.')
+        return
+
+    with open(args.csr, 'r') as f:
+        opts['csr'] = f.read()
+
+    cert = cs.certificates.create(**opts)
+    _show_cert(cert)
 
 
 def do_node_list(cs, args):
