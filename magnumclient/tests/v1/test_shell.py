@@ -348,6 +348,23 @@ class ShellTest(base.TestCase):
         shell.do_baymodel_list(client_mock, args)
         client_mock.baymodels.list.assert_called_once_with()
 
+    def test_do_baymodel_update(self):
+        client_mock = mock.MagicMock()
+        args = mock.MagicMock()
+        baymodel_id = 'id'
+        args.baymodel = baymodel_id
+        op = 'add'
+        args.op = op
+        attributes = 'name=updated_name'
+        args.attributes = attributes
+        shell.magnum_utils.args_array_to_patch = mock.MagicMock()
+        patch = [{'path': '/name', 'value': 'updated_name', 'op': 'add'}]
+        shell.magnum_utils.args_array_to_patch.return_value = patch
+
+        shell.do_baymodel_update(client_mock, args)
+        update = client_mock.baymodels.update
+        update.assert_called_once_with(baymodel_id, patch)
+
     def test_do_node_list(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
