@@ -29,8 +29,11 @@ class ReplicationControllerManager(base.Manager):
     resource_class = ReplicationController
 
     @staticmethod
-    def _path(id=None):
-        return '/v1/rcs/%s' % id if id else '/v1/rcs'
+    def _path(id=None, bay_uuid=None):
+        if id and bay_uuid:
+            return '/v1/rcs/%s/%s' % (id, bay_uuid)
+        else:
+            return '/v1/rcs'
 
     def list(self, limit=None, marker=None, sort_key=None,
              sort_dir=None, detail=False):
@@ -76,9 +79,9 @@ class ReplicationControllerManager(base.Manager):
             return self._list_pagination(self._path(path), "rcs",
                                          limit=limit)
 
-    def get(self, id):
+    def get(self, id, bay_uuid):
         try:
-            return self._list(self._path(id))[0]
+            return self._list(self._path(id, bay_uuid))[0]
         except IndexError:
             return None
 
@@ -92,8 +95,8 @@ class ReplicationControllerManager(base.Manager):
                     "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
         return self._create(self._path(), new)
 
-    def delete(self, id):
-        return self._delete(self._path(id))
+    def delete(self, id, bay_uuid):
+        return self._delete(self._path(id, bay_uuid))
 
-    def update(self, id, patch):
-        return self._update(self._path(id), patch)
+    def update(self, id, bay_uuid, patch):
+        return self._update(self._path(id, bay_uuid), patch)

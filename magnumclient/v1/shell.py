@@ -474,6 +474,7 @@ def do_rc_create(cs, args):
 
 
 @utils.arg('rc', metavar='<rc>', help="UUID or name of replication controller")
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -495,7 +496,7 @@ def do_rc_update(cs, args):
         with open(p['value'], 'r') as f:
             p['value'] = f.read()
 
-    rc = cs.rcs.update(args.rc, patch)
+    rc = cs.rcs.update(args.rc, args.bay, patch)
     _show_rc(rc)
 
 
@@ -503,11 +504,12 @@ def do_rc_update(cs, args):
            metavar='<rcs>',
            nargs='+',
            help='ID or name of the replication (controller)s to delete.')
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 def do_rc_delete(cs, args):
     """Delete specified replication controller."""
     for rc in args.rcs:
         try:
-            cs.rcs.delete(rc)
+            cs.rcs.delete(rc, args.bay)
         except Exception as e:
             print("Delete for rc %(rc)s failed: %(e)s" %
                   {'rc': rc, 'e': e})
@@ -516,9 +518,10 @@ def do_rc_delete(cs, args):
 @utils.arg('rc',
            metavar='<rc>',
            help='ID or name of the replication controller to show.')
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 def do_rc_show(cs, args):
     """Show details about the given replication controller."""
-    rc = cs.rcs.get(args.rc)
+    rc = cs.rcs.get(args.rc, args.bay)
     _show_rc(rc)
 
 
