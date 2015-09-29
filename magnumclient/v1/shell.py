@@ -382,6 +382,7 @@ def do_pod_create(cs, args):
 
 
 @utils.arg('pod', metavar='<pod-id>', help="UUID or name of pod")
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -403,7 +404,7 @@ def do_pod_update(cs, args):
         with open(p['value'], 'r') as f:
             p['value'] = f.read()
 
-    pod = cs.pods.update(args.pod, patch)
+    pod = cs.pods.update(args.pod, args.bay, patch)
     _show_pod(pod)
 
 
@@ -411,11 +412,12 @@ def do_pod_update(cs, args):
            metavar='<pods>',
            nargs='+',
            help='ID or name of the (pod)s to delete.')
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 def do_pod_delete(cs, args):
     """Delete specified pod."""
     for pod in args.pods:
         try:
-            cs.pods.delete(pod)
+            cs.pods.delete(pod, args.bay)
         except Exception as e:
             print("Delete for pod %(pod)s failed: %(e)s" %
                   {'pod': pod, 'e': e})
@@ -425,9 +427,10 @@ def do_pod_delete(cs, args):
 @utils.arg('pod',
            metavar='<pod>',
            help='ID or name of the pod to show.')
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 def do_pod_show(cs, args):
     """Show details about the given pod."""
-    pod = cs.pods.get(args.pod)
+    pod = cs.pods.get(args.pod, args.bay)
     _show_pod(pod)
 
 
