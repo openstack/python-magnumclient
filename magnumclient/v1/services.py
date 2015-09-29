@@ -28,8 +28,11 @@ class ServiceManager(base.Manager):
     resource_class = Service
 
     @staticmethod
-    def _path(id=None):
-        return '/v1/services/%s' % id if id else '/v1/services'
+    def _path(id=None, bay_uuid=None):
+        if id and bay_uuid:
+            return '/v1/services/%s/%s' % (id, bay_uuid)
+        else:
+            return '/v1/services'
 
     def list(self, marker=None, limit=None, sort_key=None,
              sort_dir=None, detail=False):
@@ -75,9 +78,9 @@ class ServiceManager(base.Manager):
             return self._list_pagination(self._path(path), "services",
                                          limit=limit)
 
-    def get(self, service_id):
+    def get(self, service_id, bay_uuid):
         try:
-            return self._list(self._path(service_id))[0]
+            return self._list(self._path(service_id, bay_uuid))[0]
         except IndexError:
             return None
 
@@ -91,8 +94,8 @@ class ServiceManager(base.Manager):
                     "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
         return self._create(self._path(), new)
 
-    def delete(self, service_id):
-        return self._delete(self._path(service_id))
+    def delete(self, service_id, bay_uuid):
+        return self._delete(self._path(service_id, bay_uuid))
 
-    def update(self, service_id, patch):
-        return self._update(self._path(service_id), patch)
+    def update(self, service_id, bay_uuid, patch):
+        return self._update(self._path(service_id, bay_uuid), patch)

@@ -562,6 +562,7 @@ def do_coe_service_create(cs, args):
 
 
 @utils.arg('service', metavar='<service>', help="UUID or name of service")
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -583,7 +584,7 @@ def do_coe_service_update(cs, args):
         with open(p['value'], 'r') as f:
             p['value'] = f.read()
 
-    service = cs.services.update(args.service, patch)
+    service = cs.services.update(args.service, args.bay, patch)
     _show_coe_service(service)
 
 
@@ -591,11 +592,12 @@ def do_coe_service_update(cs, args):
            metavar='<services>',
            nargs='+',
            help='ID or name of the (service)s to delete.')
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 def do_coe_service_delete(cs, args):
     """Delete specified coe service(s)."""
     for service in args.services:
         try:
-            cs.services.delete(service)
+            cs.services.delete(service, args.bay)
         except Exception as e:
             print("Delete for service %(service)s failed: %(e)s" %
                   {'service': service, 'e': e})
@@ -604,9 +606,10 @@ def do_coe_service_delete(cs, args):
 @utils.arg('service',
            metavar='<service>',
            help='ID or name of the service to show.')
+@utils.arg('bay', metavar='<bay-uuid>', help="UUID of Bay")
 def do_coe_service_show(cs, args):
     """Show details about the given coe service."""
-    service = cs.services.get(args.service)
+    service = cs.services.get(args.service, args.bay)
     _show_coe_service(service)
 
 
