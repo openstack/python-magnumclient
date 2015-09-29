@@ -713,3 +713,10 @@ class ShellTest(base.TestCase):
         shell.do_container_exec(client_mock, args)
         client_mock.containers.execute.assert_called_once_with(
             container_id, command)
+
+    def test_do_service_list(self):
+        client_mock = mock.MagicMock()
+        args = mock.MagicMock()
+
+        shell.do_service_list(client_mock, args)
+        client_mock.mservices.list.assert_called_once_with()

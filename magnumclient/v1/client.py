@@ -21,6 +21,7 @@ from magnumclient.v1 import baymodels
 from magnumclient.v1 import bays
 from magnumclient.v1 import certificates
 from magnumclient.v1 import containers
+from magnumclient.v1 import mservices
 from magnumclient.v1 import nodes
 from magnumclient.v1 import pods
 from magnumclient.v1 import replicationcontrollers as rcs
@@ -80,6 +81,7 @@ class Client(object):
         self.pods = pods.PodManager(self.http_client)
         self.rcs = rcs.ReplicationControllerManager(self.http_client)
         self.services = services.ServiceManager(self.http_client)
+        self.mservices = mservices.MServiceManager(self.http_client)
 
     @staticmethod
     def get_keystone_client(username=None, api_key=None, auth_url=None,
