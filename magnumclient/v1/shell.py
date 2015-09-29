@@ -209,7 +209,7 @@ def do_bay_update(cs, args):
            help='Arbitrary labels in the form of key=value pairs '
                 'to associate with a baymodel. '
                 'May be used multiple times.')
-@utils.arg('--insecure',
+@utils.arg('--tls-disabled',
            action='store_true', default=False,
            help='Disable TLS in the Bay.')
 def do_baymodel_create(cs, args):
@@ -231,7 +231,7 @@ def do_baymodel_create(cs, args):
     opts['https_proxy'] = args.https_proxy
     opts['no_proxy'] = args.no_proxy
     opts['labels'] = magnum_utils.format_labels(args.labels)
-    opts['insecure'] = args.insecure
+    opts['tls_disabled'] = args.tls_disabled
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)
