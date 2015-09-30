@@ -309,6 +309,8 @@ class ShellTest(base.TestCase):
         args.labels = labels
         tls_disabled = True
         args.tls_disabled = tls_disabled
+        public = True
+        args.public = public
 
         shell.do_baymodel_create(client_mock, args)
         client_mock.baymodels.create.assert_called_once_with(
@@ -321,7 +323,7 @@ class ShellTest(base.TestCase):
             http_proxy=http_proxy, https_proxy=https_proxy,
             no_proxy=no_proxy, network_driver=network_driver,
             labels=magnum_utils.format_labels(labels),
-            tls_disabled=tls_disabled)
+            tls_disabled=tls_disabled, public=public)
 
     def test_do_baymodel_delete(self):
         client_mock = mock.MagicMock()
