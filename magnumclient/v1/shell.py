@@ -664,6 +664,10 @@ def do_coe_service_show(cs, args):
 @utils.arg('--command',
            metavar='<command>',
            help='Send command to the container')
+@utils.arg('--memory',
+           metavar='<memory>',
+           help='The container memory size (format: <number><optional unit>, '
+                'where unit = b, k, m or g)')
 def do_container_create(cs, args):
     """Create a container."""
     bay = cs.bays.get(args.bay)
@@ -677,6 +681,7 @@ def do_container_create(cs, args):
     opts['image'] = args.image
     opts['bay_uuid'] = bay.uuid
     opts['command'] = args.command
+    opts['memory'] = args.memory
     _show_container(cs.containers.create(**opts))
 
 

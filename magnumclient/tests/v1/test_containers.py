@@ -28,6 +28,7 @@ CONTAINER1 = {'id': 123,
               'name': 'container1',
               'image': 'c-image1',
               'command': 'c-command1',
+              'memory': '512m',
               }
 CONTAINER2 = {'id': 124,
               'uuid': '66666666-7777-8888-9999-000000000002',
@@ -35,6 +36,7 @@ CONTAINER2 = {'id': 124,
               'name': 'container1',
               'image': 'c-image2',
               'command': 'c-command2',
+              'memory': '2g',
               }
 
 CREATE_CONTAINER = copy.deepcopy(CONTAINER1)
@@ -211,6 +213,8 @@ class ContainerManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(CONTAINER1['name'], container.name)
         self.assertEqual(CONTAINER1['image'], container.image)
+        self.assertEqual(CONTAINER1['command'], container.command)
+        self.assertEqual(CONTAINER1['memory'], container.memory)
 
     def test_container_create(self):
         container = self.mgr.create(**CREATE_CONTAINER)

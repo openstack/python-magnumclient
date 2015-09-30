@@ -636,10 +636,13 @@ class ShellTest(base.TestCase):
         args.bay_id = bay_id_or_name
         command = "test_command"
         args.command = command
+        memory = "512m"
+        args.memory = memory
 
         shell.do_container_create(client_mock, args)
         client_mock.containers.create.assert_called_once_with(
-            name=name, image=image, bay_uuid=bay.uuid, command=command)
+            name=name, image=image, bay_uuid=bay.uuid, command=command,
+            memory=memory)
 
     def test_do_container_list(self):
         client_mock = mock.MagicMock()

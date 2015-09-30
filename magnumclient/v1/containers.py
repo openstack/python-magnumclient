@@ -19,7 +19,7 @@ from magnumclient.common import utils
 from magnumclient import exceptions
 
 
-CREATION_ATTRIBUTES = ['name', 'image', 'command', 'bay_uuid']
+CREATION_ATTRIBUTES = ['name', 'image', 'command', 'bay_uuid', 'memory']
 
 
 class Container(base.Resource):
