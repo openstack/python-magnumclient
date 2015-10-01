@@ -36,13 +36,13 @@ class TestCommandLineArgument(utils.TestCase):
 
     _mandatory_arg_error = [
         '.*?^usage: ',
-        '.*?^error: argument',
+        '.*?^error: (the following arguments|argument)',
         ".*?^Try 'magnum help ",
         ]
 
     _few_argument_error = [
         '.*?^usage: magnum ',
-        '.*?^error: too few arguments',
+        '.*?^error: (the following arguments|too few arguments)',
         ".*?^Try"
         ]
 
@@ -189,7 +189,7 @@ class TestCommandLineArgument(utils.TestCase):
     def test_bay_update_failure_few_args(self, mock_update):
         _error_msg = [
             '.*?^usage: magnum bay-update ',
-            '.*?^error: too few arguments',
+            '.*?^error: (the following arguments|too few arguments)',
             ".*?^Try 'magnum help bay-update' for more information."
             ]
         self._test_arg_failure('bay-update', _error_msg)

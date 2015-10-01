@@ -420,7 +420,8 @@ class OpenStackMagnumShell(object):
         args = subcommand_parser.parse_args(argv)
 
         # Short-circuit and deal with help right away.
-        if args.func == self.do_help:
+        # NOTE(jamespage): args.func is not guaranteed with python >= 3.4
+        if not hasattr(args, 'func') or args.func == self.do_help:
             self.do_help(args)
             return 0
         elif args.func == self.do_bash_completion:
@@ -551,7 +552,10 @@ class OpenStackMagnumShell(object):
                   help='Display help for <subcommand>.')
     def do_help(self, args):
         """Display help about this program or one of its subcommands."""
-        if args.command:
+        # NOTE(jamespage): args.command is not guaranteed with python >= 3.4
+        command = getattr(args, 'command', '')
+
+        if command:
             if args.command in self.subcommands:
                 self.subcommands[args.command].print_help()
             else:
