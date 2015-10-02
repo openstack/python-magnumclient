@@ -318,6 +318,32 @@ def do_ca_sign(cs, args):
     _show_cert(cert)
 
 
+@utils.arg('baymodel', metavar='<baymodel>', help="UUID of baymodel")
+@utils.arg(
+    'op',
+    metavar='<op>',
+    choices=['add', 'replace', 'remove'],
+    help="Operations: 'add', 'replace' or 'remove'")
+@utils.arg(
+    'attributes',
+    metavar='<path=value>',
+    nargs='+',
+    action='append',
+    default=[],
+    help="Attributes to add/replace or remove "
+         "(only PATH is necessary on remove)")
+def do_baymodel_update(cs, args):
+    """Updates one or more baymodel attributes."""
+    patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
+    p = patch[0]
+    if p['path'] == '/manifest' and os.path.isfile(p['value']):
+        with open(p['value'], 'r') as f:
+            p['value'] = f.read()
+
+    baymodel = cs.baymodels.update(args.baymodel, patch)
+    _show_baymodel(baymodel)
+
+
 def do_node_list(cs, args):
     """Print a list of configured nodes."""
     nodes = cs.nodes.list()
