@@ -20,7 +20,7 @@ CREATION_ATTRIBUTES = ['name', 'image_id', 'flavor_id', 'master_flavor_id',
                        'dns_nameserver', 'docker_volume_size', 'labels',
                        'ssh_authorized_key', 'coe', 'http_proxy',
                        'https_proxy', 'no_proxy', 'network_driver',
-                       'tls_disabled']
+                       'tls_disabled', 'public']
 
 
 class BayModel(base.Resource):

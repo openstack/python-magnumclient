@@ -217,7 +217,8 @@ class TestCommandLineArgument(utils.TestCase):
                                '--network-driver test_driver '
                                '--labels key=val '
                                '--master-flavor-id test_flavor '
-                               '--docker-volume-size 10')
+                               '--docker-volume-size 10'
+                               '--public')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('baymodel-create '
@@ -227,6 +228,17 @@ class TestCommandLineArgument(utils.TestCase):
                                '--coe kubernetes '
                                '--name test ')
 
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_public_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test --network-driver test_driver '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm'
+                               '--public')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
