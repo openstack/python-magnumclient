@@ -566,13 +566,13 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.delete')
     def test_rc_delete_success(self, mock_delete):
-        self._test_arg_success('rc-delete xxx')
+        self._test_arg_success('rc-delete xxx zzz')
         self.assertTrue(mock_delete.called)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.delete')
     def test_rc_delete_multiple_id_success(self, mock_delete):
-        self._test_arg_success('rc-delete xxx xyz')
+        self._test_arg_success('rc-delete xxx xyz zzz')
         self.assertTrue(mock_delete.called)
         self.assertEqual(2, mock_delete.call_count)
 
@@ -585,7 +585,7 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.get')
     def test_rc_show_success(self, mock_show):
-        self._test_arg_success('rc-show xxx')
+        self._test_arg_success('rc-show xxx zzz')
         self.assertTrue(mock_show.called)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
@@ -597,7 +597,7 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.update')
     def test_rc_update_success(self, mock_update):
-        self._test_arg_success('rc-update xxx replace xxx=xxx')
+        self._test_arg_success('rc-update xxx zzz replace xxx=xxx')
         self.assertTrue(mock_update.called)
         self.assertEqual(1, mock_update.call_count)
 

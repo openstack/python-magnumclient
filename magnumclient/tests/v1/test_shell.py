@@ -512,7 +512,9 @@ class ShellTest(base.TestCase):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         rc_id = 'id'
+        bay_uuid = 'uuid'
         args.rc = rc_id
+        args.bay = bay_uuid
         op = 'replace'
         args.op = op
         attributes = 'manifest={}'
@@ -522,25 +524,31 @@ class ShellTest(base.TestCase):
         shell.magnum_utils.args_array_to_patch.return_value = patch
 
         shell.do_rc_update(client_mock, args)
-        client_mock.rcs.update.assert_called_once_with(rc_id, patch)
+        client_mock.rcs.update.assert_called_once_with(rc_id,
+                                                       bay_uuid,
+                                                       patch)
 
     def test_do_rc_delete(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         rc_id = 'id'
+        bay_uuid = 'uuid'
         args.rcs = [rc_id]
+        args.bay = bay_uuid
 
         shell.do_rc_delete(client_mock, args)
-        client_mock.rcs.delete.assert_called_once_with(rc_id)
+        client_mock.rcs.delete.assert_called_once_with(rc_id, bay_uuid)
 
     def test_do_rc_show(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         rc_id = 'id'
+        bay_uuid = 'uuid'
         args.rc = rc_id
+        args.bay = bay_uuid
 
         shell.do_rc_show(client_mock, args)
-        client_mock.rcs.get.assert_called_once_with(rc_id)
+        client_mock.rcs.get.assert_called_once_with(rc_id, bay_uuid)
 
     def test_do_coe_service_list(self):
         client_mock = mock.MagicMock()
