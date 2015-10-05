@@ -435,6 +435,8 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         pod_id = 'id'
         args.pod = pod_id
+        bay_uuid = 'uuid'
+        args.bay = bay_uuid
         op = 'add'
         args.op = op
         attributes = "labels={'name': 'value'}"
@@ -444,25 +446,30 @@ class ShellTest(base.TestCase):
         shell.magnum_utils.args_array_to_patch.return_value = patch
 
         shell.do_pod_update(client_mock, args)
-        client_mock.pods.update.assert_called_once_with(pod_id, patch)
+        client_mock.pods.update.assert_called_once_with(pod_id,
+                                                        bay_uuid,
+                                                        patch)
 
     def test_do_pod_delete(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         pod_id = 'id'
+        bay_uuid = 'uuid'
         args.pods = [pod_id]
-
+        args.bay = bay_uuid
         shell.do_pod_delete(client_mock, args)
-        client_mock.pods.delete.assert_called_once_with(pod_id)
+        client_mock.pods.delete.assert_called_once_with(pod_id, bay_uuid)
 
     def test_do_pod_show(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         pod_id = 'id'
         args.pod = pod_id
+        bay_uuid = 'uuid'
+        args.bay = bay_uuid
 
         shell.do_pod_show(client_mock, args)
-        client_mock.pods.get.assert_called_once_with(pod_id)
+        client_mock.pods.get.assert_called_once_with(pod_id, bay_uuid)
 
     def test_do_rc_list(self):
         client_mock = mock.MagicMock()

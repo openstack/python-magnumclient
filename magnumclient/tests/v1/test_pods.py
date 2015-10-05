@@ -57,7 +57,7 @@ fake_responses = {
             CREATE_POD,
         ),
     },
-    '/v1/pods/%s' % POD1['id']:
+    '/v1/pods/%s/%s' % (POD1['id'], POD1['bay_uuid']):
     {
         'GET': (
             {},
@@ -72,7 +72,7 @@ fake_responses = {
             UPDATED_POD,
         ),
     },
-    '/v1/pods/%s' % POD1['name']:
+    '/v1/pods/%s/%s' % (POD1['name'], POD1['bay_uuid']):
     {
         'GET': (
             {},
@@ -106,21 +106,25 @@ class PodManagerTest(testtools.TestCase):
         self.assertThat(pods, matchers.HasLength(2))
 
     def test_pod_show_by_id(self):
-        pod = self.mgr.get(POD1['id'])
+        pod = self.mgr.get(POD1['id'], POD1['bay_uuid'])
         expect = [
-            ('GET', '/v1/pods/%s' % POD1['id'], {}, None)
+            ('GET', '/v1/pods/%s/%s' % (POD1['id'],
+                                        POD1['bay_uuid']), {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(POD1['name'], pod.name)
+        self.assertEqual(POD1['bay_uuid'], pod.bay_uuid)
         self.assertEqual(POD1['desc'], pod.desc)
 
     def test_pod_show_by_name(self):
-        pod = self.mgr.get(POD1['name'])
+        pod = self.mgr.get(POD1['name'], POD1['bay_uuid'])
         expect = [
-            ('GET', '/v1/pods/%s' % POD1['name'], {}, None)
+            ('GET', '/v1/pods/%s/%s' % (POD1['name'],
+                                        POD1['bay_uuid']), {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(POD1['name'], pod.name)
+        self.assertEqual(POD1['bay_uuid'], pod.bay_uuid)
         self.assertEqual(POD1['desc'], pod.desc)
 
     def test_pod_create(self):
@@ -141,17 +145,19 @@ class PodManagerTest(testtools.TestCase):
         self.assertEqual([], self.api.calls)
 
     def test_pod_delete_by_id(self):
-        pod = self.mgr.delete(POD1['id'])
+        pod = self.mgr.delete(POD1['id'], POD1['bay_uuid'])
         expect = [
-            ('DELETE', '/v1/pods/%s' % POD1['id'], {}, None),
+            ('DELETE', '/v1/pods/%s/%s' % (POD1['id'],
+                                           POD1['bay_uuid']), {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(pod)
 
     def test_pod_delete_by_name(self):
-        pod = self.mgr.delete(POD1['name'])
+        pod = self.mgr.delete(POD1['name'], POD1['bay_uuid'])
         expect = [
-            ('DELETE', '/v1/pods/%s' % POD1['name'], {}, None),
+            ('DELETE', '/v1/pods/%s/%s' % (POD1['name'],
+                                           POD1['bay_uuid']), {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(pod)
@@ -160,9 +166,12 @@ class PodManagerTest(testtools.TestCase):
         patch = {'op': 'replace',
                  'value': NEW_DESCR,
                  'path': '/description'}
-        pod = self.mgr.update(id=POD1['id'], patch=patch)
+        pod = self.mgr.update(id=POD1['id'],
+                              bay_uuid=POD1['bay_uuid'],
+                              patch=patch)
         expect = [
-            ('PATCH', '/v1/pods/%s' % POD1['id'], {}, patch),
+            ('PATCH', '/v1/pods/%s/%s' % (POD1['id'],
+                                          POD1['bay_uuid']), {}, patch),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(NEW_DESCR, pod.description)

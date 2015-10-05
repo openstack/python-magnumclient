@@ -484,13 +484,13 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.pods.PodManager.delete')
     def test_pod_delete_success(self, mock_delete):
-        self._test_arg_success('pod-delete xxx')
+        self._test_arg_success('pod-delete xxx zzz')
         self.assertTrue(mock_delete.called)
         self.assertEqual(1, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.pods.PodManager.delete')
     def test_pod_delete_multiple_id_success(self, mock_delete):
-        self._test_arg_success('pod-delete xxx xyz')
+        self._test_arg_success('pod-delete xxx xyz zzz')
         self.assertTrue(mock_delete.called)
         self.assertEqual(2, mock_delete.call_count)
 
@@ -501,7 +501,7 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.pods.PodManager.update')
     def test_pod_update_success(self, mock_update):
-        self._test_arg_success('pod-update xxx replace xxx=xxx')
+        self._test_arg_success('pod-update xxx zzz replace xxx=xxx')
         self.assertTrue(mock_update.called)
         self.assertEqual(1, mock_update.call_count)
 
@@ -512,7 +512,7 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.pods.PodManager.get')
     def test_pod_show_success(self, mock_show):
-        self._test_arg_success('pod-show xxx')
+        self._test_arg_success('pod-show xxx zzz')
         self.assertTrue(mock_show.called)
 
     @mock.patch('magnumclient.v1.pods.PodManager.get')
