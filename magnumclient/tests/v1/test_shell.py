@@ -606,6 +606,8 @@ class ShellTest(base.TestCase):
         args = mock.MagicMock()
         service_id = 'id'
         args.service = service_id
+        bay_uuid = 'uuid'
+        args.bay = bay_uuid
         op = 'replace'
         args.op = op
         attributes = 'manifest={}'
@@ -615,25 +617,33 @@ class ShellTest(base.TestCase):
         shell.magnum_utils.args_array_to_patch.return_value = patch
 
         shell.do_coe_service_update(client_mock, args)
-        client_mock.services.update.assert_called_once_with(service_id, patch)
+        client_mock.services.update.assert_called_once_with(service_id,
+                                                            bay_uuid,
+                                                            patch)
 
     def test_do_coe_service_delete(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
+        bay_uuid = 'uuid'
         args.services = [service_id]
+        args.bay = bay_uuid
 
         shell.do_coe_service_delete(client_mock, args)
-        client_mock.services.delete.assert_called_once_with(service_id)
+        client_mock.services.delete.assert_called_once_with(service_id,
+                                                            bay_uuid)
 
     def test_do_coe_service_show(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
         service_id = 'id'
+        bay_uuid = 'uuid'
         args.service = service_id
+        args.bay = bay_uuid
 
         shell.do_coe_service_show(client_mock, args)
-        client_mock.services.get.assert_called_once_with(service_id)
+        client_mock.services.get.assert_called_once_with(service_id,
+                                                         bay_uuid)
 
     def test_do_container_create(self):
         client_mock = mock.MagicMock()

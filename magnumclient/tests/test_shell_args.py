@@ -640,13 +640,13 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.services.ServiceManager.delete')
     def test_coe_service_delete_success(self, mock_delete):
-        self._test_arg_success('coe-service-delete xxx')
+        self._test_arg_success('coe-service-delete xxx zzz')
         self.assertTrue(mock_delete.called)
         self.assertEqual(1, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.delete')
     def test_coe_service_delete_multiple_id_success(self, mock_delete):
-        self._test_arg_success('coe-service-delete xxx xyz')
+        self._test_arg_success('coe-service-delete xxx xyz zzz')
         self.assertTrue(mock_delete.called)
         self.assertEqual(2, mock_delete.call_count)
 
@@ -657,7 +657,7 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.services.ServiceManager.get')
     def test_coe_service_show_success(self, mock_show):
-        self._test_arg_success('coe-service-show xxx')
+        self._test_arg_success('coe-service-show xxx zzz')
         self.assertTrue(mock_show.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.get')
@@ -667,7 +667,7 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.services.ServiceManager.update')
     def test_coe_service_update_success(self, mock_update):
-        self._test_arg_success('coe-service-update xxx replace xxx=xxx')
+        self._test_arg_success('coe-service-update xxx zzz replace xxx=xxx')
         self.assertTrue(mock_update.called)
         self.assertEqual(1, mock_update.call_count)
 
