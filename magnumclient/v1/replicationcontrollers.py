@@ -35,12 +35,13 @@ class ReplicationControllerManager(base.Manager):
         else:
             return '/v1/rcs'
 
-    def list(self, limit=None, marker=None, sort_key=None,
+    def list(self, bay_ident, limit=None, marker=None, sort_key=None,
              sort_dir=None, detail=False):
         """Retrieve a list of ReplicationControllers.
 
-        :param marker: Optional, the UUID of a rc, eg the last
-                       port from a previous result set. Return
+        :param bay_ident: UUID or Name of the Bay.
+        :param marker: Optional, the UUID or Name of a rc, e.g. the last
+                       rc from a previous result set. Return
                        the next result set.
         :param limit: The maximum number of results to return per
                       request, if:
@@ -66,6 +67,7 @@ class ReplicationControllerManager(base.Manager):
             limit = int(limit)
 
         filters = utils.common_filters(marker, limit, sort_key, sort_dir)
+        filters.append('bay_ident=%s' % bay_ident)
 
         path = ''
         if detail:

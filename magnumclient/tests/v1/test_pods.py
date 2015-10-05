@@ -98,7 +98,7 @@ class PodManagerTest(testtools.TestCase):
         self.mgr = pods.PodManager(self.api)
 
     def test_pod_list(self):
-        pods = self.mgr.list()
+        pods = self.mgr.list(POD1['bay_uuid'])
         expect = [
             ('GET', '/v1/pods', {}, None),
         ]

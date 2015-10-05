@@ -34,12 +34,13 @@ class ServiceManager(base.Manager):
         else:
             return '/v1/services'
 
-    def list(self, marker=None, limit=None, sort_key=None,
+    def list(self, bay_ident, marker=None, limit=None, sort_key=None,
              sort_dir=None, detail=False):
         """Retrieve a list of services.
 
-        :param marker: Optional, the UUID of a services, eg the last
-                       services from a previous result set. Return
+        :param bay_ident: UUID or Name of the Bay.
+        :param marker: Optional, the UUID or Name of a service, e.g. the
+                       last service from a previous result set. Return
                        the next result set.
         :param limit: The maximum number of results to return per
                       request, if:
@@ -65,6 +66,7 @@ class ServiceManager(base.Manager):
             limit = int(limit)
 
         filters = utils.common_filters(marker, limit, sort_key, sort_dir)
+        filters.append('bay_ident=%s' % bay_ident)
 
         path = ''
         if detail:

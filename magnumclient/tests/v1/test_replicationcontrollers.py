@@ -96,7 +96,7 @@ class RCManagerTest(testtools.TestCase):
         self.mgr = rcs.ReplicationControllerManager(self.api)
 
     def test_rc_list(self):
-        rcs = self.mgr.list()
+        rcs = self.mgr.list(RC1['bay_uuid'])
         expect = [
             ('GET', '/v1/rcs', {}, None),
         ]

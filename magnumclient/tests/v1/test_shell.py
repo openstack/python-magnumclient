@@ -389,9 +389,11 @@ class ShellTest(base.TestCase):
     def test_do_pod_list(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
+        bay = 'id'
+        args.bay = bay
 
         shell.do_pod_list(client_mock, args)
-        client_mock.pods.list.assert_called_once_with()
+        client_mock.pods.list.assert_called_once_with(bay)
 
     def test_do_pod_create(self):
         client_mock = mock.MagicMock()
@@ -474,9 +476,11 @@ class ShellTest(base.TestCase):
     def test_do_rc_list(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
+        bay = 'id'
+        args.bay = bay
 
         shell.do_rc_list(client_mock, args)
-        client_mock.rcs.list.assert_called_once_with()
+        client_mock.rcs.list.assert_called_once_with(bay)
 
     def test_do_rc_create(self):
         client_mock = mock.MagicMock()
@@ -560,9 +564,11 @@ class ShellTest(base.TestCase):
     def test_do_coe_service_list(self):
         client_mock = mock.MagicMock()
         args = mock.MagicMock()
+        bay = 'id'
+        args.bay = bay
 
         shell.do_coe_service_list(client_mock, args)
-        client_mock.services.list.assert_called_once_with()
+        client_mock.services.list.assert_called_once_with(bay)
 
     def test_do_coe_service_create(self):
         client_mock = mock.MagicMock()

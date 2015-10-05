@@ -446,12 +446,12 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.pods.PodManager.list')
     def test_pod_list_success(self, mock_list):
-        self._test_arg_success('pod-list')
+        self._test_arg_success('pod-list bay_ident')
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.pods.PodManager.list')
     def test_pod_list_failure(self, mock_list):
-        self._test_arg_failure('pod-list --wrong',
+        self._test_arg_failure('pod-list bay_ident --wrong',
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
@@ -523,13 +523,13 @@ class TestCommandLineArgument(utils.TestCase):
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.list')
     def test_rc_list_success(self, mock_list):
-        self._test_arg_success('rc-list')
+        self._test_arg_success('rc-list bay_ident')
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.list')
     def test_rc_list_failure(self, mock_list):
-        self._test_arg_failure('rc-list --wrong',
+        self._test_arg_failure('rc-list bay_ident --wrong',
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
@@ -609,12 +609,12 @@ class TestCommandLineArgument(utils.TestCase):
 
     @mock.patch('magnumclient.v1.services.ServiceManager.list')
     def test_coe_service_list_success(self, mock_list):
-        self._test_arg_success('coe-service-list')
+        self._test_arg_success('coe-service-list bay_ident')
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.services.ServiceManager.list')
     def test_coe_service_list_failure(self, mock_list):
-        self._test_arg_failure('coe-service-list --wrong',
+        self._test_arg_failure('coe-service-list bay_ident --wrong',
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 

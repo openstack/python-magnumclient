@@ -98,7 +98,7 @@ class ServiceManagerTest(testtools.TestCase):
         self.mgr = services.ServiceManager(self.api)
 
     def test_coe_service_list(self):
-        services = self.mgr.list()
+        services = self.mgr.list(SERVICE1['bay_uuid'])
         expect = [
             ('GET', '/v1/services', {}, None),
         ]
