@@ -7,10 +7,10 @@ Babel>=1.3
 oslo.config>=2.3.0 # Apache-2.0
 oslo.i18n>=1.5.0 # Apache-2.0
 oslo.serialization>=1.4.0 # Apache-2.0
-oslo.utils>=2.0.0 # Apache-2.0
+oslo.utils!=2.6.0,>=2.4.0 # Apache-2.0
 iso8601>=0.1.9
 requests!=2.8.0,>=2.5.2
-python-keystoneclient>=1.6.0
+python-keystoneclient!=1.8.0,>=1.6.0
 PyYAML>=3.1.0
 stevedore>=1.5.0 # Apache-2.0
 six>=1.9.0
