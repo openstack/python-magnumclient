@@ -300,6 +300,7 @@ def do_ca_show(cs, args):
            metavar='<bay>',
            help='ID or name of the bay.')
 def do_ca_sign(cs, args):
+    """Generate the CA certificate for a bay."""
     bay = cs.bays.get(args.bay)
     if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
         print('Bay status for %s is: %s. We can not create a %s there'
