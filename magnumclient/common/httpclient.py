@@ -22,7 +22,7 @@ import os
 import socket
 import ssl
 
-from keystoneclient import adapter
+from keystoneauth1 import adapter
 import six
 import six.moves.urllib.parse as urlparse
 
@@ -284,8 +284,14 @@ class VerifiedHTTPSConnection(six.moves.http_client.HTTPSConnection):
 class SessionClient(adapter.LegacyJsonAdapter):
     """HTTP client based on Keystone client session."""
 
+    def __init__(self, user_agent=USER_AGENT, logger=LOG, *args, **kwargs):
+        super(SessionClient, self).__init__(*args, **kwargs)
+
     def _http_request(self, url, method, **kwargs):
-        kwargs.setdefault('user_agent', USER_AGENT)
+        if url.startswith(API_VERSION):
+            url = url[len(API_VERSION):]
+
+        kwargs.setdefault('user_agent', self.user_agent)
         kwargs.setdefault('auth', self.auth)
 
         endpoint_filter = kwargs.setdefault('endpoint_filter', {})

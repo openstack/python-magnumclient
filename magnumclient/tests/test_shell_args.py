@@ -49,10 +49,17 @@ class TestCommandLineArgument(utils.TestCase):
     def setUp(self):
         super(TestCommandLineArgument, self).setUp()
         self.make_env(fake_env=FAKE_ENV)
-        keystone_mock = mock.patch(
-            'magnumclient.v1.client.Client.get_keystone_client')
-        keystone_mock.start()
-        self.addCleanup(keystone_mock.stop)
+        session_client = mock.patch(
+            'magnumclient.common.httpclient.SessionClient')
+        session_client.start()
+        loader = mock.patch('keystoneauth1.loading.get_plugin_loader')
+        loader.start()
+        session = mock.patch('keystoneauth1.session.Session')
+        session.start()
+
+        self.addCleanup(session_client.stop)
+        self.addCleanup(loader.stop)
+        self.addCleanup(session.stop)
 
     def _test_arg_success(self, command):
         stdout, stderr = self.shell(command)

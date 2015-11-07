@@ -20,74 +20,99 @@ from magnumclient.v1 import client
 
 class ClientTest(testtools.TestCase):
 
-    @mock.patch('magnumclient.common.httpclient.HTTPClient')
-    @mock.patch.object(client.Client, 'get_keystone_client')
-    def test_init_with_token_and_url(self, keystone_client, http_client):
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('keystoneauth1.session.Session')
+    def test_init_with_session(self, mock_session, http_client):
+        session = mock.Mock()
+        client.Client(session=session)
+        mock_session.assert_not_called()
+        http_client.assert_called_once_with(
+            interface='public',
+            region_name=None,
+            service_name=None,
+            service_type='container',
+            session=session)
+
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('keystoneauth1.token_endpoint.Token')
+    @mock.patch('keystoneauth1.session.Session')
+    def test_init_with_token_and_url(
+            self, mock_session, mock_token, http_client):
+        mock_auth_plugin = mock.Mock()
+        mock_token.return_value = mock_auth_plugin
+        session = mock.Mock()
+        mock_session.return_value = session
         client.Client(input_auth_token='mytoken', magnum_url='http://myurl/')
-        self.assertFalse(keystone_client.called)
+        mock_session.assert_called_once_with(auth=mock_auth_plugin)
         http_client.assert_called_once_with(
-            'http://myurl/', token='mytoken', auth_ref=None)
+            endpoint_override='http://myurl/',
+            interface='public',
+            region_name=None,
+            service_name=None,
+            service_type='container',
+            session=session)
 
-    @mock.patch('magnumclient.common.httpclient.HTTPClient')
-    @mock.patch.object(client.Client, 'get_keystone_client')
-    def test_init_with_token(self, keystone_client, http_client):
-        mocked = mock.Mock()
-        mocked.service_catalog.url_for.return_value = 'http://myurl/'
-        keystone_client.return_value = mocked
-
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('keystoneauth1.loading.get_plugin_loader')
+    @mock.patch('keystoneauth1.session.Session')
+    def test_init_with_token(
+            self, mock_session, mock_loader, http_client):
+        mock_plugin = mock.Mock()
+        mock_loader.return_value = mock_plugin
         client.Client(input_auth_token='mytoken', auth_url='authurl')
-        keystone_client.assert_called_once_with(
-            token='mytoken', username=None, api_key=None,
-            project_name=None, project_id=None,
-            auth_url='authurl')
+        mock_loader.assert_called_once_with('token')
+        mock_plugin.load_from_options.assert_called_once_with(
+            auth_url='authurl',
+            project_id=None,
+            project_name=None,
+            token='mytoken')
         http_client.assert_called_once_with(
-            'http://myurl/', token='mytoken', auth_ref=None)
+            interface='public',
+            region_name=None,
+            service_name=None,
+            service_type='container',
+            session=mock.ANY)
 
-    @mock.patch('magnumclient.common.httpclient.HTTPClient')
-    @mock.patch.object(client.Client, 'get_keystone_client')
-    def test_init_with_user(self, keystone_client, http_client):
-        mocked = mock.Mock()
-        mocked.auth_token = 'mytoken'
-        mocked.service_catalog.url_for.return_value = 'http://myurl/'
-        keystone_client.return_value = mocked
-
-        client.Client(username='user', api_key='pass', project_name='prj',
-                      auth_url='authurl')
-        keystone_client.assert_called_once_with(
-            username='user', api_key='pass',
-            project_name='prj', project_id=None,
-            auth_url='authurl')
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('keystoneauth1.loading.get_plugin_loader')
+    @mock.patch('keystoneauth1.session.Session')
+    def test_init_with_user(
+            self, mock_session, mock_loader, http_client):
+        mock_plugin = mock.Mock()
+        mock_loader.return_value = mock_plugin
+        client.Client(username='myuser', auth_url='authurl')
+        mock_loader.assert_called_once_with('password')
+        mock_plugin.load_from_options.assert_called_once_with(
+            auth_url='authurl',
+            username='myuser',
+            password=None,
+            project_id=None,
+            project_name=None)
         http_client.assert_called_once_with(
-            'http://myurl/', token='mytoken', auth_ref=None)
+            interface='public',
+            region_name=None,
+            service_name=None,
+            service_type='container',
+            session=mock.ANY)
 
-    @mock.patch.object(client.Client, 'get_keystone_client')
-    def test_init_unauthorized(self, keystone_client):
-        mocked = mock.Mock()
-        mocked.auth_token = None
-        keystone_client.return_value = mocked
-
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('keystoneauth1.loading.get_plugin_loader')
+    @mock.patch('keystoneauth1.session.Session')
+    def test_init_unauthorized(
+            self, mock_session, mock_loader, http_client):
+        mock_plugin = mock.Mock()
+        mock_loader.return_value = mock_plugin
+        mock_session_obj = mock.Mock()
+        mock_session.return_value = mock_session_obj
+        mock_session_obj.get_endpoint.side_effect = Exception()
         self.assertRaises(
-            RuntimeError, client.Client,
-            username='user', api_key='pass', project_name='prj',
-            auth_url='authurl')
-
-    def _test_get_keystone_client(self, auth_url, keystone_client):
-        client.Client.get_keystone_client(
-            username='user', api_key='pass', project_name='prj',
-            auth_url=auth_url)
-        self.assertTrue(keystone_client.called)
-
-    @mock.patch('keystoneclient.v2_0.client.Client')
-    def test_get_keystone_client_v2(self, keystone_client):
-        self._test_get_keystone_client(
-            'http://authhost/v2.0', keystone_client)
-
-    @mock.patch('keystoneclient.v3.client.Client')
-    def test_get_keystone_client_v3(self, keystone_client):
-        self._test_get_keystone_client(
-            'http://authhost/v3', keystone_client)
-
-    def test_get_keystone_client_no_url(self):
-        self.assertRaises(RuntimeError,
-                          self._test_get_keystone_client,
-                          None, None)
+            RuntimeError,
+            client.Client, username='myuser', auth_url='authurl')
+        mock_loader.assert_called_once_with('password')
+        mock_plugin.load_from_options.assert_called_once_with(
+            auth_url='authurl',
+            username='myuser',
+            password=None,
+            project_id=None,
+            project_name=None)
+        http_client.assert_not_called()

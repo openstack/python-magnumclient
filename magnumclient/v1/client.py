@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from keystoneclient.v2_0 import client as keystone_client_v2
-from keystoneclient.v3 import client as keystone_client_v3
+from keystoneauth1 import loading
+from keystoneauth1 import session as ksa_session
 
 from magnumclient.common import httpclient
 from magnumclient.v1 import baymodels
@@ -31,48 +31,74 @@ from magnumclient.v1 import services
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, magnum_url=None,
-                 endpoint_type='publicURL', service_type='container',
-                 region_name=None, input_auth_token=None):
+                 endpoint_type=None, service_type='container',
+                 region_name=None, input_auth_token=None,
+                 session=None, password=None, auth_type='password',
+                 interface='public', service_name=None):
 
-        keystone = None
-        if not input_auth_token:
-            keystone = self.get_keystone_client(username=username,
-                                                api_key=api_key,
-                                                auth_url=auth_url,
-                                                project_id=project_id,
-                                                project_name=project_name)
-            input_auth_token = keystone.auth_token
-        if not input_auth_token:
-            raise RuntimeError("Not Authorized")
+        # We have to keep the api_key are for backwards compat, but let's
+        # remove it from the rest of our code since it's not a keystone
+        # concept
+        if not password:
+            password = api_key
+        # Backwards compat for people assing in endpoint_type
+        if endpoint_type:
+            interface = endpoint_type
 
-        if not magnum_url:
-            keystone = keystone or self.get_keystone_client(
-                username=username,
-                api_key=api_key,
-                auth_url=auth_url,
+        if magnum_url and input_auth_token:
+            auth_type = 'admin_token'
+            session = None
+            loader_kwargs = dict(
                 token=input_auth_token,
+                endpoint=magnum_url)
+        elif input_auth_token and not session:
+            auth_type = 'token'
+            loader_kwargs = dict(
+                token=input_auth_token,
+                auth_url=auth_url,
                 project_id=project_id,
                 project_name=project_name)
-            magnum_url = keystone.service_catalog.url_for(
-                service_type=service_type,
-                endpoint_type=endpoint_type,
-                region_name=region_name)
+        else:
+            loader_kwargs = dict(
+                username=username,
+                password=password,
+                auth_url=auth_url,
+                project_id=project_id,
+                project_name=project_name)
 
-        http_cli_kwargs = {
-            'token': input_auth_token,
-            # TODO(yuanying): - use insecure
-            # 'insecure': kwargs.get('insecure'),
-            # TODO(yuanying): - use timeout
-            # 'timeout': kwargs.get('timeout'),
-            # TODO(yuanying): - use ca_file
-            # 'ca_file': kwargs.get('ca_file'),
-            # TODO(yuanying): - use cert_file
-            # 'cert_file': kwargs.get('cert_file'),
-            # TODO(yuanying): - use key_file
-            # 'key_file': kwargs.get('key_file'),
-            'auth_ref': None,
-        }
-        self.http_client = httpclient.HTTPClient(magnum_url, **http_cli_kwargs)
+        # Backwards compatability for people not passing in Session
+        if session is None:
+            loader = loading.get_plugin_loader(auth_type)
+
+            # This only supports keystone v2 password auth - but we can
+            # support other auth by passing in a Session, which is the
+            # right thing to do anyway
+            auth_plugin = loader.load_from_options(**loader_kwargs)
+            session = ksa_session.Session(auth=auth_plugin)
+
+        client_kwargs = {}
+        if magnum_url:
+            client_kwargs['endpoint_override'] = magnum_url
+
+        if not magnum_url:
+            try:
+                # Trigger an auth error so that we can throw the exception
+                # we always have
+                session.get_endpoint(
+                    service_type=service_type,
+                    service_name=service_name,
+                    interface=interface,
+                    region_name=region_name)
+            except Exception:
+                raise RuntimeError("Not Authorized")
+
+        self.http_client = httpclient.SessionClient(
+            service_type=service_type,
+            service_name=service_name,
+            interface=interface,
+            region_name=region_name,
+            session=session,
+            **client_kwargs)
         self.bays = bays.BayManager(self.http_client)
         self.certificates = certificates.CertificateManager(self.http_client)
         self.baymodels = baymodels.BayModelManager(self.http_client)
@@ -82,23 +108,3 @@ class Client(object):
         self.rcs = rcs.ReplicationControllerManager(self.http_client)
         self.services = services.ServiceManager(self.http_client)
         self.mservices = mservices.MServiceManager(self.http_client)
-
-    @staticmethod
-    def get_keystone_client(username=None, api_key=None, auth_url=None,
-                            token=None, project_id=None, project_name=None):
-        if not auth_url:
-                raise RuntimeError("No auth url specified")
-        imported_client = (keystone_client_v2 if "v2.0" in auth_url
-                           else keystone_client_v3)
-
-        client = imported_client.Client(
-            username=username,
-            password=api_key,
-            token=token,
-            tenant_id=project_id,
-            tenant_name=project_name,
-            auth_url=auth_url,
-            endpoint=auth_url)
-        client.authenticate()
-
-        return client
