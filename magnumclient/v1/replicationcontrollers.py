@@ -29,9 +29,11 @@ class ReplicationControllerManager(base.Manager):
     resource_class = ReplicationController
 
     @staticmethod
-    def _path(id=None, bay_uuid=None):
-        if id and bay_uuid:
-            return '/v1/rcs/%s/%s' % (id, bay_uuid)
+    def _path(id=None, bay_ident=None):
+        if id and bay_ident:
+            return '/v1/rcs/%s/?bay_ident=%s' % (id, bay_ident)
+        elif bay_ident:
+            return '/v1/rcs/?bay_ident=%s' % (bay_ident)
         else:
             return '/v1/rcs'
 
@@ -76,14 +78,14 @@ class ReplicationControllerManager(base.Manager):
             path += '?' + '&'.join(filters)
 
         if limit is None:
-            return self._list(self._path(path), "rcs")
+            return self._list(self._path(bay_ident), "rcs")
         else:
-            return self._list_pagination(self._path(path), "rcs",
+            return self._list_pagination(self._path(bay_ident), "rcs",
                                          limit=limit)
 
-    def get(self, id, bay_uuid):
+    def get(self, id, bay_ident):
         try:
-            return self._list(self._path(id, bay_uuid))[0]
+            return self._list(self._path(id, bay_ident))[0]
         except IndexError:
             return None
 
@@ -97,8 +99,8 @@ class ReplicationControllerManager(base.Manager):
                     "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
         return self._create(self._path(), new)
 
-    def delete(self, id, bay_uuid):
-        return self._delete(self._path(id, bay_uuid))
+    def delete(self, id, bay_ident):
+        return self._delete(self._path(id, bay_ident))
 
-    def update(self, id, bay_uuid, patch):
-        return self._update(self._path(id, bay_uuid), patch)
+    def update(self, id, bay_ident, patch):
+        return self._update(self._path(id, bay_ident), patch)
