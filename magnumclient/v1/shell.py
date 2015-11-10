@@ -669,6 +669,7 @@ def do_coe_service_show(cs, args):
            metavar='<name>',
            help='name of the container')
 @utils.arg('--image',
+           required=True,
            metavar='<image>',
            help='name or ID of the image')
 @utils.arg('--bay',

@@ -694,8 +694,21 @@ class TestCommandLineArgument(utils.TestCase):
         mock_bay.status = "CREATE_COMPLETE"
         mock_bay_get.return_value = mock_bay
         self._test_arg_success('container-create '
+                               '--image test-image '
                                '--bay test-bay')
         self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    @mock.patch('magnumclient.v1.containers.ContainerManager.create')
+    def test_container_create_failure_without_image(self, mock_create,
+                                                    mock_bay_get):
+        mock_bay = mock.MagicMock()
+        mock_bay.status = "CREATE_COMPLETE"
+        mock_bay_get.return_value = mock_bay
+        self._test_arg_failure('container-create '
+                               '--bay test-bay',
+                               self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.delete')
     def test_container_delete_success(self, mock_delete):
