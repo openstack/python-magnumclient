@@ -687,15 +687,15 @@ class TestCommandLineArgument(utils.TestCase):
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
-    # NOTE(madhuri) Skip test because of command failure
-    # @mock.patch('magnumclient.v1.containers.ContainerManager.create')
-    # def test_container_create_success(self, mock_create):
-    #    self._test_arg_success('container-create '
-    #                           '--json test')
-    #    self.assertTrue(mock_create.called)
-
-    #    self._test_arg_success('container-creat')
-    #    self.assertTrue(mock_create.called)
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    @mock.patch('magnumclient.v1.containers.ContainerManager.create')
+    def test_container_create_success(self, mock_create, mock_bay_get):
+        mock_bay = mock.MagicMock()
+        mock_bay.status = "CREATE_COMPLETE"
+        mock_bay_get.return_value = mock_bay
+        self._test_arg_success('container-create '
+                               '--bay test-bay')
+        self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.delete')
     def test_container_delete_success(self, mock_delete):
