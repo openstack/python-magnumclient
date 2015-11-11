@@ -55,7 +55,14 @@ fake_responses = {
             CREATE_RC,
         ),
     },
-    '/v1/rcs/%s/%s' % (RC1['id'], RC1['bay_uuid']):
+    '/v1/rcs/?bay_ident=%s' % (RC1['bay_uuid']):
+    {
+        'GET': (
+            {},
+            {'rcs': [RC1, RC2]},
+        ),
+    },
+    '/v1/rcs/%s/?bay_ident=%s' % (RC1['id'], RC1['bay_uuid']):
     {
         'GET': (
             {},
@@ -70,7 +77,7 @@ fake_responses = {
             UPDATED_RC,
         ),
     },
-    '/v1/rcs/%s/%s' % (RC1['name'], RC1['bay_uuid']):
+    '/v1/rcs/%s/?bay_ident=%s' % (RC1['name'], RC1['bay_uuid']):
     {
         'GET': (
             {},
@@ -106,7 +113,8 @@ class RCManagerTest(testtools.TestCase):
     def test_rc_show_by_id(self):
         rc = self.mgr.get(RC1['id'], RC1['bay_uuid'])
         expect = [
-            ('GET', '/v1/rcs/%s/%s' % (RC1['id'], RC1['bay_uuid']), {}, None)
+            ('GET', '/v1/rcs/%s/?bay_ident=%s' % (RC1['id'],
+                                                  RC1['bay_uuid']), {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(RC1['name'], rc.name)
@@ -116,8 +124,8 @@ class RCManagerTest(testtools.TestCase):
     def test_rc_show_by_name(self):
         rc = self.mgr.get(RC1['name'], RC1['bay_uuid'])
         expect = [
-            ('GET', '/v1/rcs/%s/%s' % (RC1['name'],
-                                       RC1['bay_uuid']), {}, None)
+            ('GET', '/v1/rcs/%s/?bay_ident=%s' % (RC1['name'],
+                                                  RC1['bay_uuid']), {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(RC1['name'], rc.name)
@@ -144,8 +152,9 @@ class RCManagerTest(testtools.TestCase):
     def test_rc_delete_by_id(self):
         rc = self.mgr.delete(RC1['id'], RC1['bay_uuid'])
         expect = [
-            ('DELETE', '/v1/rcs/%s/%s' % (RC1['id'],
-                                          RC1['bay_uuid']), {}, None),
+            ('DELETE', '/v1/rcs/%s/?bay_ident=%s' % (RC1['id'],
+                                                     RC1['bay_uuid']),
+             {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(rc)
@@ -153,8 +162,9 @@ class RCManagerTest(testtools.TestCase):
     def test_rc_delete_by_name(self):
         rc = self.mgr.delete(RC1['name'], RC1['bay_uuid'])
         expect = [
-            ('DELETE', '/v1/rcs/%s/%s' % (RC1['name'],
-                                          RC1['bay_uuid']), {}, None),
+            ('DELETE', '/v1/rcs/%s/?bay_ident=%s' % (RC1['name'],
+                                                     RC1['bay_uuid']),
+             {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(rc)
@@ -164,11 +174,12 @@ class RCManagerTest(testtools.TestCase):
                  'value': NEW_REPLICAS,
                  'path': '/replicas'}
         rc = self.mgr.update(id=RC1['id'],
-                             bay_uuid=RC1['bay_uuid'],
+                             bay_ident=RC1['bay_uuid'],
                              patch=patch)
         expect = [
-            ('PATCH', '/v1/rcs/%s/%s' % (RC1['id'],
-                                         RC1['bay_uuid']), {}, patch),
+            ('PATCH', '/v1/rcs/%s/?bay_ident=%s' % (RC1['id'],
+                                                    RC1['bay_uuid']), {},
+             patch),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(NEW_REPLICAS, rc.replicas)
