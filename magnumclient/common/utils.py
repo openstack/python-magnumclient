@@ -107,3 +107,7 @@ def format_labels(lbls, parse_comma=True):
             labels[k].append(v)
 
     return labels
+
+
+def print_list_field(field):
+    return lambda obj: ', '.join(getattr(obj, field))
