@@ -59,8 +59,8 @@ class ReplicationControllerManager(base.Manager):
         :param sort_dir: Optional, direction of sorting, either 'asc' (the
                          default) or 'desc'.
 
-        :param detail: Optional, boolean whether to return detailed information
-                       about ReplicationControllers.
+        :param detail: Optional, boolean whether to return detailed
+                       information about ReplicationControllers.
 
         :returns: A list of ReplicationControllers.
 
@@ -78,10 +78,10 @@ class ReplicationControllerManager(base.Manager):
             path += '?' + '&'.join(filters)
 
         if limit is None:
-            return self._list(self._path(bay_ident), "rcs")
+            return self._list(self._path(bay_ident=bay_ident), "rcs")
         else:
-            return self._list_pagination(self._path(bay_ident), "rcs",
-                                         limit=limit)
+            return self._list_pagination(self._path(bay_ident=bay_ident),
+                                         "rcs", limit=limit)
 
     def get(self, id, bay_ident):
         try:

@@ -105,7 +105,7 @@ class RCManagerTest(testtools.TestCase):
     def test_rc_list(self):
         rcs = self.mgr.list(RC1['bay_uuid'])
         expect = [
-            ('GET', '/v1/rcs', {}, None),
+            ('GET', '/v1/rcs/?bay_ident=%s' % (RC1['bay_uuid']), {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertThat(rcs, matchers.HasLength(2))
