@@ -324,7 +324,7 @@ def do_ca_sign(cs, args):
     _show_cert(cert)
 
 
-@utils.arg('baymodel', metavar='<baymodel>', help="UUID of baymodel")
+@utils.arg('baymodel', metavar='<baymodel>', help="UUID or name of baymodel")
 @utils.arg(
     'op',
     metavar='<op>',
