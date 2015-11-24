@@ -25,7 +25,7 @@ def _show_baymodel(baymodel):
 
 @utils.arg('--name',
            metavar='<name>',
-           help='Name of the bay to create.')
+           help='Name of the baymodel to create.')
 @utils.arg('--image-id',
            required=True,
            metavar='<image-id>',
