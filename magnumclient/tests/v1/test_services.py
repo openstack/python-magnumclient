@@ -57,7 +57,19 @@ fake_responses = {
             CREATE_SVC,
         ),
     },
-    '/v1/services/%s/%s' % (SERVICE1['id'], SERVICE1['bay_uuid']):
+    '/v1/services/?bay_ident=%s' % (SERVICE1['bay_uuid']):
+    {
+        'GET': (
+            {},
+            {'services': [SERVICE1, SERVICE2]},
+        ),
+        'POST': (
+            {},
+            CREATE_SVC,
+        ),
+    },
+    '/v1/services/%s/?bay_ident=%s' % (SERVICE1['id'],
+                                       SERVICE1['bay_uuid']):
     {
         'GET': (
             {},
@@ -72,7 +84,8 @@ fake_responses = {
             UPDATED_SVC,
         ),
     },
-    '/v1/services/%s/%s' % (SERVICE1['name'], SERVICE1['bay_uuid']):
+    '/v1/services/%s/?bay_ident=%s' % (SERVICE1['name'],
+                                       SERVICE1['bay_uuid']):
     {
         'GET': (
             {},
@@ -100,7 +113,8 @@ class ServiceManagerTest(testtools.TestCase):
     def test_coe_service_list(self):
         services = self.mgr.list(SERVICE1['bay_uuid'])
         expect = [
-            ('GET', '/v1/services', {}, None),
+            ('GET', '/v1/services/?bay_ident=%s' % (SERVICE1['bay_uuid']),
+             {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertThat(services, matchers.HasLength(2))
@@ -108,8 +122,9 @@ class ServiceManagerTest(testtools.TestCase):
     def test_coe_service_show_by_id(self):
         service = self.mgr.get(SERVICE1['id'], SERVICE1['bay_uuid'])
         expect = [
-            ('GET', '/v1/services/%s/%s' % (SERVICE1['id'],
-                                            SERVICE1['bay_uuid']), {}, None)
+            ('GET', '/v1/services/%s/?bay_ident=%s' % (SERVICE1['id'],
+                                                       SERVICE1['bay_uuid']),
+             {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(SERVICE1['name'], service.name)
@@ -119,8 +134,9 @@ class ServiceManagerTest(testtools.TestCase):
     def test_coe_service_show_by_name(self):
         service = self.mgr.get(SERVICE1['name'], SERVICE1['bay_uuid'])
         expect = [
-            ('GET', '/v1/services/%s/%s' % (SERVICE1['name'],
-                                            SERVICE1['bay_uuid']), {}, None)
+            ('GET', '/v1/services/%s/?bay_ident=%s' % (SERVICE1['name'],
+                                                       SERVICE1['bay_uuid']),
+             {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(SERVICE1['name'], service.name)
@@ -147,10 +163,8 @@ class ServiceManagerTest(testtools.TestCase):
     def test_coe_service_delete_by_id(self):
         service = self.mgr.delete(SERVICE1['id'], SERVICE1['bay_uuid'])
         expect = [
-            ('DELETE', '/v1/services/%s/%s' % (SERVICE1['id'],
-                                               SERVICE1['bay_uuid']),
-             {},
-             None),
+            ('DELETE', '/v1/services/%s/?bay_ident=%s' % (
+                SERVICE1['id'], SERVICE1['bay_uuid']), {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(service)
@@ -158,10 +172,8 @@ class ServiceManagerTest(testtools.TestCase):
     def test_coe_service_delete_by_name(self):
         service = self.mgr.delete(SERVICE1['name'], SERVICE1['bay_uuid'])
         expect = [
-            ('DELETE', '/v1/services/%s/%s' % (SERVICE1['name'],
-                                               SERVICE1['bay_uuid']),
-             {},
-             None),
+            ('DELETE', '/v1/services/%s/?bay_ident=%s' % (
+                SERVICE1['name'], SERVICE1['bay_uuid']), {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(service)
@@ -171,13 +183,11 @@ class ServiceManagerTest(testtools.TestCase):
                  'value': NEW_SELECTOR,
                  'path': '/selector'}
         service = self.mgr.update(service_id=SERVICE1['id'],
-                                  bay_uuid=SERVICE1['bay_uuid'],
+                                  bay_ident=SERVICE1['bay_uuid'],
                                   patch=patch)
         expect = [
-            ('PATCH', '/v1/services/%s/%s' % (SERVICE1['id'],
-                                              SERVICE1['bay_uuid']),
-             {},
-             patch),
+            ('PATCH', '/v1/services/%s/?bay_ident=%s' % (
+                SERVICE1['id'], SERVICE1['bay_uuid']), {}, patch),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(NEW_SELECTOR, service.selector)

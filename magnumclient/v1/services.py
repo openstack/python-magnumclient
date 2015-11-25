@@ -28,9 +28,11 @@ class ServiceManager(base.Manager):
     resource_class = Service
 
     @staticmethod
-    def _path(id=None, bay_uuid=None):
-        if id and bay_uuid:
-            return '/v1/services/%s/%s' % (id, bay_uuid)
+    def _path(id=None, bay_ident=None):
+        if id and bay_ident:
+            return '/v1/services/%s/?bay_ident=%s' % (id, bay_ident)
+        elif bay_ident:
+            return '/v1/services/?bay_ident=%s' % (bay_ident)
         else:
             return '/v1/services'
 
@@ -56,8 +58,8 @@ class ServiceManager(base.Manager):
         :param sort_dir: Optional, direction of sorting, either 'asc' (the
                          default) or 'desc'.
 
-        :param detail: Optional, boolean whether to return detailed information
-                       about services.
+        :param detail: Optional, boolean whether to return detailed
+                       information about services.
 
         :returns: A list of services.
 
@@ -75,14 +77,14 @@ class ServiceManager(base.Manager):
             path += '?' + '&'.join(filters)
 
         if limit is None:
-            return self._list(self._path(path), "services")
+            return self._list(self._path(bay_ident=bay_ident), "services")
         else:
-            return self._list_pagination(self._path(path), "services",
-                                         limit=limit)
+            return self._list_pagination(self._path(bay_ident=bay_ident),
+                                         "services", limit=limit)
 
-    def get(self, service_id, bay_uuid):
+    def get(self, service_id, bay_ident):
         try:
-            return self._list(self._path(service_id, bay_uuid))[0]
+            return self._list(self._path(service_id, bay_ident))[0]
         except IndexError:
             return None
 
@@ -96,8 +98,8 @@ class ServiceManager(base.Manager):
                     "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
         return self._create(self._path(), new)
 
-    def delete(self, service_id, bay_uuid):
-        return self._delete(self._path(service_id, bay_uuid))
+    def delete(self, service_id, bay_ident):
+        return self._delete(self._path(service_id, bay_ident))
 
-    def update(self, service_id, bay_uuid, patch):
-        return self._update(self._path(service_id, bay_uuid), patch)
+    def update(self, service_id, bay_ident, patch):
+        return self._update(self._path(service_id, bay_ident), patch)
