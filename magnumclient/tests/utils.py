@@ -158,3 +158,23 @@ class TestCase(testtools.TestCase):
             sys.stderr.close()
             sys.stderr = orig_stderr
         return (stdout, stderr)
+
+
+class FakeSessionResponse(object):
+
+    def __init__(self, headers, content=None, status_code=None):
+        self.headers = headers
+        self.content = content
+        self.status_code = status_code
+
+
+class FakeSession(object):
+
+    def __init__(self, headers, content=None, status_code=None):
+        self.headers = headers
+        self.content = content
+        self.status_code = status_code
+
+    def request(self, url, method, **kwargs):
+        return FakeSessionResponse(self.headers, self.content,
+                                   self.status_code)
