@@ -46,7 +46,7 @@ def do_container_create(cs, args):
     if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
         print('Bay status for %s is: %s. We can not create a %s there'
               ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
-              (bay.uuid, bay.status, "pod"))
+              (bay.uuid, bay.status, "container"))
         return
     opts = {}
     opts['name'] = args.name
