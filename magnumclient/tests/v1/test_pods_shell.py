@@ -21,12 +21,12 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
 
     @mock.patch('magnumclient.v1.pods.PodManager.list')
     def test_pod_list_success(self, mock_list):
-        self._test_arg_success('pod-list bay_ident')
+        self._test_arg_success('pod-list --bay bay_ident')
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.pods.PodManager.list')
     def test_pod_list_failure(self, mock_list):
-        self._test_arg_failure('pod-list bay_ident --wrong',
+        self._test_arg_failure('pod-list --bay bay_ident --wrong',
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
@@ -59,35 +59,28 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
 
     @mock.patch('magnumclient.v1.pods.PodManager.delete')
     def test_pod_delete_success(self, mock_delete):
-        self._test_arg_success('pod-delete xxx zzz')
+        self._test_arg_success('pod-delete xxx --bay zzz')
         self.assertTrue(mock_delete.called)
-        self.assertEqual(1, mock_delete.call_count)
-
-    @mock.patch('magnumclient.v1.pods.PodManager.delete')
-    def test_pod_delete_multiple_id_success(self, mock_delete):
-        self._test_arg_success('pod-delete xxx xyz zzz')
-        self.assertTrue(mock_delete.called)
-        self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.pods.PodManager.delete')
     def test_pod_delete_failure_no_arg(self, mock_delete):
-        self._test_arg_failure('pod-delete', self._few_argument_error)
+        self._test_arg_failure('pod-delete xxx', self._mandatory_arg_error)
         self.assertFalse(mock_delete.called)
 
     @mock.patch('magnumclient.v1.pods.PodManager.update')
     def test_pod_update_success(self, mock_update):
-        self._test_arg_success('pod-update xxx zzz replace xxx=xxx')
+        self._test_arg_success('pod-update xxx --bay zzz replace xxx=xxx')
         self.assertTrue(mock_update.called)
         self.assertEqual(1, mock_update.call_count)
 
     @mock.patch('magnumclient.v1.pods.PodManager.update')
     def test_pod_update_failure_no_arg(self, mock_update):
-        self._test_arg_failure('pod-update', self._few_argument_error)
+        self._test_arg_failure('pod-update xxx', self._few_argument_error)
         self.assertFalse(mock_update.called)
 
     @mock.patch('magnumclient.v1.pods.PodManager.get')
     def test_pod_show_success(self, mock_show):
-        self._test_arg_success('pod-show xxx zzz')
+        self._test_arg_success('pod-show xxx --bay zzz')
         self.assertTrue(mock_show.called)
 
     @mock.patch('magnumclient.v1.pods.PodManager.get')

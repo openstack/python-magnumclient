@@ -23,7 +23,8 @@ def _show_pod(pod):
     utils.print_dict(pod._info)
 
 
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 def do_pod_list(cs, args):
     """Print a list of registered pods."""
     pods = cs.pods.list(args.bay)
@@ -64,7 +65,8 @@ def do_pod_create(cs, args):
 
 
 @utils.arg('pod', metavar='<pod-id>', help="UUID or name of pod")
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -91,10 +93,10 @@ def do_pod_update(cs, args):
 
 
 @utils.arg('pods',
-           metavar='<pods>',
-           nargs='+',
+           metavar='<pods>', nargs='+',
            help='ID or name of the (pod)s to delete.')
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 def do_pod_delete(cs, args):
     """Delete specified pod."""
     for pod in args.pods:
@@ -109,7 +111,8 @@ def do_pod_delete(cs, args):
 @utils.arg('pod',
            metavar='<pod>',
            help='ID or name of the pod to show.')
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 def do_pod_show(cs, args):
     """Show details about the given pod."""
     pod = cs.pods.get(args.pod, args.bay)
