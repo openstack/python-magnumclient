@@ -35,10 +35,10 @@ class BayManager(base.Manager):
 
     def list(self, limit=None, marker=None, sort_key=None,
              sort_dir=None, detail=False):
-        """Retrieve a list of port.
+        """Retrieve a list of bays.
 
-        :param marker: Optional, the UUID of a port, eg the last
-                       port from a previous result set. Return
+        :param marker: Optional, the UUID of a bay, eg the last
+                       bay from a previous result set. Return
                        the next result set.
         :param limit: The maximum number of results to return per
                       request, if:
