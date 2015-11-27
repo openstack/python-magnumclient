@@ -68,4 +68,4 @@ def from_response(response, message=None, traceback=None, method=None,
         # This is to work around that problem.
         response.text = ''
 
-    return exceptions.from_response(response, message, url)
+    return exceptions.from_response(response, method, url)
