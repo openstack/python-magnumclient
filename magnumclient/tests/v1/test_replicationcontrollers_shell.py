@@ -22,13 +22,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.list')
     def test_rc_list_success(self, mock_list):
-        self._test_arg_success('rc-list bay_ident')
+        self._test_arg_success('rc-list --bay bay_ident')
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.list')
     def test_rc_list_failure(self, mock_list):
-        self._test_arg_failure('rc-list bay_ident --wrong',
+        self._test_arg_failure('rc-list --bay bay_ident --wrong',
                                self._unrecognized_arg_error)
         self.assertFalse(mock_list.called)
 
@@ -65,43 +65,37 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.delete')
     def test_rc_delete_success(self, mock_delete):
-        self._test_arg_success('rc-delete xxx zzz')
+        self._test_arg_success('rc-delete xxx --bay zzz')
         self.assertTrue(mock_delete.called)
-
-    @mock.patch('magnumclient.v1.replicationcontrollers.'
-                'ReplicationControllerManager.delete')
-    def test_rc_delete_multiple_id_success(self, mock_delete):
-        self._test_arg_success('rc-delete xxx xyz zzz')
-        self.assertTrue(mock_delete.called)
-        self.assertEqual(2, mock_delete.call_count)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.delete')
     def test_rc_delete_failure_no_arg(self, mock_delete):
-        self._test_arg_failure('rc-delete', self._few_argument_error)
+        self._test_arg_failure('rc-delete xxx', self._mandatory_arg_error)
         self.assertFalse(mock_delete.called)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.get')
     def test_rc_show_success(self, mock_show):
-        self._test_arg_success('rc-show xxx zzz')
+        self._test_arg_success('rc-show xxx --bay zzz')
         self.assertTrue(mock_show.called)
+        self.assertEqual(1, mock_show.call_count)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.get')
     def test_rc_show_failure_no_arg(self, mock_show):
-        self._test_arg_failure('rc-show', self._few_argument_error)
+        self._test_arg_failure('rc-show xxx', self._mandatory_arg_error)
         self.assertFalse(mock_show.called)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.update')
     def test_rc_update_success(self, mock_update):
-        self._test_arg_success('rc-update xxx zzz replace xxx=xxx')
+        self._test_arg_success('rc-update xxx --bay zzz replace xxx=xxx')
         self.assertTrue(mock_update.called)
         self.assertEqual(1, mock_update.call_count)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
                 'ReplicationControllerManager.update')
     def test_rc_update_failure_no_arg(self, mock_update):
-        self._test_arg_failure('rc-update', self._few_argument_error)
+        self._test_arg_failure('rc-update xxx', self._few_argument_error)
         self.assertFalse(mock_update.called)
