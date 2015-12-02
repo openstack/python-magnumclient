@@ -22,7 +22,8 @@ def _show_rc(rc):
     utils.print_dict(rc._info)
 
 
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 def do_rc_list(cs, args):
     """Print a list of registered replication controllers."""
     rcs = cs.rcs.list(args.bay)
@@ -66,7 +67,8 @@ def do_rc_create(cs, args):
 
 
 @utils.arg('rc', metavar='<rc>', help="UUID or name of replication controller")
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -96,7 +98,8 @@ def do_rc_update(cs, args):
            metavar='<rcs>',
            nargs='+',
            help='ID or name of the replication (controller)s to delete.')
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 def do_rc_delete(cs, args):
     """Delete specified replication controller."""
     for rc in args.rcs:
@@ -110,7 +113,8 @@ def do_rc_delete(cs, args):
 @utils.arg('rc',
            metavar='<rc>',
            help='ID or name of the replication controller to show.')
-@utils.arg('bay', metavar='<bay>', help="UUID or Name of Bay")
+@utils.arg('--bay', required=True,
+           metavar='<bay>', help="UUID or Name of Bay")
 def do_rc_show(cs, args):
     """Show details about the given replication controller."""
     rc = cs.rcs.get(args.rc, args.bay)
