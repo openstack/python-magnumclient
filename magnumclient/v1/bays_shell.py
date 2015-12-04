@@ -38,6 +38,8 @@ def do_bay_list(cs, args):
            help='ID or name of the baymodel.')
 @utils.arg('--node-count',
            metavar='<node-count>',
+           type=int,
+           default=1,
            help='The bay node count.')
 @utils.arg('--master-count',
            metavar='<master-count>',

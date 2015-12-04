@@ -74,6 +74,12 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.create')
+    def test_bay_create_failure_invalid_node_count(self, mock_create):
+        self._test_arg_failure('bay-create --baymodel xxx --node-count test',
+                               self._invalid_value_error)
+        self.assertFalse(mock_create.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.create')
     def test_bay_create_failure_only_bay_create_timeout(self, mock_create):
         self._test_arg_failure('bay-create --timeout 15',
                                self._mandatory_arg_error)
