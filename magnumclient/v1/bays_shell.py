@@ -43,6 +43,7 @@ def do_bay_list(cs, args):
            help='The bay node count.')
 @utils.arg('--master-count',
            metavar='<master-count>',
+           type=int,
            default=1,
            help='The number of master nodes for the bay.')
 @utils.arg('--discovery-url',

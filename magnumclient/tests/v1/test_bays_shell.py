@@ -91,6 +91,12 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
 
+    @mock.patch('magnumclient.v1.bays.BayManager.create')
+    def test_bay_create_failure_invalid_master_count(self, mock_create):
+        self._test_arg_failure('bay-create --baymodel xxx --master-count test',
+                               self._invalid_value_error)
+        self.assertFalse(mock_create.called)
+
     @mock.patch('magnumclient.v1.bays.BayManager.delete')
     def test_bay_delete_success(self, mock_delete):
         self._test_arg_success('bay-delete xxx')
