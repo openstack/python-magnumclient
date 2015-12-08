@@ -91,6 +91,9 @@ def _show_baymodel(baymodel):
 @utils.arg('--public',
            action='store_true', default=False,
            help='Make baymodel public.')
+@utils.arg('--registry-enabled',
+           action='store_true', default=False,
+           help='Enable docker registry in the Bay')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
     opts = {}
@@ -112,6 +115,7 @@ def do_baymodel_create(cs, args):
     opts['labels'] = magnum_utils.format_labels(args.labels)
     opts['tls_disabled'] = args.tls_disabled
     opts['public'] = args.public
+    opts['registry_enabled'] = args.registry_enabled
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)
