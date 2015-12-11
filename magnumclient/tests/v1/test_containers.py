@@ -59,6 +59,17 @@ fake_responses = {
             CREATE_CONTAINER,
         ),
     },
+    '/v1/containers/?bay_ident=25d5d872-1f4e-4134-ae15-c5fa38cb09a3':
+    {
+        'GET': (
+            {},
+            {'containers': [CONTAINER1, CONTAINER2]},
+        ),
+        'POST': (
+            {},
+            CREATE_CONTAINER,
+        ),
+    },
     '/v1/containers/%s' % CONTAINER1['id']:
     {
         'GET': (
@@ -201,6 +212,16 @@ class ContainerManagerTest(testtools.TestCase):
         containers = self.mgr.list()
         expect = [
             ('GET', '/v1/containers', {}, None),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertThat(containers, matchers.HasLength(2))
+
+    def test_container_list_with_bay(self):
+        containers = self.mgr.list(
+            bay_ident='25d5d872-1f4e-4134-ae15-c5fa38cb09a3')
+        expect = [
+            ('GET', '/v1/containers/?bay_ident=25d5d872-1f4e-4134'
+                    '-ae15-c5fa38cb09a3', {}, None),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertThat(containers, matchers.HasLength(2))

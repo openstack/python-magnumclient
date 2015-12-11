@@ -25,6 +25,11 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.containers.ContainerManager.list')
+    def test_container_list_success_with_bay(self, mock_list):
+        self._test_arg_success('container-list --bay bay_uuid')
+        self.assertTrue(mock_list.called)
+
+    @mock.patch('magnumclient.v1.containers.ContainerManager.list')
     def test_container_list_failure(self, mock_list):
         self._test_arg_failure('container-list --wrong',
                                self._unrecognized_arg_error)
