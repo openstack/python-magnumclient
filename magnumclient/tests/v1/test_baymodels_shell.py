@@ -35,7 +35,36 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--labels key=val '
                                '--master-flavor-id test_flavor '
                                '--docker-volume-size 10 '
-                               '--public')
+                               '--public '
+                               '--server-type vm')
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_success('baymodel-create '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe kubernetes '
+                               '--name test '
+                               '--server-type vm')
+
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_success_no_servertype(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test '
+                               '--image-id test_image '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--coe swarm '
+                               '--dns-nameserver test_dns '
+                               '--flavor-id test_flavor '
+                               '--fixed-network public '
+                               '--network-driver test_driver '
+                               '--labels key=val '
+                               '--master-flavor-id test_flavor '
+                               '--docker-volume-size 10 '
+                               '--public ')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('baymodel-create '
@@ -68,7 +97,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--external-network-id test_net '
                                '--image-id test_image '
                                '--coe swarm'
-                               '--public')
+                               '--public '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -90,8 +120,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm'
-                               )
+                               '--coe swarm '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -101,7 +131,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm')
+                               '--coe swarm '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -111,7 +142,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm')
+                               '--coe swarm '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -121,7 +153,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm')
+                               '--coe swarm '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -132,7 +165,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--external-network-id test_net '
                                '--image-id test_image '
                                '--coe swarm '
-                               '--http-proxy http_proxy ')
+                               '--http-proxy http_proxy '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -143,7 +177,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--external-network-id test_net '
                                '--image-id test_image '
                                '--coe swarm '
-                               '--https-proxy https_proxy ')
+                               '--https-proxy https_proxy '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -154,7 +189,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--external-network-id test_net '
                                '--image-id test_image '
                                '--coe swarm '
-                               '--no-proxy no_proxy ')
+                               '--no-proxy no_proxy '
+                               '--server-type vm')
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_labels_success(self, mock_create):
@@ -164,7 +200,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm')
+                               '--coe swarm '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -176,7 +213,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm')
+                               '--coe swarm '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -187,7 +225,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm')
+                               '--coe swarm '
+                               '--server-type vm')
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
@@ -211,6 +250,10 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
 
         self._test_arg_failure('baymodel-create '
                                '--coe test', self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('baymodel-create '
+                               '--server-type test', self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
 
         self._test_arg_failure('baymodel-create', self._mandatory_arg_error)
