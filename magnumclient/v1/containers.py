@@ -31,11 +31,17 @@ class ContainerManager(base.Manager):
     resource_class = Container
 
     @staticmethod
-    def _path(id=None):
-        return '/v1/containers/%s' % id if id else '/v1/containers'
+    def _path(id=None, bay_ident=None):
+
+        if id:
+            return '/v1/containers/%s' % id
+        elif bay_ident:
+            return '/v1/containers/?bay_ident=%s' % (bay_ident)
+        else:
+            return '/v1/containers'
 
     def list(self, marker=None, limit=None, sort_key=None,
-             sort_dir=None, detail=False):
+             sort_dir=None, detail=False, bay_ident=None):
         """Retrieve a list of containers.
 
         :param marker: Optional, the UUID of a containers, eg the last
@@ -75,11 +81,14 @@ class ContainerManager(base.Manager):
         if limit is None:
             # TODO(yuanying): if endpoint returns "map",
             # change None to response_key
-            return self._list(self._path(path), "containers")
+            return self._list(self._path(path, bay_ident=bay_ident),
+                              "containers")
         else:
             # TODO(yuanying): if endpoint returns "map",
             # change None to response_key
-            return self._list_pagination(self._path(path), "containers",
+            return self._list_pagination(self._path(path,
+                                                    bay_ident=bay_ident),
+                                         "containers",
                                          limit=limit)
 
     def get(self, id):

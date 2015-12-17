@@ -57,10 +57,14 @@ def do_container_create(cs, args):
     _show_container(cs.containers.create(**opts))
 
 
+@utils.arg('--bay',
+           metavar='<bay>', help="UUID or Name of Bay")
 def do_container_list(cs, args):
     """Print a list of available containers."""
-    containers = cs.containers.list()
-    columns = ('uuid', 'name', 'status')
+    opts = {}
+    opts['bay_ident'] = args.bay
+    containers = cs.containers.list(**opts)
+    columns = ('uuid', 'name', 'status', 'bay_uuid')
     utils.print_list(containers, columns,
                      {'versions': magnum_utils.print_list_field('versions')})
 
