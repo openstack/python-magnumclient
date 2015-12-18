@@ -51,6 +51,8 @@ def do_bay_list(cs, args):
            help='Specifies custom discovery url for node discovery.')
 @utils.arg('--timeout',
            metavar='<timeout>',
+           type=int,
+           default=0,
            help='The timeout for bay creation in minutes. Set '
                 'to 0 for no timeout. The default is no timeout.')
 def do_bay_create(cs, args):

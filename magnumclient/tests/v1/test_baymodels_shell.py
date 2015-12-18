@@ -33,7 +33,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--network-driver test_driver '
                                '--labels key=val '
                                '--master-flavor-id test_flavor '
-                               '--docker-volume-size 10'
+                               '--docker-volume-size 10 '
                                '--public')
         self.assertTrue(mock_create.called)
 

@@ -69,6 +69,7 @@ def _show_baymodel(baymodel):
            'of the bay.')
 @utils.arg('--docker-volume-size',
            metavar='<docker-volume-size>',
+           type=int,
            help='Specify the number of size in GB '
                 'for the docker volume to use.')
 @utils.arg('--http-proxy',
