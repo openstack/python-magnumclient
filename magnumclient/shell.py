@@ -49,8 +49,8 @@ try:
 except ImportError:
     pass
 
+from magnumclient import exceptions as exc
 from magnumclient.openstack.common.apiclient import auth
-from magnumclient.openstack.common.apiclient import exceptions as exc
 from magnumclient.openstack.common import cliutils
 from magnumclient.v1 import client as client_v1
 from magnumclient.v1 import shell as shell_v1

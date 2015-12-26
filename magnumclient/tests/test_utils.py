@@ -18,7 +18,7 @@
 import six
 
 from magnumclient.common import utils
-from magnumclient.openstack.common.apiclient import exceptions as exc
+from magnumclient import exceptions as exc
 from magnumclient.openstack.common import cliutils
 from magnumclient.tests import utils as test_utils
 

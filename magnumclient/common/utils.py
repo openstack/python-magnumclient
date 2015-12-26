@@ -17,8 +17,8 @@
 
 import json
 
-from magnumclient.openstack.common._i18n import _
-from magnumclient.openstack.common.apiclient import exceptions as exc
+from magnumclient import exceptions as exc
+from magnumclient.i18n import _
 
 
 def common_filters(marker=None, limit=None, sort_key=None, sort_dir=None):
