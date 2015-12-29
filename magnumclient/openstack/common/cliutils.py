@@ -224,6 +224,9 @@ def print_dict(dct, dict_property="Property", wrap=0):
             for line in lines:
                 pt.add_row([col1, line])
                 col1 = ''
+        elif isinstance(v, list):
+            val = str([str(i) for i in v])
+            pt.add_row([k, val])
         else:
             pt.add_row([k, v])
 
