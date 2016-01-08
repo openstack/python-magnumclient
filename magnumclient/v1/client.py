@@ -34,7 +34,7 @@ class Client(object):
                  endpoint_type=None, service_type='container',
                  region_name=None, input_auth_token=None,
                  session=None, password=None, auth_type='password',
-                 interface='public', service_name=None):
+                 interface='public', service_name=None, insecure=False):
 
         # We have to keep the api_key are for backwards compat, but let's
         # remove it from the rest of our code since it's not a keystone
@@ -74,7 +74,8 @@ class Client(object):
             # support other auth by passing in a Session, which is the
             # right thing to do anyway
             auth_plugin = loader.load_from_options(**loader_kwargs)
-            session = ksa_session.Session(auth=auth_plugin)
+            session = ksa_session.Session(
+                auth=auth_plugin, verify=(not insecure))
 
         client_kwargs = {}
         if magnum_url:

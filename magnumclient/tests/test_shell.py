@@ -189,6 +189,14 @@ class ShellTest(utils.TestCase):
         _, client_kwargs = mock_client.call_args_list[0]
         self.assertEqual('container', client_kwargs['service_type'])
 
+    @mock.patch('magnumclient.v1.bays_shell.do_bay_list')
+    @mock.patch('magnumclient.v1.client.ksa_session')
+    def test_insecure(self, mock_session, mock_bay_list):
+        self.make_env()
+        self.shell('--insecure bay-list')
+        _, session_kwargs = mock_session.Session.call_args_list[0]
+        self.assertEqual(False, session_kwargs['verify'])
+
     @mock.patch('sys.stdin', side_effect=mock.MagicMock)
     @mock.patch('getpass.getpass', side_effect=EOFError)
     def test_no_password(self, mock_getpass, mock_stdin):
@@ -225,7 +233,7 @@ class ShellTest(utils.TestCase):
             endpoint_type='publicURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
             service_type='container', region_name=expected_region_name,
-            magnum_url=None)
+            magnum_url=None, insecure=False)
 
     def test_main_option_region(self):
         self.make_env()
@@ -250,7 +258,7 @@ class ShellTest(utils.TestCase):
             endpoint_type='publicURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
             service_type='container', region_name=None,
-            magnum_url=None)
+            magnum_url=None, insecure=False)
 
     @mock.patch('magnumclient.v1.client.Client')
     def test_main_endpoint_internal(self, mock_client):
@@ -261,7 +269,7 @@ class ShellTest(utils.TestCase):
             endpoint_type='internalURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
             service_type='container', region_name=None,
-            magnum_url=None)
+            magnum_url=None, insecure=False)
 
 
 class ShellTestKeystoneV3(ShellTest):

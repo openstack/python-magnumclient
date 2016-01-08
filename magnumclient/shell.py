@@ -323,6 +323,12 @@ class OpenStackMagnumShell(object):
         parser.add_argument('--bypass_url',
                             help=argparse.SUPPRESS)
 
+        parser.add_argument('--insecure',
+                            default=cliutils.env('MAGNUMCLIENT_INSECURE',
+                                                 default=False),
+                            action='store_true',
+                            help="Do not verify https connections")
+
         # The auth-system-plugins might require some extra options
         auth.load_auth_system_opts(parser)
 
@@ -431,10 +437,10 @@ class OpenStackMagnumShell(object):
 
         (os_username, os_tenant_name, os_tenant_id,
          os_auth_url, os_auth_system, endpoint_type,
-         service_type, bypass_url) = (
+         service_type, bypass_url, insecure) = (
             (args.os_username, args.os_tenant_name, args.os_tenant_id,
              args.os_auth_url, args.os_auth_system, args.endpoint_type,
-             args.service_type, args.bypass_url)
+             args.service_type, args.bypass_url, args.insecure)
         )
 
         if os_auth_system and os_auth_system != "keystone":
@@ -524,7 +530,8 @@ class OpenStackMagnumShell(object):
                                 service_type=service_type,
                                 region_name=args.os_region_name,
                                 magnum_url=bypass_url,
-                                endpoint_type=endpoint_type)
+                                endpoint_type=endpoint_type,
+                                insecure=insecure)
 
         args.func(self.cs, args)
 
