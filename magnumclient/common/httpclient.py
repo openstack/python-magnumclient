@@ -295,6 +295,7 @@ class SessionClient(adapter.LegacyJsonAdapter):
 
         kwargs.setdefault('user_agent', self.user_agent)
         kwargs.setdefault('auth', self.auth)
+        kwargs.setdefault('endpoint_override', self.endpoint_override)
 
         endpoint_filter = kwargs.setdefault('endpoint_filter', {})
         endpoint_filter.setdefault('interface', self.interface)

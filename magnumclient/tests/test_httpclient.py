@@ -15,10 +15,12 @@
 
 import json
 
+import mock
 import six
 
 from magnumclient.common import httpclient as http
 from magnumclient import exceptions as exc
+from magnumclient.openstack.common.apiclient.exceptions import GatewayTimeout
 from magnumclient.tests import utils
 
 
@@ -269,3 +271,29 @@ class SessionClientTest(utils.BaseTestCase):
                                   'GET', '/v1/resources')
 
         self.assertEqual('Internal Server Error (HTTP 500)', str(error))
+
+    def test_bypass_url(self):
+        fake_response = utils.FakeSessionResponse(
+            {}, content="", status_code=201)
+        fake_session = mock.MagicMock()
+        fake_session.request.side_effect = [fake_response]
+
+        client = http.SessionClient(
+            session=fake_session, endpoint_override='http://magnum')
+
+        client.json_request('GET', '/v1/bays')
+        self.assertEqual(
+            fake_session.request.call_args[1]['endpoint_override'],
+            'http://magnum'
+        )
+
+    def test_exception(self):
+        fake_response = utils.FakeSessionResponse(
+            {}, content="", status_code=504)
+        fake_session = mock.MagicMock()
+        fake_session.request.side_effect = [fake_response]
+        client = http.SessionClient(
+            session=fake_session, endpoint_override='http://magnum')
+        self.assertRaises(GatewayTimeout,
+                          client.json_request,
+                          'GET', '/v1/resources')
