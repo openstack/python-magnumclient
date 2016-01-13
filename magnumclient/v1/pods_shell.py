@@ -15,6 +15,7 @@
 import os.path
 
 from magnumclient.common import utils as magnum_utils
+from magnumclient import exceptions
 from magnumclient.openstack.common import cliutils as utils
 
 
@@ -27,6 +28,12 @@ def _show_pod(pod):
            metavar='<bay>', help="UUID or Name of Bay")
 def do_pod_list(cs, args):
     """Print a list of registered pods."""
+    bay = cs.bays.get(args.bay)
+    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
+        raise exceptions.InvalidAttribute(
+            'Bay status for %s is: %s. We can not list pods in there until'
+            ' the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+            (bay.uuid, bay.status))
     pods = cs.pods.list(args.bay)
     columns = ('uuid', 'name')
     utils.print_list(pods, columns,

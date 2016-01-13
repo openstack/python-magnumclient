@@ -14,13 +14,18 @@
 
 import mock
 
+from magnumclient import exceptions
 from magnumclient.tests.v1 import shell_test_base
 
 
 class ShellTest(shell_test_base.TestCommandLineArgument):
 
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.pods.PodManager.list')
-    def test_pod_list_success(self, mock_list):
+    def test_pod_list_success(self, mock_list, mock_get):
+        mockbay = mock.MagicMock()
+        mockbay.status = "CREATE_COMPLETE"
+        mock_get.return_value = mockbay
         self._test_arg_success('pod-list --bay bay_ident')
         self.assertTrue(mock_list.called)
 
@@ -28,6 +33,16 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     def test_pod_list_failure(self, mock_list):
         self._test_arg_failure('pod-list --bay bay_ident --wrong',
                                self._unrecognized_arg_error)
+        self.assertFalse(mock_list.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    @mock.patch('magnumclient.v1.pods.PodManager.list')
+    def test_pod_list_failure_invalid_bay_status(self, mock_list, mock_get):
+        mockbay = mock.MagicMock()
+        mockbay.status = "CREATE_IN_PROGRESS"
+        mock_get.return_value = mockbay
+        self.assertRaises(exceptions.InvalidAttribute, self._test_arg_failure,
+                          'pod-list --bay bay_ident', self._bay_status_error)
         self.assertFalse(mock_list.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.get')
