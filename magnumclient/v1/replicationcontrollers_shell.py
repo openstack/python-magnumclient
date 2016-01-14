@@ -15,6 +15,7 @@
 import os.path
 
 from magnumclient.common import utils as magnum_utils
+from magnumclient import exceptions
 from magnumclient.openstack.common import cliutils as utils
 
 
@@ -48,11 +49,11 @@ def do_rc_create(cs, args):
     """Create a replication controller."""
     bay = cs.bays.get(args.bay)
     if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
-        print('Bay status for %s is: %s. We can not create a '
-              'replication controller in bay until the status '
-              'is CREATE_COMPLETE or UPDATE_COMPLETE.' %
-              (args.bay, bay.status))
-        return
+        raise exceptions.InvalidAttribute(
+            'Bay status for %s is: %s. We cannot create a '
+            'replication controller in bay until the status '
+            'is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+            (args.bay, bay.status))
 
     opts = {}
     opts['manifest_url'] = args.manifest_url
