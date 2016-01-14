@@ -78,11 +78,11 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         mockbay = mock.MagicMock()
         mockbay.status = "CREATE_IN_PROGRESS"
         mock_get.return_value = mockbay
-        self._test_arg_failure('pod-create '
-                               '--bay xxx '
-                               '--manifest test '
-                               '--manifest-url test_url',
-                               self._bay_status_error)
+        self.assertRaises(exceptions.InvalidAttribute, self._test_arg_failure,
+                          'pod-create --bay xxx '
+                          '--manifest test '
+                          '--manifest-url test_url',
+                          self._bay_status_error)
         self.assertFalse(mock_list.called)
 
     @mock.patch('magnumclient.v1.pods.PodManager.delete')
