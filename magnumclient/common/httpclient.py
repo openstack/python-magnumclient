@@ -167,7 +167,8 @@ class HTTPClient(object):
         # Read body into string if it isn't obviously image data
         body_str = None
         if resp.getheader('content-type', None) != 'application/octet-stream':
-            body_str = ''.join([chunk for chunk in body_iter])
+            # decoding byte to string is necessary for Python 3.4 compatibility
+            body_str = ''.join([chunk.decode("utf-8") for chunk in body_iter])
             self.log_http_response(resp, body_str)
             body_iter = six.StringIO(body_str)
         else:
