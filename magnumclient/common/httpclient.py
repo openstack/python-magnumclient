@@ -167,7 +167,15 @@ class HTTPClient(object):
         # Read body into string if it isn't obviously image data
         body_str = None
         if resp.getheader('content-type', None) != 'application/octet-stream':
-            body_str = ''.join([chunk for chunk in body_iter])
+            # decoding byte to string is necessary for Python 3.4 compatibility
+            # this issues has not been found with Python 3.4 unit tests
+            # because the test creates a fake http response of type str
+            # the if statement satisfies test (str) and real (bytes) behavior
+            body_list = [
+                chunk.decode("utf-8") if isinstance(chunk, bytes)
+                else chunk for chunk in body_iter
+            ]
+            body_str = ''.join(body_list)
             self.log_http_response(resp, body_str)
             body_iter = six.StringIO(body_str)
         else:
