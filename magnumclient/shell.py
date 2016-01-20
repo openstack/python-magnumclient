@@ -523,7 +523,8 @@ class OpenStackMagnumShell(object):
                                 auth_url=os_auth_url,
                                 service_type=service_type,
                                 region_name=args.os_region_name,
-                                magnum_url=bypass_url)
+                                magnum_url=bypass_url,
+                                endpoint_type=endpoint_type)
 
         args.func(self.cs, args)
 

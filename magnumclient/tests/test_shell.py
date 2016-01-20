@@ -222,9 +222,10 @@ class ShellTest(utils.TestCase):
         self.shell(command)
         mock_client.assert_called_once_with(
             username='username', api_key='password',
-            project_id='', project_name='tenant_name',
-            auth_url=self.AUTH_URL, service_type='container',
-            region_name=expected_region_name, magnum_url=None)
+            endpoint_type='publicURL', project_id='',
+            project_name='tenant_name', auth_url=self.AUTH_URL,
+            service_type='container', region_name=expected_region_name,
+            magnum_url=None)
 
     def test_main_option_region(self):
         self.make_env()
@@ -239,6 +240,28 @@ class ShellTest(utils.TestCase):
     def test_main_no_region(self):
         self.make_env()
         self._test_main_region('bay-list', None)
+
+    @mock.patch('magnumclient.v1.client.Client')
+    def test_main_endpoint_public(self, mock_client):
+        self.make_env()
+        self.shell('--endpoint-type publicURL bay-list')
+        mock_client.assert_called_once_with(
+            username='username', api_key='password',
+            endpoint_type='publicURL', project_id='',
+            project_name='tenant_name', auth_url=self.AUTH_URL,
+            service_type='container', region_name=None,
+            magnum_url=None)
+
+    @mock.patch('magnumclient.v1.client.Client')
+    def test_main_endpoint_internal(self, mock_client):
+        self.make_env()
+        self.shell('--endpoint-type internalURL bay-list')
+        mock_client.assert_called_once_with(
+            username='username', api_key='password',
+            endpoint_type='internalURL', project_id='',
+            project_name='tenant_name', auth_url=self.AUTH_URL,
+            service_type='container', region_name=None,
+            magnum_url=None)
 
 
 class ShellTestKeystoneV3(ShellTest):
