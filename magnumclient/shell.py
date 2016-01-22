@@ -396,6 +396,10 @@ class OpenStackMagnumShell(object):
 
     def main(self, argv):
 
+        # NOTE(Christoph Jansen): With Python 3.4 argv somehow becomes a Map.
+        #                         This hack fixes it.
+        argv = list(argv)
+
         # Parse args once to find version and debug settings
         parser = self.get_base_parser()
         (options, args) = parser.parse_known_args(argv)
