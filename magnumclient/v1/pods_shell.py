@@ -54,10 +54,10 @@ def do_pod_create(cs, args):
     """Create a pod."""
     bay = cs.bays.get(args.bay)
     if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
-        print('Bay status for %s is: %s. We can not create a %s there'
-              ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
-              (bay.uuid, bay.status, "pod"))
-        return
+        raise exceptions.InvalidAttribute(
+            'Bay status for %s is: %s. We cannot create a %s'
+            ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+            (bay.uuid, bay.status, "pod"))
     opts = {}
     opts['manifest_url'] = args.manifest_url
     opts['bay_uuid'] = bay.uuid

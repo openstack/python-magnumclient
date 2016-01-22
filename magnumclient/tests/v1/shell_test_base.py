@@ -52,7 +52,7 @@ class TestCommandLineArgument(utils.TestCase):
         ]
 
     _bay_status_error = [
-        '^Bay status for',
+        '.*?^Bay status for',
         ]
 
     def setUp(self):
