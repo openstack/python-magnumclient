@@ -27,6 +27,14 @@ def _show_rc(rc):
            metavar='<bay>', help="UUID or Name of Bay")
 def do_rc_list(cs, args):
     """Print a list of registered replication controllers."""
+    bay = cs.bays.get(args.bay)
+    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
+        raise exceptions.InvalidAttribute(
+            'Bay status for %s is: %s. We cannot list '
+            'replication controllers in bay until the bay status '
+            'is CREATE_COMPLETE or UPDATE_COMPLETE.' %
+            (args.bay, bay.status))
+
     rcs = cs.rcs.list(args.bay)
     columns = ('uuid', 'name')
     utils.print_list(rcs, columns,
