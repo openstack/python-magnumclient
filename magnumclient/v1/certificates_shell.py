@@ -28,12 +28,6 @@ def _show_cert(certificate):
 def do_ca_show(cs, args):
     """Show details about the CA certificate for a bay."""
     bay = cs.bays.get(args.bay)
-    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
-        print('Bay status for %s is: %s. We can not create a %s there'
-              ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
-              (bay.uuid, bay.status, 'certificate'))
-        return
-
     opts = {
         'bay_uuid': bay.uuid
     }
@@ -52,12 +46,6 @@ def do_ca_show(cs, args):
 def do_ca_sign(cs, args):
     """Generate the CA certificate for a bay."""
     bay = cs.bays.get(args.bay)
-    if bay.status not in ['CREATE_COMPLETE', 'UPDATE_COMPLETE']:
-        print('Bay status for %s is: %s. We can not create a %s there'
-              ' until the status is CREATE_COMPLETE or UPDATE_COMPLETE.' %
-              (bay.uuid, bay.status, 'certificate'))
-        return
-
     opts = {
         'bay_uuid': bay.uuid
     }

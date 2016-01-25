@@ -30,16 +30,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--bay xxx')
         self.assertTrue(mock_cert_get.called)
 
-    @mock.patch('magnumclient.v1.bays.BayManager.get')
-    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
-    def test_ca_show_with_wrong_status(self, mock_cert_get, mock_bay_get):
-        mockbay = mock.MagicMock()
-        mockbay.status = "FAILED"
-        mock_bay_get.return_value = mockbay
-        self._test_arg_success('ca-show '
-                               '--bay xxx')
-        self.assertFalse(mock_cert_get.called)
-
     @mock.patch('os.path.isfile')
     @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.certificates.CertificateManager.create')
@@ -57,26 +47,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                    '--csr path/csr.pem '
                                    '--bay xxx')
             self.assertTrue(mock_cert_create.called)
-
-    @mock.patch('os.path.isfile')
-    @mock.patch('magnumclient.v1.bays.BayManager.get')
-    @mock.patch('magnumclient.v1.certificates.CertificateManager.create')
-    def test_ca_sign_with_wrong_status(
-        self, mock_cert_create, mock_bay_get, mock_isfile):
-        mock_isfile.return_value = True
-        mockbay = mock.MagicMock()
-        mockbay.status = "FAILED"
-        mock_bay_get.return_value = mockbay
-
-        fake_csr = 'fake-csr'
-        file_mock = mock.mock_open(read_data=fake_csr)
-        with mock.patch.object(certificates_shell, 'open', file_mock):
-            self._test_arg_success('ca-sign '
-                                   '--csr path/csr.pem '
-                                   '--bay xxx')
-            self.assertFalse(mock_isfile.called)
-            self.assertFalse(file_mock.called)
-            self.assertFalse(mock_cert_create.called)
 
     @mock.patch('os.path.isfile')
     @mock.patch('magnumclient.v1.bays.BayManager.get')
