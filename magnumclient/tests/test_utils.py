@@ -15,6 +15,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import collections
 import six
 
 from magnumclient.common import utils
@@ -181,6 +182,16 @@ class CliUtilsTest(test_utils.BaseTestCase):
 
     def test_keys_and_vals_to_strs(self):
         dict_in = {u'a': u'1', u'b': {u'x': 1, 'y': u'2', u'z': u'3'}, 'c': 7}
-        dict_exp = {'a': '1', 'b': {'x': 1, 'y': '2', 'z': '3'}, 'c': 7}
+
+        dict_exp = collections.OrderedDict(
+            {'a': '1',
+             'b': collections.OrderedDict({'x': 1, 'y': '2', 'z': '3'}),
+             'c': 7})
+
         dict_out = cliutils.keys_and_vals_to_strs(dict_in)
-        self.assertEqual(six.text_type(dict_exp), six.text_type(dict_out))
+        dict_act = collections.OrderedDict(
+            {'a': dict_out['a'],
+             'b': collections.OrderedDict(dict_out['b']),
+             'c': dict_out['c']})
+
+        self.assertEqual(six.text_type(dict_exp), six.text_type(dict_act))
