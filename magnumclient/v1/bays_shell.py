@@ -65,8 +65,7 @@ def do_bay_create(cs, args):
     opts['node_count'] = args.node_count
     opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url
-    if args.timeout is not None:
-        opts['bay_create_timeout'] = args.timeout
+    opts['bay_create_timeout'] = args.timeout
 
     bay = cs.bays.create(**opts)
     _show_bay(bay)
