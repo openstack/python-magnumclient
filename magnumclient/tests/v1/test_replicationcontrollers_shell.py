@@ -14,6 +14,7 @@
 
 import mock
 
+from magnumclient import exceptions
 from magnumclient.tests.v1 import shell_test_base
 
 
@@ -60,6 +61,21 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                'bay xxx '
                                '--manifest-url test_url',
                                self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    @mock.patch('magnumclient.v1.replicationcontrollers.'
+                'ReplicationControllerManager.create')
+    def test_rc_create_failure_invalid_bay_status(self, mock_create, mock_get):
+        mockbay = mock.MagicMock()
+        mockbay.status = "CREATE_IN_PROGRESS"
+        mock_get.return_value = mockbay
+        self.assertRaises(exceptions.InvalidAttribute, self._test_arg_failure,
+                          'rc-create '
+                          '--bay xxx '
+                          '--manifest test '
+                          '--manifest-url test_url',
+                          self._bay_status_error)
         self.assertFalse(mock_create.called)
 
     @mock.patch('magnumclient.v1.replicationcontrollers.'
