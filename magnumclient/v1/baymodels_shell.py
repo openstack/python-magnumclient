@@ -52,6 +52,10 @@ def _show_baymodel(baymodel):
            metavar='<network-driver>',
            help='The network driver name for instantiating container'
            ' networks.')
+@utils.arg('--volume-driver',
+           metavar='<volume-driver>',
+           help='The volume driver name for instantiating container'
+           ' volume.')
 @utils.arg('--ssh-authorized-key',
            metavar='<ssh-authorized-key>',
            help='The SSH authorized key to use')
@@ -106,6 +110,7 @@ def do_baymodel_create(cs, args):
     opts['external_network_id'] = args.external_network_id
     opts['fixed_network'] = args.fixed_network
     opts['network_driver'] = args.network_driver
+    opts['volume_driver'] = args.volume_driver
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
     opts['ssh_authorized_key'] = args.ssh_authorized_key
