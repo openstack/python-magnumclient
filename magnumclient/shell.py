@@ -276,6 +276,26 @@ class OpenStackMagnumShell(object):
                             default=cliutils.env('OS_TENANT_ID'),
                             help='Defaults to env[OS_TENANT_ID].')
 
+        parser.add_argument('--os-user-domain-id',
+                            metavar='<auth-user-domain-id>',
+                            default=cliutils.env('OS_USER_DOMAIN_ID'),
+                            help='Defaults to env[OS_USER_DOMAIN_ID].')
+
+        parser.add_argument('--os-user-domain-name',
+                            metavar='<auth-user-domain-name>',
+                            default=cliutils.env('OS_USER_DOMAIN_NAME'),
+                            help='Defaults to env[OS_USER_DOMAIN_NAME].')
+
+        parser.add_argument('--os-project-domain-id',
+                            metavar='<auth-project-domain-id>',
+                            default=cliutils.env('OS_PROJECT_DOMAIN_ID'),
+                            help='Defaults to env[OS_PROJECT_DOMAIN_ID].')
+
+        parser.add_argument('--os-project-domain-name',
+                            metavar='<auth-project-domain-name>',
+                            default=cliutils.env('OS_PROJECT_DOMAIN_NAME'),
+                            help='Defaults to env[OS_PROJECT_DOMAIN_NAME].')
+
         parser.add_argument('--service-type',
                             metavar='<service-type>',
                             help='Defaults to container for all '
@@ -440,9 +460,13 @@ class OpenStackMagnumShell(object):
             return 0
 
         (os_username, os_tenant_name, os_tenant_id,
+         os_user_domain_id, os_user_domain_name,
+         os_project_domain_id, os_project_domain_name,
          os_auth_url, os_auth_system, endpoint_type,
          service_type, bypass_url, insecure) = (
             (args.os_username, args.os_tenant_name, args.os_tenant_id,
+             args.os_user_domain_id, args.os_user_domain_name,
+             args.os_project_domain_id, args.os_project_domain_name,
              args.os_auth_url, args.os_auth_system, args.endpoint_type,
              args.service_type, args.bypass_url, args.insecure)
         )
@@ -530,6 +554,10 @@ class OpenStackMagnumShell(object):
                                 api_key=os_password,
                                 project_id=os_tenant_id,
                                 project_name=os_tenant_name,
+                                user_domain_id=os_user_domain_id,
+                                user_domain_name=os_user_domain_name,
+                                project_domain_id=os_project_domain_id,
+                                project_domain_name=os_project_domain_name,
                                 auth_url=os_auth_url,
                                 service_type=service_type,
                                 region_name=args.os_region_name,
