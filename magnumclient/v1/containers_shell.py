@@ -105,7 +105,7 @@ def do_container_show(cs, args):
 @utils.arg('containers',
            metavar='<container>',
            nargs='+',
-           help='ID or name of the (container)s to start.')
+           help='ID or name of the (container)s to reboot.')
 def do_container_reboot(cs, args):
     """Reboot specified containers."""
     for container in args.containers:
@@ -119,7 +119,7 @@ def do_container_reboot(cs, args):
 @utils.arg('containers',
            metavar='<container>',
            nargs='+',
-           help='ID or name of the (container)s to start.')
+           help='ID or name of the (container)s to stop.')
 def do_container_stop(cs, args):
     """Stop specified containers."""
     for container in args.containers:
@@ -147,7 +147,7 @@ def do_container_start(cs, args):
 @utils.arg('containers',
            metavar='<container>',
            nargs='+',
-           help='ID or name of the (container)s to start.')
+           help='ID or name of the (container)s to pause.')
 def do_container_pause(cs, args):
     """Pause specified containers."""
     for container in args.containers:
@@ -161,7 +161,7 @@ def do_container_pause(cs, args):
 @utils.arg('containers',
            metavar='<container>',
            nargs='+',
-           help='ID or name of the (container)s to start.')
+           help='ID or name of the (container)s to unpause.')
 def do_container_unpause(cs, args):
     """Unpause specified containers."""
     for container in args.containers:
@@ -174,7 +174,7 @@ def do_container_unpause(cs, args):
 
 @utils.arg('container',
            metavar='<container>',
-           help='ID or name of the container to start.')
+           help='ID or name of the container to get logs for.')
 def do_container_logs(cs, args):
     """Get logs of a container."""
     logs = cs.containers.logs(args.container)
@@ -183,7 +183,7 @@ def do_container_logs(cs, args):
 
 @utils.arg('container',
            metavar='<container>',
-           help='ID or name of the container to start.')
+           help='ID or name of the container to execute command in.')
 @utils.arg('--command',
            required=True,
            metavar='<command>',
