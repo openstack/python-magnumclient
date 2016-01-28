@@ -40,6 +40,13 @@ FAKE_ENV3 = {'OS_USERNAME': 'username',
              'OS_TENANT_ID': 'tenant_id',
              'OS_AUTH_URL': 'http://no.where/v2.0'}
 
+FAKE_ENV4 = {'OS_USERNAME': 'username',
+             'OS_PASSWORD': 'password',
+             'OS_TENANT_ID': 'tenant_id',
+             'OS_USER_DOMAIN_NAME': 'Default',
+             'OS_PROJECT_DOMAIN_NAME': 'Default',
+             'OS_AUTH_URL': 'http://no.where/v3'}
+
 
 def _create_ver_list(versions):
     return {'versions': {'values': versions}}
@@ -233,6 +240,8 @@ class ShellTest(utils.TestCase):
             endpoint_type='publicURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
             service_type='container', region_name=expected_region_name,
+            project_domain_id='', project_domain_name='',
+            user_domain_id='', user_domain_name='',
             magnum_url=None, insecure=False)
 
     def test_main_option_region(self):
@@ -258,6 +267,8 @@ class ShellTest(utils.TestCase):
             endpoint_type='publicURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
             service_type='container', region_name=None,
+            project_domain_id='', project_domain_name='',
+            user_domain_id='', user_domain_name='',
             magnum_url=None, insecure=False)
 
     @mock.patch('magnumclient.v1.client.Client')
@@ -269,6 +280,8 @@ class ShellTest(utils.TestCase):
             endpoint_type='internalURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
             service_type='container', region_name=None,
+            project_domain_id='', project_domain_name='',
+            user_domain_id='', user_domain_name='',
             magnum_url=None, insecure=False)
 
 
@@ -287,3 +300,16 @@ class ShellTestKeystoneV3(ShellTest):
         mreq.register_uri(
             'GET', v3_url, json=_create_ver_list([v3_version]),
             status_code=200)
+
+    @mock.patch('magnumclient.v1.client.Client')
+    def test_main_endpoint_public(self, mock_client):
+        self.make_env(fake_env=FAKE_ENV4)
+        self.shell('--endpoint-type publicURL bay-list')
+        mock_client.assert_called_once_with(
+            username='username', api_key='password',
+            endpoint_type='publicURL', project_id='tenant_id',
+            project_name='', auth_url=self.AUTH_URL,
+            service_type='container', region_name=None,
+            project_domain_id='', project_domain_name='Default',
+            user_domain_id='', user_domain_name='Default',
+            magnum_url=None, insecure=False)
