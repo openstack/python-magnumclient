@@ -56,9 +56,6 @@ def _show_baymodel(baymodel):
            metavar='<volume-driver>',
            help='The volume driver name for instantiating container'
            ' volume.')
-@utils.arg('--ssh-authorized-key',
-           metavar='<ssh-authorized-key>',
-           help='The SSH authorized key to use')
 @utils.arg('--dns-nameserver',
            metavar='<dns-nameserver>',
            default='8.8.8.8',
@@ -113,7 +110,6 @@ def do_baymodel_create(cs, args):
     opts['volume_driver'] = args.volume_driver
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
-    opts['ssh_authorized_key'] = args.ssh_authorized_key
     opts['coe'] = args.coe
     opts['http_proxy'] = args.http_proxy
     opts['https_proxy'] = args.https_proxy

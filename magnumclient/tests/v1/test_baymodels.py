@@ -34,13 +34,6 @@ BAYMODEL1 = {'id': 123,
              'volume_driver': 'rexray',
              'dns_nameserver': '8.8.1.1',
              'docker_volume_size': '71',
-             'ssh_authorized_key': 'ssh-rsa AAAAB3NaC1yc2EAAAADAABAAABAQC'
-                                   '0XRqg3tm+jlsOKGO81lPDH+KaSJs8qegZHtQw'
-                                   '3Q7wvmjUqszP/H6NC/m+qiGp/sTitomSofMam'
-                                   'YucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
-                                   'Ma71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
-                                   '8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
-                                   'v0Zio4VeFrfpytB8RtAAA test1234@magnum',
              'coe': 'swarm',
              'http_proxy': 'http_proxy',
              'https_proxy': 'https_proxy',
@@ -63,13 +56,6 @@ BAYMODEL2 = {'id': 124,
              'volume_driver': 'cinder',
              'dns_nameserver': '8.8.1.2',
              'docker_volume_size': '50',
-             'ssh_authorized_key': 'ssh-rsa AAAAB3NzaC1ycEAAAADAQABAAABAQC'
-                                   'v0XRqg3tm+jlsOKGO81lPDH+KaSJs8qegZHtQw'
-                                   'n3Q7wvmjUqszP/H6NC/m+qiGp/sTitomSofMam'
-                                   'DYucqbeuM7nmJi+8Hb55y1xWoOZItvKJ+n4VKc'
-                                   'KMa71G5/4EOQxuQ/sgW965OOO2Hq027yHOwzcR'
-                                   'X8vjlQUnTK0HijrbSTLxp/9kazWWraBS0AyXe6'
-                                   'Jv0Zio4VeFrfpytB8RtAAA test1234@magnum',
              'coe': 'kubernetes',
              'labels': 'key2=val2,key22=val22',
              'tls_disabled': True,
@@ -155,8 +141,6 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
-        self.assertEqual(BAYMODEL1['ssh_authorized_key'],
-                         baymodel.ssh_authorized_key)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
@@ -180,8 +164,6 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
-        self.assertEqual(BAYMODEL1['ssh_authorized_key'],
-                         baymodel.ssh_authorized_key)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)

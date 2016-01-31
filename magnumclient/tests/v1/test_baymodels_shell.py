@@ -125,18 +125,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
-    def test_baymodel_create_ssh_authorized_key_success(self, mock_create):
-        self._test_arg_success('baymodel-create '
-                               '--name test '
-                               '--keypair-id test_keypair '
-                               '--external-network-id test_net '
-                               '--image-id test_image '
-                               '--coe swarm '
-                               '--ssh-authorized-key test_key '
-                               )
-        self.assertTrue(mock_create.called)
-
-    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
     def test_baymodel_create_http_proxy_success(self, mock_create):
         self._test_arg_success('baymodel-create '
                                '--name test --fixed-network private '
