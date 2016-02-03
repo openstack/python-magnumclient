@@ -36,7 +36,7 @@ def do_rc_list(cs, args):
             (args.bay, bay.status))
 
     rcs = cs.rcs.list(args.bay)
-    columns = ('uuid', 'name')
+    columns = ('uuid', 'name', 'bay_uuid')
     utils.print_list(rcs, columns,
                      {'versions': magnum_utils.print_list_field('versions')})
 
