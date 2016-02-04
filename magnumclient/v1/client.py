@@ -76,7 +76,7 @@ class Client(object):
                 project_domain_id=project_domain_id,
                 project_domain_name=project_domain_name)
 
-        # Backwards compatability for people not passing in Session
+        # Backwards compatibility for people not passing in Session
         if session is None:
             loader = loading.get_plugin_loader(auth_type)
 
