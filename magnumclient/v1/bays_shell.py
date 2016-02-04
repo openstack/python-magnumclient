@@ -66,9 +66,12 @@ def do_bay_create(cs, args):
     opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url
     opts['bay_create_timeout'] = args.timeout
-
-    bay = cs.bays.create(**opts)
-    _show_bay(bay)
+    try:
+        bay = cs.bays.create(**opts)
+        _show_bay(bay)
+    except Exception as e:
+        print("Create for bay %s failed: %s" %
+              (opts['name'], e))
 
 
 @utils.arg('bay',
