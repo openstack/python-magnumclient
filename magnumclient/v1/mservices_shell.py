@@ -13,8 +13,8 @@
 #    under the License.
 
 
+from magnumclient.common import cliutils as utils
 from magnumclient.common import utils as magnum_utils
-from magnumclient.openstack.common import cliutils as utils
 
 
 def do_service_list(cs, args):

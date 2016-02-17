@@ -23,7 +23,7 @@ import copy
 
 import six.moves.urllib.parse as urlparse
 
-from magnumclient.openstack.common.apiclient import base
+from magnumclient.common.apiclient import base
 
 
 def getid(obj):

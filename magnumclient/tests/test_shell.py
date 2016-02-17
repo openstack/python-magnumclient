@@ -79,7 +79,7 @@ class ShellTest(utils.TestCase):
     def setUp(self):
         super(ShellTest, self).setUp()
         self.nc_util = mock.patch(
-            'magnumclient.openstack.common.cliutils.isunauthenticated').start()
+            'magnumclient.common.cliutils.isunauthenticated').start()
         self.nc_util.return_value = False
 
     def test_help_unknown_command(self):

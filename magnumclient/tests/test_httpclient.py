@@ -18,9 +18,9 @@ import json
 import mock
 import six
 
+from magnumclient.common.apiclient.exceptions import GatewayTimeout
 from magnumclient.common import httpclient as http
 from magnumclient import exceptions as exc
-from magnumclient.openstack.common.apiclient.exceptions import GatewayTimeout
 from magnumclient.tests import utils
 
 
