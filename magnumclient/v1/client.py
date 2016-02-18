@@ -22,7 +22,6 @@ from magnumclient.v1 import bays
 from magnumclient.v1 import certificates
 from magnumclient.v1 import containers
 from magnumclient.v1 import mservices
-from magnumclient.v1 import nodes
 from magnumclient.v1 import pods
 from magnumclient.v1 import replicationcontrollers as rcs
 from magnumclient.v1 import services
@@ -112,7 +111,6 @@ class Client(object):
         self.certificates = certificates.CertificateManager(self.http_client)
         self.baymodels = baymodels.BayModelManager(self.http_client)
         self.containers = containers.ContainerManager(self.http_client)
-        self.nodes = nodes.NodeManager(self.http_client)
         self.pods = pods.PodManager(self.http_client)
         self.rcs = rcs.ReplicationControllerManager(self.http_client)
         self.services = services.ServiceManager(self.http_client)
