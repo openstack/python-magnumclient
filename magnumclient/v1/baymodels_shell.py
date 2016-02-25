@@ -146,12 +146,26 @@ def do_baymodel_show(cs, args):
     _show_baymodel(baymodel)
 
 
+@utils.arg('--limit',
+           metavar='<limit>',
+           type=int,
+           help='Maximum number of baymodels to return')
+@utils.arg('--sort-key',
+           metavar='<sort-key>',
+           help='Column to sort results by')
+@utils.arg('--sort-dir',
+           metavar='<sort-dir>',
+           choices=['desc', 'asc'],
+           help='Direction to sort. "asc" or "desc".')
 def do_baymodel_list(cs, args):
     """Print a list of bay models."""
-    nodes = cs.baymodels.list()
+    nodes = cs.baymodels.list(limit=args.limit,
+                              sort_key=args.sort_key,
+                              sort_dir=args.sort_dir)
     columns = ('uuid', 'name')
     utils.print_list(nodes, columns,
-                     {'versions': magnum_utils.print_list_field('versions')})
+                     {'versions': magnum_utils.print_list_field('versions')},
+                     sortby_index=None)
 
 
 @utils.arg('baymodel', metavar='<baymodel>', help="UUID or name of baymodel")
