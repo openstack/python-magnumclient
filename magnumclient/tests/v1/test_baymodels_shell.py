@@ -249,6 +249,24 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.list')
+    def test_baymodel_list_success_with_arg(self, mock_list):
+        self._test_arg_success('baymodel-list '
+                               '--limit 1 '
+                               '--sort-dir asc '
+                               '--sort-key uuid')
+        self.assertTrue(mock_list.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.list')
+    def test_baymodel_list_failure_invalid_arg(self, mock_list):
+        _error_msg = [
+            '.*?^usage: magnum baymodel-list ',
+            '.*?^error: argument --sort-dir: invalid choice: ',
+            ".*?^Try 'magnum help baymodel-list' for more information."
+            ]
+        self._test_arg_failure('baymodel-list --sort-dir aaa', _error_msg)
+        self.assertFalse(mock_list.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.list')
     def test_baymodel_list_failure(self, mock_list):
         self._test_arg_failure('baymodel-list --wrong',
                                self._unrecognized_arg_error)
