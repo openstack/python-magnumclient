@@ -70,8 +70,10 @@ class TestCommandLineArgument(utils.TestCase):
         self.addCleanup(loader.stop)
         self.addCleanup(session.stop)
 
-    def _test_arg_success(self, command):
+    def _test_arg_success(self, command, keyword=None):
         stdout, stderr = self.shell(command)
+        if keyword:
+            self.assertTrue(keyword in (stdout + stderr))
 
     def _test_arg_failure(self, command, error_msg):
         stdout, stderr = self.shell(command, (2,))

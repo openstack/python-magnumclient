@@ -14,7 +14,24 @@
 
 import mock
 
+from magnumclient.common.apiclient import exceptions
 from magnumclient.tests.v1 import shell_test_base
+from magnumclient.v1.baymodels import BayModel
+
+
+class FakeBayModel(BayModel):
+    def __init__(self, manager=None, info={}, **kwargs):
+        BayModel.__init__(self, manager=manager, info=info)
+        self.apiserver_port = kwargs.get('apiserver_port', None)
+        self.uuid = kwargs.get('uuid', 'x')
+        self.links = kwargs.get('links', [])
+        self.server_type = kwargs.get('server_type', 'vm')
+        self.image_id = kwargs.get('image_id', 'x')
+        self.tls_disabled = kwargs.get('tls_disabled', False)
+        self.registry_enabled = kwargs.get('registry_enabled', False)
+        self.coe = kwargs.get('coe', 'x')
+        self.public = kwargs.get('public', False)
+        self.name = kwargs.get('name', 'x')
 
 
 class ShellTest(shell_test_base.TestCommandLineArgument):
@@ -254,6 +271,29 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--limit 1 '
                                '--sort-dir asc '
                                '--sort-key uuid')
+        self.assertTrue(mock_list.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.list')
+    def test_baymodel_list_ignored_duplicated_field(self, mock_list):
+        mock_list.return_value = [FakeBayModel()]
+        self._test_arg_success('baymodel-list --fields coe,coe,coe,name,name',
+                               keyword='\n| uuid | name | Coe |\n')
+        # Output should be
+        # +------+------+-----+
+        # | uuid | name | Coe |
+        # +------+------+-----+
+        # | x    | x    | x   |
+        # +------+------+-----+
+        self.assertTrue(mock_list.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.list')
+    def test_baymodel_list_failure_with_invalid_field(self, mock_list):
+        mock_list.return_value = [FakeBayModel()]
+        _error_msg = [".*?^Non-existent fields are specified: ['xxx','zzz']"]
+        self.assertRaises(exceptions.CommandError,
+                          self._test_arg_failure,
+                          'baymodel-list --fields xxx,coe,zzz',
+                          _error_msg)
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.list')
