@@ -181,7 +181,11 @@ class FormatLabelsTest(test_utils.BaseTestCase):
 class CliUtilsTest(test_utils.BaseTestCase):
 
     def test_keys_and_vals_to_strs(self):
-        dict_in = {u'a': u'1', u'b': {u'x': 1, 'y': u'2', u'z': u'3'}, 'c': 7}
+        dict_in = {six.u('a'): six.u('1'),
+                   six.u('b'): {six.u('x'): 1,
+                                'y': six.u('2'),
+                                six.u('z'): six.u('3')},
+                   'c': 7}
 
         dict_exp = collections.OrderedDict(
             {'a': '1',
