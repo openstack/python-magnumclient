@@ -118,6 +118,30 @@ class FormatLabelsTest(test_utils.BaseTestCase):
                           'K5': 'V5'
                           }, l)
 
+    def test_format_labels_semicolon(self):
+        l = utils.format_labels([
+            'K1=V1;K2=V2;'
+            'K3=V3;K4=V4;'
+            'K5=V5'])
+        self.assertEqual({'K1': 'V1',
+                          'K2': 'V2',
+                          'K3': 'V3',
+                          'K4': 'V4',
+                          'K5': 'V5'
+                          }, l)
+
+    def test_format_labels_mix_commas_semicolon(self):
+        l = utils.format_labels([
+            'K1=V1,K2=V2,'
+            'K3=V3;K4=V4,'
+            'K5=V5'])
+        self.assertEqual({'K1': 'V1',
+                          'K2': 'V2',
+                          'K3': 'V3',
+                          'K4': 'V4',
+                          'K5': 'V5'
+                          }, l)
+
     def test_format_labels_split(self):
         l = utils.format_labels([
             'K1=V1,'
