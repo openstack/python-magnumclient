@@ -60,16 +60,37 @@ def do_container_create(cs, args):
     _show_container(cs.containers.create(**opts))
 
 
+@utils.arg('--marker',
+           metavar='<marker>',
+           default=None,
+           help='The last bay UUID of the previous page; '
+                'displays list of bays after "marker".')
+@utils.arg('--limit',
+           metavar='<limit>',
+           type=int,
+           help='Maximum number of containers to return')
+@utils.arg('--sort-key',
+           metavar='<sort-key>',
+           help='Column to sort results by')
+@utils.arg('--sort-dir',
+           metavar='<sort-dir>',
+           choices=['desc', 'asc'],
+           help='Direction to sort. "asc" or "desc".')
 @utils.arg('--bay',
            metavar='<bay>', help="UUID or Name of Bay")
 def do_container_list(cs, args):
     """Print a list of available containers."""
     opts = {}
     opts['bay_ident'] = args.bay
+    opts['marker'] = args.marker
+    opts['limit'] = args.limit
+    opts['sort_key'] = args.sort_key
+    opts['sort_dir'] = args.sort_dir
     containers = cs.containers.list(**opts)
     columns = ('uuid', 'name', 'status', 'bay_uuid')
     utils.print_list(containers, columns,
-                     {'versions': magnum_utils.print_list_field('versions')})
+                     {'versions': magnum_utils.print_list_field('versions')},
+                     sortby_index=None)
 
 
 @utils.arg('containers',
