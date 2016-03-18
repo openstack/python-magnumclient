@@ -21,12 +21,31 @@ def _show_bay(bay):
     utils.print_dict(bay._info)
 
 
+@utils.arg('--marker',
+           metavar='<marker>',
+           default=None,
+           help='The last bay UUID of the previous page; '
+                'displays list of bays after "marker".')
+@utils.arg('--limit',
+           metavar='<limit>',
+           type=int,
+           help='Maximum number of bays to return.')
+@utils.arg('--sort-key',
+           metavar='<sort-key>',
+           help='Column to sort results by.')
+@utils.arg('--sort-dir',
+           metavar='<sort-dir>',
+           choices=['desc', 'asc'],
+           help='Direction to sort. "asc" or "desc".')
 def do_bay_list(cs, args):
     """Print a list of available bays."""
-    bays = cs.bays.list()
+    bays = cs.bays.list(marker=args.marker, limit=args.limit,
+                        sort_key=args.sort_key,
+                        sort_dir=args.sort_dir)
     columns = ('uuid', 'name', 'node_count', 'master_count', 'status')
     utils.print_list(bays, columns,
-                     {'versions': magnum_utils.print_list_field('versions')})
+                     {'versions': magnum_utils.print_list_field('versions')},
+                     sortby_index=None)
 
 
 @utils.arg('--name',
