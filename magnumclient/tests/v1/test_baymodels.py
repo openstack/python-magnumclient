@@ -112,6 +112,48 @@ fake_responses = {
             UPDATED_BAYMODEL,
         ),
     },
+    '/v1/baymodels/?limit=2':
+    {
+        'GET': (
+            {},
+            {'baymodels': [BAYMODEL1, BAYMODEL2]},
+        ),
+    },
+    '/v1/baymodels/?marker=%s' % BAYMODEL2['uuid']:
+    {
+        'GET': (
+            {},
+            {'baymodels': [BAYMODEL1, BAYMODEL2]},
+        ),
+    },
+    '/v1/baymodels/?limit=2&marker=%s' % BAYMODEL2['uuid']:
+    {
+        'GET': (
+            {},
+            {'baymodels': [BAYMODEL1, BAYMODEL2]},
+        ),
+    },
+    '/v1/baymodels/?sort_dir=asc':
+    {
+        'GET': (
+            {},
+            {'baymodels': [BAYMODEL1, BAYMODEL2]},
+        ),
+    },
+    '/v1/baymodels/?sort_key=uuid':
+    {
+        'GET': (
+            {},
+            {'baymodels': [BAYMODEL1, BAYMODEL2]},
+        ),
+    },
+    '/v1/baymodels/?sort_key=uuid&sort_dir=desc':
+    {
+        'GET': (
+            {},
+            {'baymodels': [BAYMODEL2, BAYMODEL1]},
+        ),
+    },
 }
 
 
@@ -129,6 +171,66 @@ class BayModelManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertThat(baymodels, matchers.HasLength(2))
+
+    def _test_baymode_list_with_fileters(
+            self, limit=None, marker=None,
+            sort_key=None, sort_dir=None,
+            detail=False, expect=[]):
+        baymodels_filter = self.mgr.list(limit=limit, marker=marker,
+                                         sort_key=sort_key,
+                                         sort_dir=sort_dir,
+                                         detail=detail)
+        self.assertEqual(expect, self.api.calls)
+        self.assertThat(baymodels_filter, matchers.HasLength(2))
+
+    def test_baymodel_list_with_limit(self):
+        expect = [
+            ('GET', '/v1/baymodels/?limit=2', {}, None),
+        ]
+        self._test_baymode_list_with_fileters(
+            limit=2,
+            expect=expect)
+
+    def test_baymodel_list_with_marker(self):
+        expect = [
+            ('GET', '/v1/baymodels/?marker=%s' % BAYMODEL2['uuid'], {}, None),
+        ]
+        self._test_baymode_list_with_fileters(
+            marker=BAYMODEL2['uuid'],
+            expect=expect)
+
+    def test_baymodel_list_with_marker_limit(self):
+        expect = [
+            ('GET', '/v1/baymodels/?limit=2&marker=%s' % BAYMODEL2['uuid'],
+             {}, None),
+        ]
+        self._test_baymode_list_with_fileters(
+            limit=2, marker=BAYMODEL2['uuid'],
+            expect=expect)
+
+    def test_baymodel_list_with_sort_dir(self):
+        expect = [
+            ('GET', '/v1/baymodels/?sort_dir=asc', {}, None),
+        ]
+        self._test_baymode_list_with_fileters(
+            sort_dir='asc',
+            expect=expect)
+
+    def test_baymodel_list_with_sort_key(self):
+        expect = [
+            ('GET', '/v1/baymodels/?sort_key=uuid', {}, None),
+        ]
+        self._test_baymode_list_with_fileters(
+            sort_key='uuid',
+            expect=expect)
+
+    def test_baymodel_list_with_sort_key_dir(self):
+        expect = [
+            ('GET', '/v1/baymodels/?sort_key=uuid&sort_dir=desc', {}, None),
+        ]
+        self._test_baymode_list_with_fileters(
+            sort_key='uuid', sort_dir='desc',
+            expect=expect)
 
     def test_baymodel_show_by_id(self):
         baymodel = self.mgr.get(BAYMODEL1['id'])
