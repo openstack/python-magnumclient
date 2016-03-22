@@ -102,6 +102,8 @@ def do_coe_service_delete(cs, args):
     for service in args.services:
         try:
             cs.services.delete(service, args.bay)
+            print("Request to delete service %s has been accepted." %
+                  service)
         except Exception as e:
             print("Delete for service %(service)s failed: %(e)s" %
                   {'service': service, 'e': e})

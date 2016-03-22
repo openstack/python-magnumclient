@@ -109,6 +109,8 @@ def do_pod_delete(cs, args):
     for pod in args.pods:
         try:
             cs.pods.delete(pod, args.bay)
+            print("Request to delete pod %s has been accepted." %
+                  pod)
         except Exception as e:
             print("Delete for pod %(pod)s failed: %(e)s" %
                   {'pod': pod, 'e': e})
