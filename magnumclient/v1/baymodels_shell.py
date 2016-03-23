@@ -82,7 +82,7 @@ def _show_baymodel(baymodel):
 @utils.arg('--no-proxy',
            metavar='<no-proxy>',
            help='The no_proxy address to use for nodes in bay.')
-@utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2...>',
+@utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
            action='append', default=[],
            help='Arbitrary labels in the form of key=value pairs '
                 'to associate with a baymodel. '
