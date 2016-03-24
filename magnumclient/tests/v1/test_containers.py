@@ -198,6 +198,48 @@ fake_responses = {
             {'output': '/home'},
         ),
     },
+    '/v1/containers/?limit=2':
+    {
+        'GET': (
+            {},
+            {'containers': [CONTAINER1, CONTAINER2]},
+        ),
+    },
+    '/v1/containers/?marker=%s' % CONTAINER2['uuid']:
+    {
+        'GET': (
+            {},
+            {'containers': [CONTAINER1, CONTAINER2]},
+        ),
+    },
+    '/v1/containers/?limit=2&marker=%s' % CONTAINER2['uuid']:
+    {
+        'GET': (
+            {},
+            {'containers': [CONTAINER1, CONTAINER2]},
+        ),
+    },
+    '/v1/containers/?sort_dir=asc':
+    {
+        'GET': (
+            {},
+            {'containers': [CONTAINER1, CONTAINER2]},
+        ),
+    },
+    '/v1/containers/?sort_key=uuid':
+    {
+        'GET': (
+            {},
+            {'containers': [CONTAINER1, CONTAINER2]},
+        ),
+    },
+    '/v1/containers/?sort_key=uuid&sort_dir=desc':
+    {
+        'GET': (
+            {},
+            {'containers': [CONTAINER2, CONTAINER1]},
+        ),
+    },
 }
 
 
@@ -225,6 +267,70 @@ class ContainerManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertThat(containers, matchers.HasLength(2))
+
+    def _test_container_list_with_filters(
+            self, limit=None, marker=None,
+            sort_key=None, sort_dir=None,
+            detail=False, expect=[]):
+        containers_filter = self.mgr.list(limit=limit, marker=marker,
+                                          sort_key=sort_key,
+                                          sort_dir=sort_dir,
+                                          detail=detail)
+        self.assertEqual(expect, self.api.calls)
+        self.assertThat(containers_filter, matchers.HasLength(2))
+
+    def test_container_list_with_limit(self):
+        expect = [
+            ('GET', '/v1/containers/?limit=2', {}, None),
+        ]
+        self._test_container_list_with_filters(
+            limit=2,
+            expect=expect)
+
+    def test_container_list_with_marker(self):
+        expect = [
+            ('GET', '/v1/containers/?marker=%s' % CONTAINER2['uuid'],
+             {}, None),
+        ]
+        self._test_container_list_with_filters(
+            marker=CONTAINER2['uuid'],
+            expect=expect)
+
+    def test_container_list_with_marker_limit(self):
+        expect = [
+            ('GET', '/v1/containers/?limit=2&marker=%s' % CONTAINER2['uuid'],
+             {}, None),
+        ]
+        self._test_container_list_with_filters(
+            limit=2, marker=CONTAINER2['uuid'],
+            expect=expect)
+
+    def test_container_list_with_sort_dir(self):
+        expect = [
+            ('GET', '/v1/containers/?sort_dir=asc',
+             {}, None),
+        ]
+        self._test_container_list_with_filters(
+            sort_dir='asc',
+            expect=expect)
+
+    def test_container_list_with_sort_key(self):
+        expect = [
+            ('GET', '/v1/containers/?sort_key=uuid',
+             {}, None),
+        ]
+        self._test_container_list_with_filters(
+            sort_key='uuid',
+            expect=expect)
+
+    def test_container_list_with_sort_key_dir(self):
+        expect = [
+            ('GET', '/v1/containers/?sort_key=uuid&sort_dir=desc',
+             {}, None),
+        ]
+        self._test_container_list_with_filters(
+            sort_key='uuid', sort_dir='desc',
+            expect=expect)
 
     def test_container_show(self):
         container = self.mgr.get(CONTAINER1['id'])
