@@ -102,6 +102,8 @@ def do_container_delete(cs, args):
     for container in args.containers:
         try:
             cs.containers.delete(container)
+            print("Request to delete container %s has been accepted." %
+                  container)
         except Exception as e:
             print("Delete for container %(container)s failed: %(e)s" %
                   {'container': container, 'e': e})

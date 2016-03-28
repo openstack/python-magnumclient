@@ -132,6 +132,8 @@ def do_baymodel_delete(cs, args):
     for baymodel in args.baymodels:
         try:
             cs.baymodels.delete(baymodel)
+            print("Request to delete baymodel %s has been accepted." %
+                  baymodel)
         except Exception as e:
             print("Delete for baymodel %(baymodel)s failed: %(e)s" %
                   {'baymodel': baymodel, 'e': e})

@@ -114,6 +114,8 @@ def do_rc_delete(cs, args):
     for rc in args.rcs:
         try:
             cs.rcs.delete(rc, args.bay)
+            print("Request to delete rc %s has been accepted." %
+                  rc)
         except Exception as e:
             print("Delete for rc %(rc)s failed: %(e)s" %
                   {'rc': rc, 'e': e})

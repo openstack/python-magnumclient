@@ -102,6 +102,8 @@ def do_bay_delete(cs, args):
     for id in args.bay:
         try:
             cs.bays.delete(id)
+            print("Request to delete bay %s has been accepted." %
+                  id)
         except Exception as e:
             print("Delete for bay %(bay)s failed: %(e)s" %
                   {'bay': id, 'e': e})
