@@ -31,7 +31,11 @@ class CommonFiltersTest(test_utils.BaseTestCase):
 
     def test_limit_0(self):
         result = utils.common_filters(limit=0)
-        self.assertEqual([], result)
+        self.assertEqual(['limit=0'], result)
+
+    def test_limit_negative_number(self):
+        result = utils.common_filters(limit=-2)
+        self.assertEqual(['limit=-2'], result)
 
     def test_other(self):
         for key in ('marker', 'sort_key', 'sort_dir'):
