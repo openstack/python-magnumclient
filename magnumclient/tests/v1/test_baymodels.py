@@ -34,6 +34,7 @@ BAYMODEL1 = {'id': 123,
              'volume_driver': 'rexray',
              'dns_nameserver': '8.8.1.1',
              'docker_volume_size': '71',
+             'docker_storage_driver': 'devicemapper',
              'coe': 'swarm',
              'http_proxy': 'http_proxy',
              'https_proxy': 'https_proxy',
@@ -56,6 +57,7 @@ BAYMODEL2 = {'id': 124,
              'volume_driver': 'cinder',
              'dns_nameserver': '8.8.1.2',
              'docker_volume_size': '50',
+             'docker_storage_driver': 'overlay',
              'coe': 'kubernetes',
              'labels': 'key2=val2,key22=val22',
              'tls_disabled': True,
@@ -242,6 +244,8 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['image_id'], baymodel.image_id)
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
+        self.assertEqual(BAYMODEL1['docker_storage_driver'],
+                         baymodel.docker_storage_driver)
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
@@ -265,6 +269,8 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['image_id'], baymodel.image_id)
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
+        self.assertEqual(BAYMODEL1['docker_storage_driver'],
+                         baymodel.docker_storage_driver)
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
@@ -287,6 +293,8 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertTrue(baymodel)
         self.assertEqual(BAYMODEL1['docker_volume_size'],
                          baymodel.docker_volume_size)
+        self.assertEqual(BAYMODEL1['docker_storage_driver'],
+                         baymodel.docker_storage_driver)
 
     def test_baymodel_create_fail(self):
         CREATE_BAYMODEL_FAIL = copy.deepcopy(CREATE_BAYMODEL)

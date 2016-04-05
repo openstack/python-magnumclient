@@ -52,6 +52,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--labels key=val '
                                '--master-flavor-id test_flavor '
                                '--docker-volume-size 10 '
+                               '--docker-storage-driver devicemapper '
                                '--public '
                                '--server-type vm')
         self.assertTrue(mock_create.called)
@@ -81,6 +82,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--labels key=val '
                                '--master-flavor-id test_flavor '
                                '--docker-volume-size 10 '
+                               '--docker-storage-driver devicemapper '
                                '--public ')
         self.assertTrue(mock_create.called)
 
@@ -139,6 +141,18 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
+        self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')
+    def test_baymodel_create_docker_storage_driver_success(self, mock_create):
+        self._test_arg_success('baymodel-create '
+                               '--name test '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--docker-storage-driver devicemapper '
+                               '--coe swarm'
+                               )
         self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')

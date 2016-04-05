@@ -74,6 +74,11 @@ def _show_baymodel(baymodel):
            type=int,
            help='Specify the number of size in GB '
                 'for the docker volume to use.')
+@utils.arg('--docker-storage-driver',
+           metavar='<docker-storage-driver>',
+           default='devicemapper',
+           help='Select a docker storage driver. Supported: devicemapper, '
+                'overlay. Default: devicemapper')
 @utils.arg('--http-proxy',
            metavar='<http-proxy>',
            help='The http_proxy address to use for nodes in bay.')
@@ -117,6 +122,7 @@ def do_baymodel_create(cs, args):
     opts['volume_driver'] = args.volume_driver
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
+    opts['docker_storage_driver'] = args.docker_storage_driver
     opts['coe'] = args.coe
     opts['http_proxy'] = args.http_proxy
     opts['https_proxy'] = args.https_proxy
