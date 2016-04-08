@@ -368,17 +368,6 @@ class ContainerManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertIsNone(container)
 
-    def test_container_update(self):
-        patch = {'op': 'replace',
-                 'value': NEW_NAME,
-                 'path': '/name'}
-        container = self.mgr.update(id=CONTAINER1['id'], patch=patch)
-        expect = [
-            ('PATCH', '/v1/containers/%s' % CONTAINER1['id'], {}, patch),
-        ]
-        self.assertEqual(expect, self.api.calls)
-        self.assertEqual(NEW_NAME, container.name)
-
     def test_container_start(self):
         container = self.mgr.start(CONTAINER1['id'])
         expect = [

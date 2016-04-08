@@ -110,9 +110,6 @@ class ContainerManager(base.Manager):
     def delete(self, id):
         return self._delete(self._path(id))
 
-    def update(self, id, patch):
-        return self._update(self._path(id), patch)
-
     def _action(self, id, action, method='PUT', qparams=None, **kwargs):
         if qparams:
             action = "%s?%s" % (action,
