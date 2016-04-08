@@ -27,7 +27,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         mockbay.status = "CREATE_COMPLETE"
         mock_bay_get.return_value = mockbay
         self._test_arg_success('ca-show '
-                               '--bay xxx')
+                               'xxx')
         self.assertTrue(mock_cert_get.called)
 
     @mock.patch('os.path.isfile')
@@ -44,8 +44,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         file_mock = mock.mock_open(read_data=fake_csr)
         with mock.patch.object(certificates_shell, 'open', file_mock):
             self._test_arg_success('ca-sign '
-                                   '--csr path/csr.pem '
-                                   '--bay xxx')
+                                   'xxx '
+                                   'path/csr.pem')
             self.assertTrue(mock_cert_create.called)
 
     @mock.patch('os.path.isfile')
@@ -62,8 +62,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         file_mock = mock.mock_open(read_data=fake_csr)
         with mock.patch.object(certificates_shell, 'open', file_mock):
             self._test_arg_success('ca-sign '
-                                   '--csr path/csr.pem '
-                                   '--bay xxx')
+                                   'xxx '
+                                   'path/csr.pem')
             mock_isfile.assert_called_once_with('path/csr.pem')
             self.assertFalse(file_mock.called)
             self.assertFalse(mock_cert_create.called)
