@@ -21,7 +21,8 @@ def _show_cert(certificate):
     print(certificate.pem)
 
 
-@utils.arg('bay',
+@utils.arg('--bay',
+           required=True,
            metavar='<bay>',
            help='ID or name of the bay.')
 def do_ca_show(cs, args):
@@ -35,12 +36,13 @@ def do_ca_show(cs, args):
     _show_cert(cert)
 
 
-@utils.arg('bay',
-           metavar='<bay>',
-           help='ID or name of the bay.')
-@utils.arg('csr',
+@utils.arg('--csr',
            metavar='<csr>',
            help='File path of the csr file to send to Magnum to get signed.')
+@utils.arg('--bay',
+           required=True,
+           metavar='<bay>',
+           help='ID or name of the bay.')
 def do_ca_sign(cs, args):
     """Generate the CA certificate for a bay."""
     bay = cs.bays.get(args.bay)
