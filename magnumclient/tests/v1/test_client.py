@@ -129,3 +129,33 @@ class ClientTest(testtools.TestCase):
             project_id=None,
             project_name=None)
         http_client.assert_not_called()
+
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('keystoneauth1.session.Session')
+    def test_init_with_endpoint_override(self, mock_session, http_client):
+        session = mock.Mock()
+        client.Client(session=session, endpoint_override='magnumurl')
+        mock_session.assert_not_called()
+        http_client.assert_called_once_with(
+            interface='public',
+            region_name=None,
+            service_name=None,
+            service_type='container',
+            session=session,
+            endpoint_override='magnumurl')
+
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('keystoneauth1.session.Session')
+    def test_init_with_magnum_url_and_endpoint_override(self, mock_session,
+                                                        http_client):
+        session = mock.Mock()
+        client.Client(session=session, magnum_url='magnumurl',
+                      endpoint_override='magnumurl_override')
+        mock_session.assert_not_called()
+        http_client.assert_called_once_with(
+            interface='public',
+            region_name=None,
+            service_name=None,
+            service_type='container',
+            session=session,
+            endpoint_override='magnumurl')
