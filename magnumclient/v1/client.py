@@ -30,7 +30,8 @@ from magnumclient.v1 import services
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, magnum_url=None,
-                 endpoint_type=None, service_type='container',
+                 endpoint_type=None, endpoint_override=None,
+                 service_type='container',
                  region_name=None, input_auth_token=None,
                  session=None, password=None, auth_type='password',
                  interface='public', service_name=None, insecure=False,
@@ -45,6 +46,11 @@ class Client(object):
         # Backwards compat for people assing in endpoint_type
         if endpoint_type:
             interface = endpoint_type
+
+        # fix (yolanda): os-cloud-config is using endpoint_override
+        # instead of magnum_url
+        if endpoint_override and not magnum_url:
+            magnum_url = endpoint_override
 
         if magnum_url and input_auth_token:
             auth_type = 'admin_token'
