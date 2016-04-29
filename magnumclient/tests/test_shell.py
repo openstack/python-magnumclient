@@ -88,7 +88,6 @@ class ShellTest(utils.TestCase):
     def test_help(self):
         required = [
             '.*?^usage: ',
-            '.*?^\s+container-stop\s+Stop specified container.',
             '.*?^See "magnum help COMMAND" for help on a specific command',
         ]
         stdout, stderr = self.shell('help')
@@ -110,7 +109,6 @@ class ShellTest(utils.TestCase):
     def test_help_no_options(self):
         required = [
             '.*?^usage: ',
-            '.*?^\s+container-stop\s+Stop specified container.',
             '.*?^See "magnum help COMMAND" for help on a specific command',
         ]
         stdout, stderr = self.shell('')
@@ -122,7 +120,6 @@ class ShellTest(utils.TestCase):
         stdout, stderr = self.shell('bash-completion')
         # just check we have some output
         required = [
-            '.*--json',
             '.*help',
             '.*bay-show',
             '.*--bay']
