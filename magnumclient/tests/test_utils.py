@@ -191,12 +191,12 @@ class FormatLabelsTest(test_utils.BaseTestCase):
         self.assertIn('V1', l['K1'])
         self.assertIn('V2', l['K1'])
 
-    def test_format_label_bad_label(self):
+    def test_format_label_special_label(self):
         labels = ['K1=V1,K22.2.2.2']
-        ex = self.assertRaises(exc.CommandError,
-                               utils.format_labels, labels)
-        self.assertEqual('labels must be a list of KEY=VALUE '
-                         'not K22.2.2.2', str(ex))
+        l = utils.format_labels(
+            labels,
+            parse_comma=True)
+        self.assertEqual({'K1': 'V1,K22.2.2.2'}, l)
 
     def test_format_multiple_bad_label(self):
         labels = ['K1=V1', 'K22.2.2.2']

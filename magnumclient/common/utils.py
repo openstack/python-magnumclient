@@ -89,7 +89,7 @@ def format_labels(lbls, parse_comma=True):
     if parse_comma:
         # expect multiple invocations of --labels but fall back
         # to either , or ; delimited if only one --labels is specified
-        if len(lbls) == 1:
+        if len(lbls) == 1 and lbls[0].count('=') > 1:
             lbls = lbls[0].replace(';', ',').split(',')
 
     labels = {}
