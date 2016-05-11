@@ -160,7 +160,7 @@ def do_baymodel_show(cs, args):
            choices=['desc', 'asc'],
            help='Direction to sort. "asc" or "desc".')
 def do_baymodel_list(cs, args):
-    """Print a list of bay models."""
+    """Print a list of baymodels."""
     nodes = cs.baymodels.list(limit=args.limit,
                               sort_key=args.sort_key,
                               sort_dir=args.sort_dir)
