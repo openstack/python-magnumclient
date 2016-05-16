@@ -194,7 +194,7 @@ def keys_and_vals_to_strs(dictionary):
     def to_str(k_or_v):
         if isinstance(k_or_v, dict):
             return keys_and_vals_to_strs(k_or_v)
-        elif isinstance(k_or_v, unicode):
+        elif isinstance(k_or_v, six.text_type):
             return str(k_or_v)
         else:
             return k_or_v
