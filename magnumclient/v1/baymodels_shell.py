@@ -61,7 +61,7 @@ def _show_baymodel(baymodel):
 @utils.arg('--dns-nameserver',
            metavar='<dns-nameserver>',
            default='8.8.8.8',
-           help='The DNS nameserver to use for this Bay.')
+           help='The DNS nameserver to use for this baymodel.')
 @utils.arg('--flavor-id',
            metavar='<flavor-id>',
            default='m1.medium',
@@ -143,7 +143,7 @@ def do_baymodel_delete(cs, args):
 
 @utils.arg('baymodel',
            metavar='<baymodel>',
-           help='ID of the baymodel to show.')
+           help='ID or name of the baymodel to show.')
 def do_baymodel_show(cs, args):
     """Show details about the given baymodel."""
     baymodel = cs.baymodels.get(args.baymodel)
