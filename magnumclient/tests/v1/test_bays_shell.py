@@ -16,6 +16,21 @@ import mock
 
 from magnumclient import exceptions
 from magnumclient.tests.v1 import shell_test_base
+from magnumclient.v1.bays import Bay
+
+
+class FakeBay(Bay):
+    def __init__(self, manager=None, info={}, **kwargs):
+        Bay.__init__(self, manager=manager, info=info)
+        self.uuid = kwargs.get('uuid', 'x')
+        self.name = kwargs.get('name', 'x')
+        self.baymodel_id = kwargs.get('baymodel_id', 'x')
+        self.stack_id = kwargs.get('stack_id', 'x')
+        self.status = kwargs.get('status', 'x')
+        self.master_count = kwargs.get('master_count', 1)
+        self.node_count = kwargs.get('node_count', 1)
+        self.links = kwargs.get('links', [])
+        self.bay_create_timeout = kwargs.get('bay_create_timeout', 0)
 
 
 class ShellTest(shell_test_base.TestCommandLineArgument):
@@ -32,6 +47,29 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--limit 1 '
                                '--sort-dir asc '
                                '--sort-key uuid')
+        self.assertTrue(mock_list.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.list')
+    def test_bay_list_ignored_duplicated_field(self, mock_list):
+        mock_list.return_value = [FakeBay()]
+        self._test_arg_success('bay-list --fields status,status,status,name',
+                               keyword='\n| uuid | name | Status |\n')
+        # Output should be
+        # +------+------+--------+
+        # | uuid | name | Status |
+        # +------+------+--------+
+        # | x    | x    | x      |
+        # +------+------+--------+
+        self.assertTrue(mock_list.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.list')
+    def test_bay_list_failure_with_invalid_field(self, mock_list):
+        mock_list.return_value = [FakeBay()]
+        _error_msg = [".*?^Non-existent fields are specified: ['xxx','zzz']"]
+        self.assertRaises(exceptions.CommandError,
+                          self._test_arg_failure,
+                          'bay-list --fields xxx,stack_id,zzz,status',
+                          _error_msg)
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.list')

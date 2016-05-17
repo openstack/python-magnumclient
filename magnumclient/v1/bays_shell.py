@@ -14,6 +14,7 @@
 
 from magnumclient.common import cliutils as utils
 from magnumclient.common import utils as magnum_utils
+from magnumclient.i18n import _
 
 
 def _show_bay(bay):
@@ -37,12 +38,23 @@ def _show_bay(bay):
            metavar='<sort-dir>',
            choices=['desc', 'asc'],
            help='Direction to sort. "asc" or "desc".')
+@utils.arg('--fields',
+           default=None,
+           metavar='<fields>',
+           help=_('Comma-separated list of fields to display. '
+                  'Available fields: uuid, name, baymodel_id, stack_id, '
+                  'status, master_count, node_count, links, bay_create_timeout'
+                  )
+           )
 def do_bay_list(cs, args):
     """Print a list of available bays."""
     bays = cs.bays.list(marker=args.marker, limit=args.limit,
                         sort_key=args.sort_key,
                         sort_dir=args.sort_dir)
-    columns = ('uuid', 'name', 'node_count', 'master_count', 'status')
+    columns = ['uuid', 'name']
+    columns += utils._get_list_table_columns_and_formatters(
+        args.fields, bays,
+        exclude_fields=(c.lower() for c in columns))[0]
     utils.print_list(bays, columns,
                      {'versions': magnum_utils.print_list_field('versions')},
                      sortby_index=None)
