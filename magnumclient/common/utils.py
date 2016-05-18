@@ -80,6 +80,16 @@ def args_array_to_patch(op, attributes):
     return patch
 
 
+def handle_labels(labels):
+    labels = format_labels(labels)
+    if 'mesos_slave_executor_env_file' in labels:
+        environment_variables_data = handle_json_from_file(
+            labels['mesos_slave_executor_env_file'])
+        labels['mesos_slave_executor_env_variables'] = json.dumps(
+            environment_variables_data)
+    return labels
+
+
 def format_labels(lbls, parse_comma=True):
     '''Reformat labels into dict of format expected by the API.'''
 
@@ -111,3 +121,26 @@ def format_labels(lbls, parse_comma=True):
 
 def print_list_field(field):
     return lambda obj: ', '.join(getattr(obj, field))
+
+
+def handle_json_from_file(json_arg):
+    """Attempts to read JSON file by the file url.
+
+    :param json_arg: May be a file name containing the JSON.
+    :returns: A list or dictionary parsed from JSON.
+    """
+
+    try:
+        with open(json_arg, 'r') as f:
+            json_arg = f.read().strip()
+            json_arg = json.loads(json_arg)
+    except IOError as e:
+        err = _("Cannot get JSON from file '%(file)s'. "
+                "Error: %(err)s") % {'err': e, 'file': json_arg}
+        raise exc.InvalidAttribute(err)
+    except ValueError as e:
+        err = (_("For JSON: '%(string)s', error: '%(err)s'") %
+               {'err': e, 'string': json_arg})
+        raise exc.InvalidAttribute(err)
+
+    return json_arg
