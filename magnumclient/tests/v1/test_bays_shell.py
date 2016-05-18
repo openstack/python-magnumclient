@@ -53,13 +53,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     def test_bay_list_ignored_duplicated_field(self, mock_list):
         mock_list.return_value = [FakeBay()]
         self._test_arg_success('bay-list --fields status,status,status,name',
-                               keyword='\n| uuid | name | Status |\n')
+                               keyword=('\n| uuid | name | node_count | '
+                                        'master_count | status |\n'))
         # Output should be
-        # +------+------+--------+
-        # | uuid | name | Status |
-        # +------+------+--------+
-        # | x    | x    | x      |
-        # +------+------+--------+
+        # +------+------+------------+--------------+--------+
+        # | uuid | name | node_count | master_count | status |
+        # +------+------+------------+--------------+--------+
+        # | x    | x    | x          | x            | x      |
+        # +------+------+------------+--------------+--------+
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.bays.BayManager.list')
