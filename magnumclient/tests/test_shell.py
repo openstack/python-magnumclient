@@ -193,7 +193,7 @@ class ShellTest(utils.TestCase):
         self.make_env()
         self.shell('bay-list')
         _, client_kwargs = mock_client.call_args_list[0]
-        self.assertEqual('container', client_kwargs['service_type'])
+        self.assertEqual('container-infra', client_kwargs['service_type'])
 
     @mock.patch('magnumclient.v1.bays_shell.do_bay_list')
     @mock.patch('magnumclient.v1.client.ksa_session')
@@ -238,7 +238,7 @@ class ShellTest(utils.TestCase):
             username='username', api_key='password',
             endpoint_type='publicURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
-            service_type='container', region_name=expected_region_name,
+            service_type='container-infra', region_name=expected_region_name,
             project_domain_id='', project_domain_name='',
             user_domain_id='', user_domain_name='',
             magnum_url=None, insecure=False)
@@ -265,7 +265,7 @@ class ShellTest(utils.TestCase):
             username='username', api_key='password',
             endpoint_type='publicURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
-            service_type='container', region_name=None,
+            service_type='container-infra', region_name=None,
             project_domain_id='', project_domain_name='',
             user_domain_id='', user_domain_name='',
             magnum_url=None, insecure=False)
@@ -278,7 +278,7 @@ class ShellTest(utils.TestCase):
             username='username', api_key='password',
             endpoint_type='internalURL', project_id='',
             project_name='tenant_name', auth_url=self.AUTH_URL,
-            service_type='container', region_name=None,
+            service_type='container-infra', region_name=None,
             project_domain_id='', project_domain_name='',
             user_domain_id='', user_domain_name='',
             magnum_url=None, insecure=False)
@@ -308,7 +308,7 @@ class ShellTestKeystoneV3(ShellTest):
             username='username', api_key='password',
             endpoint_type='publicURL', project_id='tenant_id',
             project_name='', auth_url=self.AUTH_URL,
-            service_type='container', region_name=None,
+            service_type='container-infra', region_name=None,
             project_domain_id='', project_domain_name='Default',
             user_domain_id='', user_domain_name='Default',
             magnum_url=None, insecure=False)

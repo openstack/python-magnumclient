@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from keystoneauth1.exceptions import catalog
 from keystoneauth1 import loading
 from keystoneauth1 import session as ksa_session
 
@@ -27,11 +28,15 @@ from magnumclient.v1 import replicationcontrollers as rcs
 from magnumclient.v1 import services
 
 
+DEFAULT_SERVICE_TYPE = 'container-infra'
+LEGACY_DEFAULT_SERVICE_TYPE = 'container'
+
+
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, magnum_url=None,
                  endpoint_type=None, endpoint_override=None,
-                 service_type='container',
+                 service_type=DEFAULT_SERVICE_TYPE,
                  region_name=None, input_auth_token=None,
                  session=None, password=None, auth_type='password',
                  interface='public', service_name=None, insecure=False,
@@ -103,6 +108,16 @@ class Client(object):
                     service_name=service_name,
                     interface=interface,
                     region_name=region_name)
+            except catalog.EndpointNotFound:
+                service_type = LEGACY_DEFAULT_SERVICE_TYPE
+                try:
+                    session.get_endpoint(
+                        service_type=service_type,
+                        service_name=service_name,
+                        interface=interface,
+                        region_name=region_name)
+                except Exception:
+                    raise RuntimeError("Not Authorized")
             except Exception:
                 raise RuntimeError("Not Authorized")
 

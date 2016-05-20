@@ -58,7 +58,7 @@ from magnumclient import version
 
 DEFAULT_API_VERSION = '1'
 DEFAULT_ENDPOINT_TYPE = 'publicURL'
-DEFAULT_SERVICE_TYPE = 'container'
+DEFAULT_SERVICE_TYPE = 'container-infra'
 
 logger = logging.getLogger(__name__)
 
