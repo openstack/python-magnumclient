@@ -51,7 +51,7 @@ def do_bay_list(cs, args):
     bays = cs.bays.list(marker=args.marker, limit=args.limit,
                         sort_key=args.sort_key,
                         sort_dir=args.sort_dir)
-    columns = ['uuid', 'name']
+    columns = ['uuid', 'name', 'node_count', 'master_count', 'status']
     columns += utils._get_list_table_columns_and_formatters(
         args.fields, bays,
         exclude_fields=(c.lower() for c in columns))[0]
