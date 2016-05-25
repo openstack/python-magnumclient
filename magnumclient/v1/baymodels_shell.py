@@ -97,6 +97,12 @@ def _show_baymodel(baymodel):
 @utils.arg('--registry-enabled',
            action='store_true', default=False,
            help='Enable docker registry in the Bay')
+@utils.arg('--server-type',
+           metavar='<server-type>',
+           default='vm',
+           help='Specify the server type to be used '
+                'for example vm. For this release '
+                'default server type will be vm.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
     opts = {}
@@ -119,6 +125,7 @@ def do_baymodel_create(cs, args):
     opts['tls_disabled'] = args.tls_disabled
     opts['public'] = args.public
     opts['registry_enabled'] = args.registry_enabled
+    opts['server_type'] = args.server_type
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)
