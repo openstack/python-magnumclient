@@ -16,19 +16,11 @@
 from magnumclient.v1 import baymodels_shell
 from magnumclient.v1 import bays_shell
 from magnumclient.v1 import certificates_shell
-from magnumclient.v1 import containers_shell
 from magnumclient.v1 import mservices_shell
-from magnumclient.v1 import pods_shell
-from magnumclient.v1 import replicationcontrollers_shell
-from magnumclient.v1 import services_shell
 
 COMMAND_MODULES = [
     baymodels_shell,
     bays_shell,
     certificates_shell,
-    containers_shell,
     mservices_shell,
-    pods_shell,
-    replicationcontrollers_shell,
-    services_shell,
 ]

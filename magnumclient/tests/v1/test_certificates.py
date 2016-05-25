@@ -32,9 +32,6 @@ CERT2 = {
 }
 CREATE_CERT = {'bay_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
                'csr': 'fake-csr'}
-UPDATED_POD = copy.deepcopy(CERT1)
-NEW_DESCR = 'new-description'
-UPDATED_POD['description'] = NEW_DESCR
 
 fake_responses = {
     '/v1/certificates':
@@ -80,7 +77,7 @@ class CertificateManagerTest(testtools.TestCase):
         self.assertEqual(CERT2['pem'], cert.pem)
         self.assertEqual(CERT2['csr'], cert.csr)
 
-    def test_pod_create_fail(self):
+    def test_create_fail(self):
         create_cert_fail = copy.deepcopy(CREATE_CERT)
         create_cert_fail["wrong_key"] = "wrong"
         self.assertRaisesRegexp(exceptions.InvalidAttribute,
