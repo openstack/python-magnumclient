@@ -121,7 +121,7 @@ def do_baymodel_create(cs, args):
     opts['http_proxy'] = args.http_proxy
     opts['https_proxy'] = args.https_proxy
     opts['no_proxy'] = args.no_proxy
-    opts['labels'] = magnum_utils.format_labels(args.labels)
+    opts['labels'] = magnum_utils.handle_labels(args.labels)
     opts['tls_disabled'] = args.tls_disabled
     opts['public'] = args.public
     opts['registry_enabled'] = args.registry_enabled
