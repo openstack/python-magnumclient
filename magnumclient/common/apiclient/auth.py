@@ -54,7 +54,7 @@ def discover_auth_systems():
     def add_plugin(ext):
         _discovered_plugins[ext.name] = ext.plugin
 
-    ep_namespace = "magnumclient.openstack.common.apiclient.auth"
+    ep_namespace = "magnumclient.common.apiclient.auth"
     mgr = extension.ExtensionManager(ep_namespace)
     mgr.map(add_plugin)
 
