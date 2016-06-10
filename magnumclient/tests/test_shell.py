@@ -27,22 +27,22 @@ from magnumclient.tests import utils
 
 FAKE_ENV = {'OS_USERNAME': 'username',
             'OS_PASSWORD': 'password',
-            'OS_TENANT_NAME': 'tenant_name',
+            'OS_PROJECT_NAME': 'project_name',
             'OS_AUTH_URL': 'http://no.where/v2.0'}
 
 FAKE_ENV2 = {'OS_USER_ID': 'user_id',
              'OS_PASSWORD': 'password',
-             'OS_TENANT_ID': 'tenant_id',
+             'OS_PROJECT_ID': 'project_id',
              'OS_AUTH_URL': 'http://no.where/v2.0'}
 
 FAKE_ENV3 = {'OS_USERNAME': 'username',
              'OS_PASSWORD': 'password',
-             'OS_TENANT_ID': 'tenant_id',
+             'OS_PROJECT_ID': 'project_id',
              'OS_AUTH_URL': 'http://no.where/v2.0'}
 
 FAKE_ENV4 = {'OS_USERNAME': 'username',
              'OS_PASSWORD': 'password',
-             'OS_TENANT_ID': 'tenant_id',
+             'OS_PROJECT_ID': 'project_id',
              'OS_USER_DOMAIN_NAME': 'Default',
              'OS_PROJECT_DOMAIN_NAME': 'Default',
              'OS_AUTH_URL': 'http://no.where/v3'}
@@ -72,9 +72,9 @@ class ParserTest(utils.TestCase):
 class ShellTest(utils.TestCase):
     AUTH_URL = utils.FAKE_ENV['OS_AUTH_URL']
 
-    _msg_no_tenant_project = ("You must provide a tenant name or tenant id"
-                              " via --os-tenant-name, --os-tenant-id,"
-                              " env[OS_TENANT_NAME] or env[OS_TENANT_ID]")
+    _msg_no_tenant_project = ("You must provide a project name or project id"
+                              " via --os-project-name, --os-project-id,"
+                              " env[OS_PROJECT_NAME] or env[OS_PROJECT_ID]")
 
     def setUp(self):
         super(ShellTest, self).setUp()
@@ -149,9 +149,9 @@ class ShellTest(utils.TestCase):
         else:
             self.fail('CommandError not raised')
 
-    def test_no_tenant_name(self):
+    def test_no_project_name(self):
         required = self._msg_no_tenant_project
-        self.make_env(exclude='OS_TENANT_NAME')
+        self.make_env(exclude='OS_PROJECT_NAME')
         try:
             self.shell('bay-list')
         except exceptions.CommandError as message:
@@ -159,9 +159,9 @@ class ShellTest(utils.TestCase):
         else:
             self.fail('CommandError not raised')
 
-    def test_no_tenant_id(self):
+    def test_no_project_id(self):
         required = self._msg_no_tenant_project
-        self.make_env(exclude='OS_TENANT_ID', fake_env=FAKE_ENV3)
+        self.make_env(exclude='OS_PROJECT_ID', fake_env=FAKE_ENV3)
         try:
             self.shell('bay-list')
         except exceptions.CommandError as message:
@@ -234,7 +234,7 @@ class ShellTest(utils.TestCase):
         mock_client.assert_called_once_with(
             username='username', api_key='password',
             endpoint_type='publicURL', project_id='',
-            project_name='tenant_name', auth_url=self.AUTH_URL,
+            project_name='project_name', auth_url=self.AUTH_URL,
             service_type='container-infra', region_name=expected_region_name,
             project_domain_id='', project_domain_name='',
             user_domain_id='', user_domain_name='',
@@ -261,7 +261,7 @@ class ShellTest(utils.TestCase):
         mock_client.assert_called_once_with(
             username='username', api_key='password',
             endpoint_type='publicURL', project_id='',
-            project_name='tenant_name', auth_url=self.AUTH_URL,
+            project_name='project_name', auth_url=self.AUTH_URL,
             service_type='container-infra', region_name=None,
             project_domain_id='', project_domain_name='',
             user_domain_id='', user_domain_name='',
@@ -274,7 +274,7 @@ class ShellTest(utils.TestCase):
         mock_client.assert_called_once_with(
             username='username', api_key='password',
             endpoint_type='internalURL', project_id='',
-            project_name='tenant_name', auth_url=self.AUTH_URL,
+            project_name='project_name', auth_url=self.AUTH_URL,
             service_type='container-infra', region_name=None,
             project_domain_id='', project_domain_name='',
             user_domain_id='', user_domain_name='',
@@ -303,7 +303,7 @@ class ShellTestKeystoneV3(ShellTest):
         self.shell('--endpoint-type publicURL bay-list')
         mock_client.assert_called_once_with(
             username='username', api_key='password',
-            endpoint_type='publicURL', project_id='tenant_id',
+            endpoint_type='publicURL', project_id='project_id',
             project_name='', auth_url=self.AUTH_URL,
             service_type='container-infra', region_name=None,
             project_domain_id='', project_domain_name='Default',

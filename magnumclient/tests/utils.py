@@ -27,7 +27,7 @@ from magnumclient import shell
 
 FAKE_ENV = {'OS_USERNAME': 'username',
             'OS_PASSWORD': 'password',
-            'OS_TENANT_NAME': 'tenant_name',
+            'OS_PROJECT_NAME': 'project_name',
             'OS_AUTH_URL': 'http://no.where/v2.0'}
 
 
