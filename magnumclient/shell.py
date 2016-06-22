@@ -271,31 +271,6 @@ class OpenStackMagnumShell(object):
 #            type=positive_non_zero_float,
 #            help="Set HTTP call timeout (in seconds)")
 
-        parser.add_argument('--os-tenant-id',
-                            metavar='<auth-tenant-id>',
-                            default=cliutils.env('OS_TENANT_ID'),
-                            help='Defaults to env[OS_TENANT_ID].')
-
-        parser.add_argument('--os-user-domain-id',
-                            metavar='<auth-user-domain-id>',
-                            default=cliutils.env('OS_USER_DOMAIN_ID'),
-                            help='Defaults to env[OS_USER_DOMAIN_ID].')
-
-        parser.add_argument('--os-user-domain-name',
-                            metavar='<auth-user-domain-name>',
-                            default=cliutils.env('OS_USER_DOMAIN_NAME'),
-                            help='Defaults to env[OS_USER_DOMAIN_NAME].')
-
-        parser.add_argument('--os-project-domain-id',
-                            metavar='<auth-project-domain-id>',
-                            default=cliutils.env('OS_PROJECT_DOMAIN_ID'),
-                            help='Defaults to env[OS_PROJECT_DOMAIN_ID].')
-
-        parser.add_argument('--os-project-domain-name',
-                            metavar='<auth-project-domain-name>',
-                            default=cliutils.env('OS_PROJECT_DOMAIN_NAME'),
-                            help='Defaults to env[OS_PROJECT_DOMAIN_NAME].')
-
         parser.add_argument('--service-type',
                             metavar='<service-type>',
                             help='Defaults to container for all '
@@ -459,17 +434,22 @@ class OpenStackMagnumShell(object):
             self.do_bash_completion(args)
             return 0
 
-        (os_username, os_tenant_name, os_tenant_id,
+        (os_username, os_project_name, os_project_id,
+         os_tenant_id, os_tenant_name,
          os_user_domain_id, os_user_domain_name,
          os_project_domain_id, os_project_domain_name,
          os_auth_url, os_auth_system, endpoint_type,
          service_type, bypass_url, insecure) = (
-            (args.os_username, args.os_tenant_name, args.os_tenant_id,
+            (args.os_username, args.os_project_name, args.os_project_id,
+             args.os_tenant_id, args.os_tenant_name,
              args.os_user_domain_id, args.os_user_domain_name,
              args.os_project_domain_id, args.os_project_domain_name,
              args.os_auth_url, args.os_auth_system, args.endpoint_type,
              args.service_type, args.bypass_url, args.insecure)
         )
+
+        os_project_id = (os_project_id or os_tenant_id)
+        os_project_name = (os_project_name or os_tenant_name)
 
         if os_auth_system and os_auth_system != "keystone":
             auth_plugin = auth.load_plugin(os_auth_system)
@@ -499,11 +479,11 @@ class OpenStackMagnumShell(object):
                                            "via either --os-username or "
                                            "env[OS_USERNAME]")
 
-            if not os_tenant_name and not os_tenant_id:
-                raise exc.CommandError("You must provide a tenant name "
-                                       "or tenant id via --os-tenant-name, "
-                                       "--os-tenant-id, env[OS_TENANT_NAME] "
-                                       "or env[OS_TENANT_ID]")
+            if not os_project_name and not os_project_id:
+                raise exc.CommandError("You must provide a project name "
+                                       "or project id via --os-project-name, "
+                                       "--os-project-id, env[OS_PROJECT_NAME] "
+                                       "or env[OS_PROJECT_ID]")
 
             if not os_auth_url:
                 if os_auth_system and os_auth_system != 'keystone':
@@ -552,8 +532,8 @@ class OpenStackMagnumShell(object):
 
         self.cs = client.Client(username=os_username,
                                 api_key=os_password,
-                                project_id=os_tenant_id,
-                                project_name=os_tenant_name,
+                                project_id=os_project_id,
+                                project_name=os_project_name,
                                 user_domain_id=os_user_domain_id,
                                 user_domain_name=os_user_domain_name,
                                 project_domain_id=os_project_domain_id,
