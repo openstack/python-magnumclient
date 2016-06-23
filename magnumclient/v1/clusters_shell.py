@@ -110,7 +110,13 @@ def do_cluster_create(cs, args):
     opts['create_timeout'] = args.timeout
     try:
         cluster = cs.clusters.create(**opts)
-        _show_cluster(cluster)
+        # support for non-async in 1.1
+        if args.magnum_api_version and args.magnum_api_version == '1.1':
+            _show_cluster(cluster)
+        else:
+            fields = str(cluster).split("u'")
+            uuid = fields[2]
+            print("Request to create cluster %s has been accepted." % uuid[:3])
     except Exception as e:
         print("Create for cluster %s failed: %s" %
               (opts['name'], e))
@@ -171,7 +177,10 @@ def do_cluster_update(cs, args):
     """Update information about the given cluster."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
     cluster = cs.clusters.update(args.cluster, patch)
-    _show_cluster(cluster)
+    if args.magnum_api_version and args.magnum_api_version == '1.1':
+        _show_cluster(cluster)
+    else:
+        print("Request to update cluster %s has been accepted." % args.cluster)
 
 
 @utils.arg('cluster',

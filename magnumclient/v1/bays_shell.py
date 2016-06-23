@@ -115,7 +115,13 @@ def do_bay_create(cs, args):
     opts['bay_create_timeout'] = args.timeout
     try:
         bay = cs.bays.create(**opts)
-        _show_bay(bay)
+        # support for non-async in 1.1
+        if args.magnum_api_version and args.magnum_api_version == '1.1':
+            _show_bay(bay)
+        else:
+            fields = str(bay).split("u'")
+            uuid = fields[2]
+            print("Request to create bay %s has been accepted." % uuid[:-3])
     except Exception as e:
         print("Create for bay %s failed: %s" %
               (opts['name'], e))
@@ -177,7 +183,10 @@ def do_bay_update(cs, args):
     """Update information about the given bay."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
     bay = cs.bays.update(args.bay, patch)
-    _show_bay(bay)
+    if args.magnum_api_version and args.magnum_api_version == '1.1':
+        _show_bay(bay)
+    else:
+        print("Request to update bay %s has been accepted." % args.bay)
 
 
 @utils.arg('bay',
