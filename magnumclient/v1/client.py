@@ -112,10 +112,10 @@ class Client(object):
                         service_name=service_name,
                         interface=interface,
                         region_name=region_name)
-                except Exception:
-                    raise RuntimeError("Not Authorized")
-            except Exception:
-                raise RuntimeError("Not Authorized")
+                except Exception as e:
+                    raise RuntimeError(str(e))
+            except Exception as e:
+                raise RuntimeError(str(e))
 
         self.http_client = httpclient.SessionClient(
             service_type=service_type,
