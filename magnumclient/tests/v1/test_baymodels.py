@@ -30,6 +30,7 @@ BAYMODEL1 = {'id': 123,
              'keypair_id': 'keypair1',
              'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e21',
              'fixed_network': 'private',
+             'fixed_subnet': 'private-subnet',
              'network_driver': 'libnetwork',
              'volume_driver': 'rexray',
              'dns_nameserver': '8.8.1.1',
@@ -247,6 +248,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['docker_storage_driver'],
                          baymodel.docker_storage_driver)
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
+        self.assertEqual(BAYMODEL1['fixed_subnet'], baymodel.fixed_subnet)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
@@ -272,6 +274,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['docker_storage_driver'],
                          baymodel.docker_storage_driver)
         self.assertEqual(BAYMODEL1['fixed_network'], baymodel.fixed_network)
+        self.assertEqual(BAYMODEL1['fixed_subnet'], baymodel.fixed_subnet)
         self.assertEqual(BAYMODEL1['coe'], baymodel.coe)
         self.assertEqual(BAYMODEL1['http_proxy'], baymodel.http_proxy)
         self.assertEqual(BAYMODEL1['https_proxy'], baymodel.https_proxy)
