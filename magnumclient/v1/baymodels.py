@@ -21,7 +21,7 @@ CREATION_ATTRIBUTES = ['name', 'image_id', 'flavor_id', 'master_flavor_id',
                        'coe', 'http_proxy', 'https_proxy', 'no_proxy',
                        'network_driver', 'tls_disabled', 'public',
                        'registry_enabled', 'volume_driver', 'server_type',
-                       'docker_storage_driver']
+                       'docker_storage_driver', 'master_lb_enabled']
 
 
 class BayModel(base.Resource):

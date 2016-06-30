@@ -42,7 +42,8 @@ BAYMODEL1 = {'id': 123,
              'labels': 'key1=val1,key11=val11',
              'tls_disabled': False,
              'public': False,
-             'registry_enabled': False}
+             'registry_enabled': False,
+             'master_lb_enabled': True}
 
 BAYMODEL2 = {'id': 124,
              'uuid': '66666666-7777-8888-9999-000000000002',
@@ -258,6 +259,8 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['public'], baymodel.public)
         self.assertEqual(BAYMODEL1['registry_enabled'],
                          baymodel.registry_enabled)
+        self.assertEqual(BAYMODEL1['master_lb_enabled'],
+                         baymodel.master_lb_enabled)
 
     def test_baymodel_show_by_name(self):
         baymodel = self.mgr.get(BAYMODEL1['name'])
@@ -283,6 +286,8 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(BAYMODEL1['public'], baymodel.public)
         self.assertEqual(BAYMODEL1['registry_enabled'],
                          baymodel.registry_enabled)
+        self.assertEqual(BAYMODEL1['master_lb_enabled'],
+                         baymodel.master_lb_enabled)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)
