@@ -54,7 +54,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--docker-volume-size 10 '
                                '--docker-storage-driver devicemapper '
                                '--public '
-                               '--server-type vm')
+                               '--server-type vm'
+                               '--master-lb-enabled')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('baymodel-create '

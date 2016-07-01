@@ -108,6 +108,10 @@ def _show_baymodel(baymodel):
            help='Specify the server type to be used '
                 'for example vm. For this release '
                 'default server type will be vm.')
+@utils.arg('--master-lb-enabled',
+           action='store_true', default=False,
+           help='Indicates whether created bays should have a load balancer '
+                'for master nodes or not.')
 def do_baymodel_create(cs, args):
     """Create a baymodel."""
     opts = {}
@@ -132,6 +136,7 @@ def do_baymodel_create(cs, args):
     opts['public'] = args.public
     opts['registry_enabled'] = args.registry_enabled
     opts['server_type'] = args.server_type
+    opts['master_lb_enabled'] = args.master_lb_enabled
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)
