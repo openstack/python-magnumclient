@@ -49,6 +49,9 @@ def _show_baymodel(baymodel):
            metavar='<fixed-network>',
            help='The private Neutron network name to connect to this bay'
            ' model.')
+@utils.arg('--fixed-subnet',
+           metavar='<fixed-subnet>',
+           help='The private Neutron subnet name to connect to bay.')
 @utils.arg('--network-driver',
            metavar='<network-driver>',
            help='The network driver name for instantiating container'
@@ -122,6 +125,7 @@ def do_baymodel_create(cs, args):
     opts['keypair_id'] = args.keypair_id
     opts['external_network_id'] = args.external_network_id
     opts['fixed_network'] = args.fixed_network
+    opts['fixed_subnet'] = args.fixed_subnet
     opts['network_driver'] = args.network_driver
     opts['volume_driver'] = args.volume_driver
     opts['dns_nameserver'] = args.dns_nameserver
