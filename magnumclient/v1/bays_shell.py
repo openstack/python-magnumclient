@@ -83,9 +83,9 @@ def do_bay_list(cs, args):
 @utils.arg('--timeout',
            metavar='<timeout>',
            type=int,
-           default=0,
-           help='The timeout for bay creation in minutes. Set '
-                'to 0 for no timeout. The default is no timeout.')
+           default=60,
+           help='The timeout for bay creation in minutes. The default '
+                'is 60 minutes.')
 def do_bay_create(cs, args):
     """Create a bay."""
     baymodel = cs.baymodels.get(args.baymodel)

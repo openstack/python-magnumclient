@@ -30,7 +30,7 @@ class FakeBay(Bay):
         self.master_count = kwargs.get('master_count', 1)
         self.node_count = kwargs.get('node_count', 1)
         self.links = kwargs.get('links', [])
-        self.bay_create_timeout = kwargs.get('bay_create_timeout', 0)
+        self.bay_create_timeout = kwargs.get('bay_create_timeout', 60)
 
 
 class ShellTest(shell_test_base.TestCommandLineArgument):
