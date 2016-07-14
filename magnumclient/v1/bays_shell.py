@@ -124,9 +124,19 @@ def do_bay_delete(cs, args):
 @utils.arg('bay',
            metavar='<bay>',
            help='ID or name of the bay to show.')
+@utils.arg('--long',
+           action='store_true', default=False,
+           help='Display extra associated Baymodel info.')
 def do_bay_show(cs, args):
     """Show details about the given bay."""
     bay = cs.bays.get(args.bay)
+    if args.long:
+        baymodel = cs.baymodels.get(bay.baymodel_id)
+        del baymodel._info['links'], baymodel._info['uuid']
+
+        for key in baymodel._info:
+            if 'baymodel_' + key not in bay._info:
+                bay._info['baymodel_' + key] = baymodel._info[key]
     _show_bay(bay)
 
 

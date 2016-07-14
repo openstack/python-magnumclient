@@ -16,6 +16,7 @@ import mock
 
 from magnumclient import exceptions
 from magnumclient.tests.v1 import shell_test_base
+from magnumclient.tests.v1 import test_baymodels_shell
 from magnumclient.v1.bays import Bay
 
 
@@ -112,6 +113,17 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self._test_arg_success('bay-create --baymodel xxx '
                                '--timeout 15')
         self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    def test_bay_show_baymodel_metadata(self, mock_bay, mock_baymodel):
+        mock_bay.return_value = FakeBay(info={'links': 0, 'baymodel_id': 0})
+        mock_baymodel.return_value = test_baymodels_shell.FakeBayModel(
+            info={'links': 0, 'uuid': 0, 'id': 0, 'name': ''})
+
+        self._test_arg_success('bay-show --long x', 'baymodel_name')
+        self.assertTrue(mock_bay.called)
+        self.assertTrue(mock_baymodel.called)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
     @mock.patch('magnumclient.v1.bays.BayManager.create')
