@@ -49,7 +49,6 @@ try:
 except ImportError:
     pass
 
-from magnumclient.common.apiclient import auth
 from magnumclient.common import cliutils
 from magnumclient import exceptions as exc
 from magnumclient.v1 import client as client_v1
@@ -57,7 +56,7 @@ from magnumclient.v1 import shell as shell_v1
 from magnumclient import version
 
 DEFAULT_API_VERSION = '1'
-DEFAULT_ENDPOINT_TYPE = 'publicURL'
+DEFAULT_INTERFACE = 'public'
 DEFAULT_SERVICE_TYPE = 'container-infra'
 
 logger = logging.getLogger(__name__)
@@ -271,20 +270,111 @@ class OpenStackMagnumShell(object):
 #            type=positive_non_zero_float,
 #            help="Set HTTP call timeout (in seconds)")
 
+        parser.add_argument('--os-auth-url',
+                            metavar='<auth-auth-url>',
+                            default=cliutils.env('OS_AUTH_URL', default=None),
+                            help='Defaults to env[OS_AUTH_URL].')
+
+        parser.add_argument('--os-user-id',
+                            metavar='<auth-user-id>',
+                            default=cliutils.env('OS_USER_ID', default=None),
+                            help='Defaults to env[OS_USER_ID].')
+
+        parser.add_argument('--os-username',
+                            metavar='<auth-username>',
+                            default=cliutils.env('OS_USERNAME', default=None),
+                            help='Defaults to env[OS_USERNAME].')
+
+        parser.add_argument('--os-user-domain-id',
+                            metavar='<auth-user-domain-id>',
+                            default=cliutils.env('OS_USER_DOMAIN_ID',
+                                                 default=None),
+                            help='Defaults to env[OS_USER_DOMAIN_ID].')
+
+        parser.add_argument('--os-user-domain-name',
+                            metavar='<auth-user-domain-name>',
+                            default=cliutils.env('OS_USER_DOMAIN_NAME',
+                                                 default=None),
+                            help='Defaults to env[OS_USER_DOMAIN_NAME].')
+
+        parser.add_argument('--os-project-id',
+                            metavar='<auth-project-id>',
+                            default=cliutils.env('OS_PROJECT_ID',
+                                                 default=None),
+                            help='Defaults to env[OS_PROJECT_ID].')
+
+        parser.add_argument('--os-project-name',
+                            metavar='<auth-project-name>',
+                            default=cliutils.env('OS_PROJECT_NAME',
+                                                 default=None),
+                            help='Defaults to env[OS_PROJECT_NAME].')
+
+        parser.add_argument('--os-tenant-id',
+                            metavar='<auth-tenant-id>',
+                            default=cliutils.env('OS_TENANT_ID',
+                                                 default=None),
+                            help=argparse.SUPPRESS)
+
+        parser.add_argument('--os-tenant-name',
+                            metavar='<auth-tenant-name>',
+                            default=cliutils.env('OS_TENANT_NAME',
+                                                 default=None),
+                            help=argparse.SUPPRESS)
+
+        parser.add_argument('--os-project-domain-id',
+                            metavar='<auth-project-domain-id>',
+                            default=cliutils.env('OS_PROJECT_DOMAIN_ID',
+                                                 default=None),
+                            help='Defaults to env[OS_PROJECT_DOMAIN_ID].')
+
+        parser.add_argument('--os-project-domain-name',
+                            metavar='<auth-project-domain-name>',
+                            default=cliutils.env('OS_PROJECT_DOMAIN_NAME',
+                                                 default=None),
+                            help='Defaults to env[OS_PROJECT_DOMAIN_NAME].')
+
+        parser.add_argument('--os-token',
+                            metavar='<auth-token>',
+                            default=cliutils.env('OS_TOKEN', default=None),
+                            help='Defaults to env[OS_TOKEN].')
+
+        parser.add_argument('--os-password',
+                            metavar='<auth-password>',
+                            default=cliutils.env('OS_PASSWORD',
+                                                 default=None),
+                            help='Defaults to env[OS_PASSWORD].')
+
         parser.add_argument('--service-type',
                             metavar='<service-type>',
-                            help='Defaults to container for all '
+                            help='Defaults to container-infra for all '
                                  'actions.')
         parser.add_argument('--service_type',
                             help=argparse.SUPPRESS)
 
         parser.add_argument('--endpoint-type',
                             metavar='<endpoint-type>',
+                            default=cliutils.env('OS_ENDPOINT_TYPE',
+                                                 default=None),
+                            help=argparse.SUPPRESS)
+
+        parser.add_argument('--os-endpoint-type',
+                            metavar='<os-endpoint-type>',
+                            default=cliutils.env('OS_ENDPOINT_TYPE',
+                                                 default=None),
+                            help='Defaults to env[OS_ENDPOINT_TYPE]')
+
+        parser.add_argument('--os-interface',
+                            metavar='<os-interface>',
                             default=cliutils.env(
-                                'OS_ENDPOINT_TYPE',
-                                default=DEFAULT_ENDPOINT_TYPE),
-                            help='Defaults to env[OS_ENDPOINT_TYPE] or '
-                            + DEFAULT_ENDPOINT_TYPE + '.')
+                                'OS_INTERFACE',
+                                default=DEFAULT_INTERFACE),
+                            help=argparse.SUPPRESS)
+
+        parser.add_argument('--os-cloud',
+                            metavar='<auth-cloud>',
+                            default=cliutils.env('OS_CLOUD', default=None),
+                            help='Defaults to env[OS_CLOUD].')
+
         # NOTE(dtroyer): We can't add --endpoint_type here due to argparse
         #                thinking usage-list --end is ambiguous; but it
         #                works fine with only --endpoint-type present
@@ -309,12 +399,17 @@ class OpenStackMagnumShell(object):
                             'verifying a TLS (https) server certificate. '
                             'Defaults to env[OS_CACERT].')
 
+        parser.add_argument('--os-endpoint-override',
+                            metavar='<endpoint-override>',
+                            default=cliutils.env('OS_ENDPOINT_OVERRIDE',
+                                                 default=None),
+                            help="Use this API endpoint instead of the "
+                            "Service Catalog.")
         parser.add_argument('--bypass-url',
                             metavar='<bypass-url>',
                             default=cliutils.env('BYPASS_URL', default=None),
                             dest='bypass_url',
-                            help="Use this API endpoint instead of the "
-                            "Service Catalog.")
+                            help=argparse.SUPPRESS)
         parser.add_argument('--bypass_url',
                             help=argparse.SUPPRESS)
 
@@ -323,9 +418,6 @@ class OpenStackMagnumShell(object):
                                                  default=False),
                             action='store_true',
                             help="Do not verify https connections")
-
-        # The auth-system-plugins might require some extra options
-        auth.load_auth_system_opts(parser)
 
         return parser
 
@@ -434,95 +526,43 @@ class OpenStackMagnumShell(object):
             self.do_bash_completion(args)
             return 0
 
-        (os_username, os_project_name, os_project_id,
-         os_tenant_id, os_tenant_name,
-         os_user_domain_id, os_user_domain_name,
-         os_project_domain_id, os_project_domain_name,
-         os_auth_url, os_auth_system, endpoint_type,
-         service_type, bypass_url, insecure) = (
-            (args.os_username, args.os_project_name, args.os_project_id,
-             args.os_tenant_id, args.os_tenant_name,
-             args.os_user_domain_id, args.os_user_domain_name,
-             args.os_project_domain_id, args.os_project_domain_name,
-             args.os_auth_url, args.os_auth_system, args.endpoint_type,
-             args.service_type, args.bypass_url, args.insecure)
-        )
+        if not args.service_type:
+            args.service_type = DEFAULT_SERVICE_TYPE
 
-        os_project_id = (os_project_id or os_tenant_id)
-        os_project_name = (os_project_name or os_tenant_name)
+        if args.bypass_url:
+            args.os_endpoint_override = args.bypass_url
 
-        if os_auth_system and os_auth_system != "keystone":
-            auth_plugin = auth.load_plugin(os_auth_system)
-        else:
-            auth_plugin = None
+        args.os_project_id = (args.os_project_id or args.os_tenant_id)
+        args.os_project_name = (args.os_project_name or args.os_tenant_name)
 
-        # Fetched and set later as needed
-        os_password = None
-
-        if not endpoint_type:
-            endpoint_type = DEFAULT_ENDPOINT_TYPE
-
-        if not service_type:
-            service_type = DEFAULT_SERVICE_TYPE
-# NA - there is only one service this CLI accesses
-#            service_type = utils.get_service_type(args.func) or service_type
-
-        # FIXME(usrleon): Here should be restrict for project id same as
-        # for os_username or os_password but for compatibility it is not.
         if not cliutils.isunauthenticated(args.func):
-            if auth_plugin:
-                auth_plugin.parse_opts(args)
+            if (not (args.os_token and
+                     (args.os_auth_url or args.os_endpoint_override)) and
+                not args.os_cloud
+                ):
 
-            if not auth_plugin or not auth_plugin.opts:
-                if not os_username:
-                    raise exc.CommandError("You must provide a username "
-                                           "via either --os-username or "
-                                           "env[OS_USERNAME]")
-
-            if not os_project_name and not os_project_id:
-                raise exc.CommandError("You must provide a project name "
-                                       "or project id via --os-project-name, "
-                                       "--os-project-id, env[OS_PROJECT_NAME] "
-                                       "or env[OS_PROJECT_ID]")
-
-            if not os_auth_url:
-                if os_auth_system and os_auth_system != 'keystone':
-                    os_auth_url = auth_plugin.get_auth_url()
-
-            if not os_auth_url:
-                    raise exc.CommandError("You must provide an auth url "
-                                           "via either --os-auth-url or "
-                                           "env[OS_AUTH_URL] or specify an "
-                                           "auth_system which defines a "
-                                           "default url with --os-auth-system "
-                                           "or env[OS_AUTH_SYSTEM]")
-
-# NOTE: The Magnum client authenticates when you create it. So instead of
-#       creating here and authenticating later, which is what the novaclient
-#       does, we just create the client later.
-
-        # Now check for the password/token of which pieces of the
-        # identifying keyring key can come from the underlying client
-        if not cliutils.isunauthenticated(args.func):
-            # NA - Client can't be used with SecretsHelper
-            if (auth_plugin and auth_plugin.opts and
-                    "os_password" not in auth_plugin.opts):
-                use_pw = False
-            else:
-                use_pw = True
-
-            if use_pw:
-                # Auth using token must have failed or not happened
-                # at all, so now switch to password mode and save
-                # the token when its gotten... using our keyring
-                # saver
-                os_password = args.os_password
-                if not os_password:
+                if not (args.os_username or args.os_user_id):
                     raise exc.CommandError(
-                        'Expecting a password provided via either '
-                        '--os-password, env[OS_PASSWORD], or '
-                        'prompted response')
-
+                        "You must provide a username via either --os-username "
+                        "or via env[OS_USERNAME]"
+                    )
+                if not args.os_password:
+                    raise exc.CommandError(
+                        "You must provide a password via either "
+                        "--os-password, env[OS_PASSWORD], or prompted "
+                        "response"
+                    )
+                if (not args.os_project_name and not args.os_project_id):
+                    raise exc.CommandError(
+                        "You must provide a project name or project id via "
+                        "--os-project-name, --os-project-id, "
+                        "env[OS_PROJECT_NAME] or env[OS_PROJECT_ID]"
+                    )
+                if not args.os_auth_url:
+                    raise exc.CommandError(
+                        "You must provide an auth url via either "
+                        "--os-auth-url or via env[OS_AUTH_URL]"
+                    )
         try:
             client = {
                 '1': client_v1,
@@ -530,20 +570,32 @@ class OpenStackMagnumShell(object):
         except KeyError:
             client = client_v1
 
-        self.cs = client.Client(username=os_username,
-                                api_key=os_password,
-                                project_id=os_project_id,
-                                project_name=os_project_name,
-                                user_domain_id=os_user_domain_id,
-                                user_domain_name=os_user_domain_name,
-                                project_domain_id=os_project_domain_id,
-                                project_domain_name=os_project_domain_name,
-                                auth_url=os_auth_url,
-                                service_type=service_type,
-                                region_name=args.os_region_name,
-                                magnum_url=bypass_url,
-                                endpoint_type=endpoint_type,
-                                insecure=insecure)
+        args.os_endpoint_type = (args.os_endpoint_type or args.endpoint_type)
+        if args.os_endpoint_type:
+            args.os_interface = args.os_endpoint_type
+
+        if args.os_interface.endswith('URL'):
+            args.os_interface = args.os_interface[:-3]
+
+        self.cs = client.Client(
+            cloud=args.os_cloud,
+            user_id=args.os_user_id,
+            username=args.os_username,
+            password=args.os_password,
+            auth_token=args.os_token,
+            project_id=args.os_project_id,
+            project_name=args.os_project_name,
+            user_domain_id=args.os_user_domain_id,
+            user_domain_name=args.os_user_domain_name,
+            project_domain_id=args.os_project_domain_id,
+            project_domain_name=args.os_project_domain_name,
+            auth_url=args.os_auth_url,
+            service_type=args.service_type,
+            region_name=args.os_region_name,
+            magnum_url=args.os_endpoint_override,
+            interface=args.os_interface,
+            insecure=args.insecure,
+        )
 
         args.func(self.cs, args)
 

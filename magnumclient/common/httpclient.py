@@ -44,6 +44,10 @@ def _extract_error_json(body):
         if 'error_message' in body_json:
             raw_msg = body_json['error_message']
             error_json = json.loads(raw_msg)
+        elif 'error' in body_json:
+            error_body = body_json['error']
+            error_json = {'faultstring': error_body['title'],
+                          'debuginfo': error_body['message']}
         else:
             error_body = body_json['errors'][0]
             raw_msg = error_body['title']

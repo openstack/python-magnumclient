@@ -22,9 +22,9 @@ class ClientTest(testtools.TestCase):
 
     @mock.patch('magnumclient.v1.client.Client')
     def test_no_version_argument(self, mock_magnum_client):
-        client.Client(input_auth_token='mytoken', magnum_url='http://myurl/')
+        client.Client(auth_token='mytoken', magnum_url='http://myurl/')
         mock_magnum_client.assert_called_with(
-            input_auth_token='mytoken', magnum_url='http://myurl/')
+            auth_token='mytoken', magnum_url='http://myurl/')
 
     @mock.patch('magnumclient.v1.client.Client')
     def test_valid_version_argument(self, mock_magnum_client):

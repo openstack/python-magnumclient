@@ -20,174 +20,206 @@ from keystoneauth1.exceptions import catalog
 from magnumclient.v1 import client
 
 
-class ClientTest(testtools.TestCase):
+class ClientInitializeTest(testtools.TestCase):
+
+    def _load_session_kwargs(self):
+        return {
+            'username': None,
+            'project_id': None,
+            'project_name': None,
+            'auth_url': None,
+            'password': None,
+            'auth_type': 'password',
+            'insecure': False,
+            'user_domain_id': None,
+            'user_domain_name': None,
+            'project_domain_id': None,
+            'project_domain_name': None,
+            'auth_token': None,
+            'timeout': 600,
+        }
+
+    def _load_service_type_kwargs(self):
+        return {
+            'interface': 'public',
+            'region_name': None,
+            'service_name': None,
+            'service_type': 'container-infra',
+        }
+
+    def _session_client_kwargs(self, session):
+        kwargs = self._load_service_type_kwargs()
+        kwargs['endpoint_override'] = None
+        kwargs['session'] = session
+
+        return kwargs
 
     @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_with_session(self, mock_session, http_client):
+    @mock.patch('magnumclient.v1.client._load_session')
+    @mock.patch('magnumclient.v1.client._load_service_type',
+                return_value='container-infra')
+    def test_init_with_session(self,
+                               mock_load_service_type,
+                               mock_load_session,
+                               mock_http_client):
         session = mock.Mock()
         client.Client(session=session)
-        mock_session.assert_not_called()
-        http_client.assert_called_once_with(
-            interface='public',
-            region_name=None,
-            service_name=None,
-            service_type='container-infra',
-            session=session)
+        mock_load_session.assert_not_called()
+        mock_load_service_type.assert_called_once_with(
+            session,
+            **self._load_service_type_kwargs()
+        )
+        mock_http_client.assert_called_once_with(
+            **self._session_client_kwargs(session)
+        )
 
-    @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.token_endpoint.Token')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_with_token_and_url(
-            self, mock_session, mock_token, http_client):
-        mock_auth_plugin = mock.Mock()
-        mock_token.return_value = mock_auth_plugin
+    def _test_init_with_secret(self,
+                               init_func,
+                               mock_load_service_type,
+                               mock_load_session,
+                               mock_http_client,):
+        expected_password = 'expected_password'
         session = mock.Mock()
-        mock_session.return_value = session
-        client.Client(input_auth_token='mytoken', magnum_url='http://myurl/')
-        mock_session.assert_called_once_with(
-            auth=mock_auth_plugin, verify=True)
-        http_client.assert_called_once_with(
-            endpoint_override='http://myurl/',
-            interface='public',
-            region_name=None,
-            service_name=None,
-            service_type='container-infra',
-            session=session)
+        mock_load_session.return_value = session
+        init_func(expected_password)
+        load_session_args = self._load_session_kwargs()
+        load_session_args['password'] = expected_password
+        mock_load_session.assert_called_once_with(
+            **load_session_args
+        )
+        mock_load_service_type.assert_called_once_with(
+            session,
+            **self._load_service_type_kwargs()
+        )
+        mock_http_client.assert_called_once_with(
+            **self._session_client_kwargs(session)
+        )
 
     @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.loading.get_plugin_loader')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_with_token(
-            self, mock_session, mock_loader, http_client):
-        mock_plugin = mock.Mock()
-        mock_loader.return_value = mock_plugin
-        client.Client(input_auth_token='mytoken', auth_url='authurl')
-        mock_loader.assert_called_once_with('token')
-        mock_plugin.load_from_options.assert_called_once_with(
-            auth_url='authurl',
-            project_id=None,
-            project_name=None,
-            project_domain_id=None,
-            project_domain_name=None,
-            user_domain_id=None,
-            user_domain_name=None,
-            token='mytoken')
-        http_client.assert_called_once_with(
-            interface='public',
-            region_name=None,
-            service_name=None,
-            service_type='container-infra',
-            session=mock.ANY)
+    @mock.patch('magnumclient.v1.client._load_session')
+    @mock.patch('magnumclient.v1.client._load_service_type',
+                return_value='container-infra')
+    def test_init_with_password(self,
+                                mock_load_service_type,
+                                mock_load_session,
+                                mock_http_client):
+        self._test_init_with_secret(
+            lambda x: client.Client(password=x),
+            mock_load_service_type,
+            mock_load_session,
+            mock_http_client
+        )
 
     @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.loading.get_plugin_loader')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_with_user(
-            self, mock_session, mock_loader, http_client):
-        mock_plugin = mock.Mock()
-        mock_loader.return_value = mock_plugin
+    @mock.patch('magnumclient.v1.client._load_session')
+    @mock.patch('magnumclient.v1.client._load_service_type',
+                return_value='container-infra')
+    def test_init_with_api_key(self,
+                               mock_load_service_type,
+                               mock_load_session,
+                               mock_http_client):
+        self._test_init_with_secret(
+            lambda x: client.Client(api_key=x),
+            mock_load_service_type,
+            mock_load_session,
+            mock_http_client
+        )
+
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('magnumclient.v1.client._load_session')
+    @mock.patch('magnumclient.v1.client._load_service_type',
+                return_value='container-infra')
+    def test_init_with_auth_token(self,
+                                  mock_load_service_type,
+                                  mock_load_session,
+                                  mock_http_client,):
+        expected_token = 'expected_password'
+        session = mock.Mock()
+        mock_load_session.return_value = session
+        client.Client(auth_token=expected_token)
+        load_session_args = self._load_session_kwargs()
+        load_session_args['auth_token'] = expected_token
+        load_session_args['auth_type'] = 'token'
+        mock_load_session.assert_called_once_with(
+            **load_session_args
+        )
+        mock_load_service_type.assert_called_once_with(
+            session,
+            **self._load_service_type_kwargs()
+        )
+        mock_http_client.assert_called_once_with(
+            **self._session_client_kwargs(session)
+        )
+
+    def _test_init_with_interface(self,
+                                  init_func,
+                                  mock_load_service_type,
+                                  mock_load_session,
+                                  mock_http_client):
+        expected_interface = 'admin'
+        session = mock.Mock()
+        mock_load_session.return_value = session
+        init_func(expected_interface)
+        mock_load_session.assert_called_once_with(
+            **self._load_session_kwargs()
+        )
+        expected_kwargs = self._load_service_type_kwargs()
+        expected_kwargs['interface'] = expected_interface
+        mock_load_service_type.assert_called_once_with(
+            session,
+            **expected_kwargs
+        )
+        expected_kwargs = self._session_client_kwargs(session)
+        expected_kwargs['interface'] = expected_interface
+        mock_http_client.assert_called_once_with(
+            **expected_kwargs
+        )
+
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('magnumclient.v1.client._load_session')
+    @mock.patch('magnumclient.v1.client._load_service_type',
+                return_value='container-infra')
+    def test_init_with_interface(self,
+                                 mock_load_service_type,
+                                 mock_load_session,
+                                 mock_http_client):
+        self._test_init_with_interface(
+            lambda x: client.Client(interface=x),
+            mock_load_service_type,
+            mock_load_session,
+            mock_http_client
+        )
+
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('magnumclient.v1.client._load_session')
+    @mock.patch('magnumclient.v1.client._load_service_type',
+                return_value='container-infra')
+    def test_init_with_endpoint_type(self,
+                                     mock_load_service_type,
+                                     mock_load_session,
+                                     mock_http_client):
+        self._test_init_with_interface(
+            lambda x: client.Client(interface='public',
+                                    endpoint_type=('%sURL' % x)),
+            mock_load_service_type,
+            mock_load_session,
+            mock_http_client
+        )
+
+    @mock.patch('magnumclient.common.httpclient.SessionClient')
+    @mock.patch('magnumclient.v1.client._load_session')
+    def test_init_with_legacy_service_type(self,
+                                           mock_load_session,
+                                           mock_http_client):
+        session = mock.Mock()
+        mock_load_session.return_value = session
+        session.get_endpoint.side_effect = [
+            catalog.EndpointNotFound(),
+            mock.Mock()
+        ]
         client.Client(username='myuser', auth_url='authurl')
-        mock_loader.assert_called_once_with('password')
-        mock_plugin.load_from_options.assert_called_once_with(
-            auth_url='authurl',
-            username='myuser',
-            password=None,
-            project_domain_id=None,
-            project_domain_name=None,
-            user_domain_id=None,
-            user_domain_name=None,
-            project_id=None,
-            project_name=None)
-        http_client.assert_called_once_with(
-            interface='public',
-            region_name=None,
-            service_name=None,
-            service_type='container-infra',
-            session=mock.ANY)
-
-    @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.loading.get_plugin_loader')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_with_legacy_service_type(
-            self, mock_session, mock_loader, http_client):
-        mock_plugin = mock.Mock()
-        mock_loader.return_value = mock_plugin
-        mock_session_obj = mock.Mock()
-        mock_session.return_value = mock_session_obj
-        mock_session_obj.get_endpoint.side_effect = [
-            catalog.EndpointNotFound(), mock.Mock()]
-        client.Client(username='myuser', auth_url='authurl')
-        mock_loader.assert_called_once_with('password')
-        mock_plugin.load_from_options.assert_called_once_with(
-            auth_url='authurl',
-            username='myuser',
-            password=None,
-            project_domain_id=None,
-            project_domain_name=None,
-            user_domain_id=None,
-            user_domain_name=None,
-            project_id=None,
-            project_name=None)
-        http_client.assert_called_once_with(
-            interface='public',
-            region_name=None,
-            service_name=None,
-            service_type='container',
-            session=mock.ANY)
-
-    @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.loading.get_plugin_loader')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_unauthorized(
-            self, mock_session, mock_loader, http_client):
-        mock_plugin = mock.Mock()
-        mock_loader.return_value = mock_plugin
-        mock_session_obj = mock.Mock()
-        mock_session.return_value = mock_session_obj
-        mock_session_obj.get_endpoint.side_effect = Exception()
-        self.assertRaises(
-            RuntimeError,
-            client.Client, username='myuser', auth_url='authurl')
-        mock_loader.assert_called_once_with('password')
-        mock_plugin.load_from_options.assert_called_once_with(
-            auth_url='authurl',
-            username='myuser',
-            password=None,
-            project_domain_id=None,
-            project_domain_name=None,
-            user_domain_id=None,
-            user_domain_name=None,
-            project_id=None,
-            project_name=None)
-        http_client.assert_not_called()
-
-    @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_with_endpoint_override(self, mock_session, http_client):
-        session = mock.Mock()
-        client.Client(session=session, endpoint_override='magnumurl')
-        mock_session.assert_not_called()
-        http_client.assert_called_once_with(
-            interface='public',
-            region_name=None,
-            service_name=None,
-            service_type='container-infra',
-            session=session,
-            endpoint_override='magnumurl')
-
-    @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('keystoneauth1.session.Session')
-    def test_init_with_magnum_url_and_endpoint_override(self, mock_session,
-                                                        http_client):
-        session = mock.Mock()
-        client.Client(session=session, magnum_url='magnumurl',
-                      endpoint_override='magnumurl_override')
-        mock_session.assert_not_called()
-        http_client.assert_called_once_with(
-            interface='public',
-            region_name=None,
-            service_name=None,
-            service_type='container-infra',
-            session=session,
-            endpoint_override='magnumurl')
+        expected_kwargs = self._session_client_kwargs(session)
+        expected_kwargs['service_type'] = 'container'
+        mock_http_client.assert_called_once_with(
+            **expected_kwargs
+        )
