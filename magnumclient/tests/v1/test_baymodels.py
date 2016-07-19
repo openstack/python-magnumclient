@@ -116,6 +116,13 @@ fake_responses = {
             UPDATED_BAYMODEL,
         ),
     },
+    '/v1/baymodels/detail':
+    {
+        'GET': (
+            {},
+            {'baymodels': [BAYMODEL1, BAYMODEL2]},
+        ),
+    },
     '/v1/baymodels/?limit=2':
     {
         'GET': (
@@ -176,7 +183,7 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertThat(baymodels, matchers.HasLength(2))
 
-    def _test_baymode_list_with_fileters(
+    def _test_baymodel_list_with_filters(
             self, limit=None, marker=None,
             sort_key=None, sort_dir=None,
             detail=False, expect=[]):
@@ -187,11 +194,19 @@ class BayModelManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertThat(baymodels_filter, matchers.HasLength(2))
 
+    def test_baymodel_list_with_detail(self):
+        expect = [
+            ('GET', '/v1/baymodels/detail', {}, None),
+        ]
+        self._test_baymodel_list_with_filters(
+            detail=True,
+            expect=expect)
+
     def test_baymodel_list_with_limit(self):
         expect = [
             ('GET', '/v1/baymodels/?limit=2', {}, None),
         ]
-        self._test_baymode_list_with_fileters(
+        self._test_baymodel_list_with_filters(
             limit=2,
             expect=expect)
 
@@ -199,7 +214,7 @@ class BayModelManagerTest(testtools.TestCase):
         expect = [
             ('GET', '/v1/baymodels/?marker=%s' % BAYMODEL2['uuid'], {}, None),
         ]
-        self._test_baymode_list_with_fileters(
+        self._test_baymodel_list_with_filters(
             marker=BAYMODEL2['uuid'],
             expect=expect)
 
@@ -208,7 +223,7 @@ class BayModelManagerTest(testtools.TestCase):
             ('GET', '/v1/baymodels/?limit=2&marker=%s' % BAYMODEL2['uuid'],
              {}, None),
         ]
-        self._test_baymode_list_with_fileters(
+        self._test_baymodel_list_with_filters(
             limit=2, marker=BAYMODEL2['uuid'],
             expect=expect)
 
@@ -216,7 +231,7 @@ class BayModelManagerTest(testtools.TestCase):
         expect = [
             ('GET', '/v1/baymodels/?sort_dir=asc', {}, None),
         ]
-        self._test_baymode_list_with_fileters(
+        self._test_baymodel_list_with_filters(
             sort_dir='asc',
             expect=expect)
 
@@ -224,7 +239,7 @@ class BayModelManagerTest(testtools.TestCase):
         expect = [
             ('GET', '/v1/baymodels/?sort_key=uuid', {}, None),
         ]
-        self._test_baymode_list_with_fileters(
+        self._test_baymodel_list_with_filters(
             sort_key='uuid',
             expect=expect)
 
@@ -232,7 +247,7 @@ class BayModelManagerTest(testtools.TestCase):
         expect = [
             ('GET', '/v1/baymodels/?sort_key=uuid&sort_dir=desc', {}, None),
         ]
-        self._test_baymode_list_with_fileters(
+        self._test_baymodel_list_with_filters(
             sort_key='uuid', sort_dir='desc',
             expect=expect)
 
