@@ -238,3 +238,43 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
 
         self._test_arg_failure('bay-update test add', _error_msg)
         self.assertFalse(mock_update.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    def test_bay_config_success(self, mock_bay, mock_baymodel):
+        mock_bay.return_value = FakeBay(status='UPDATE_COMPLETE')
+        self._test_arg_success('bay-config xxx')
+        self.assertTrue(mock_bay.called)
+
+        mock_bay.return_value = FakeBay(status='CREATE_COMPLETE')
+        self._test_arg_success('bay-config xxx')
+        self.assertTrue(mock_bay.called)
+
+        self._test_arg_success('bay-config --dir /tmp xxx')
+        self.assertTrue(mock_bay.called)
+
+        self._test_arg_success('bay-config --force xxx')
+        self.assertTrue(mock_bay.called)
+
+        self._test_arg_success('bay-config --dir /tmp --force xxx')
+        self.assertTrue(mock_bay.called)
+
+    @mock.patch('magnumclient.v1.baymodels.BayModelManager.get')
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    def test_bay_config_failure_wrong_status(self, mock_bay, mock_baymodel):
+        mock_bay.return_value = FakeBay(status='CREATE_IN_PROGRESS')
+        self.assertRaises(exceptions.CommandError,
+                          self._test_arg_failure,
+                          'bay-config xxx',
+                          ['.*?^Bay in status: '])
+
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    def test_bay_config_failure_no_arg(self, mock_bay):
+        self._test_arg_failure('bay-config', self._few_argument_error)
+        self.assertFalse(mock_bay.called)
+
+    @mock.patch('magnumclient.v1.bays.BayManager.get')
+    def test_bay_config_failure_wrong_arg(self, mock_bay):
+        self._test_arg_failure('bay-config xxx yyy',
+                               self._unrecognized_arg_error)
+        self.assertFalse(mock_bay.called)

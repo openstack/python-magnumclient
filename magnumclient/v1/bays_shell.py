@@ -14,7 +14,16 @@
 
 from magnumclient.common import cliutils as utils
 from magnumclient.common import utils as magnum_utils
+from magnumclient import exceptions
 from magnumclient.i18n import _
+
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+import os
 
 
 def _show_bay(bay):
@@ -159,3 +168,152 @@ def do_bay_update(cs, args):
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
     bay = cs.bays.update(args.bay, patch)
     _show_bay(bay)
+
+
+@utils.arg('bay',
+           metavar='<bay>',
+           help='ID or name of the bay to retrieve config.')
+@utils.arg('--dir',
+           metavar='<dir>',
+           default='.',
+           help='Directory to save the certificate and config files.')
+@utils.arg('--force',
+           action='store_true', default=False,
+           help='Overwrite files if existing.')
+def do_bay_config(cs, args):
+    """Configure native client to access bay.
+
+    You can source the output of this command to get the native client of the
+    corresponding COE configured to access the bay.
+
+    Example: eval $(magnum bay-config <bay-name>).
+    """
+    bay = cs.bays.get(args.bay)
+    if bay.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
+        raise exceptions.CommandError("Bay in status %s" % bay.status)
+    baymodel = cs.baymodels.get(bay.baymodel_id)
+    opts = {
+        'bay_uuid': bay.uuid,
+    }
+
+    if not baymodel.tls_disabled:
+        tls = _generate_csr_and_key()
+        tls['ca'] = cs.certificates.get(**opts).pem
+        opts['csr'] = tls['csr']
+        tls['cert'] = cs.certificates.create(**opts).pem
+        for k in ('key', 'cert', 'ca'):
+            fname = "%s/%s.pem" % (args.dir, k)
+            if os.path.exists(fname) and not args.force:
+                raise Exception("File %s exists, aborting." % fname)
+            else:
+                f = open(fname, "w")
+                f.write(tls[k])
+                f.close()
+
+    print(_config_bay(bay, baymodel, cfg_dir=args.dir, force=args.force))
+
+
+def _config_bay(bay, baymodel, cfg_dir='.', force=False):
+    """Return and write configuration for the given bay."""
+    if baymodel.coe == 'kubernetes':
+        return _config_bay_kubernetes(bay, baymodel, cfg_dir, force)
+    elif baymodel.coe == 'swarm':
+        return _config_bay_swarm(bay, baymodel, cfg_dir, force)
+
+
+def _config_bay_kubernetes(bay, baymodel, cfg_dir='.', force=False):
+    """Return and write configuration for the given kubernetes bay."""
+    cfg_file = "%s/config" % cfg_dir
+    if baymodel.tls_disabled:
+        cfg = ("apiVersion: v1\n"
+               "clusters:\n"
+               "- cluster:\n"
+               "    server: %(api_address)s\n"
+               "  name: %(name)s\n"
+               "contexts:\n"
+               "- context:\n"
+               "    cluster: %(name)s\n"
+               "    user: %(name)s\n"
+               "  name: default/%(name)s\n"
+               "current-context: default/%(name)s\n"
+               "kind: Config\n"
+               "preferences: {}\n"
+               "users:\n"
+               "- name: %(name)s'\n"
+               % {'name': bay.name, 'api_address': bay.api_address})
+    else:
+        cfg = ("apiVersion: v1\n"
+               "clusters:\n"
+               "- cluster:\n"
+               "    certificate-authority: ca.pem\n"
+               "    server: %(api_address)s\n"
+               "  name: %(name)s\n"
+               "contexts:\n"
+               "- context:\n"
+               "    cluster: %(name)s\n"
+               "    user: %(name)s\n"
+               "  name: default/%(name)s\n"
+               "current-context: default/%(name)s\n"
+               "kind: Config\n"
+               "preferences: {}\n"
+               "users:\n"
+               "- name: %(name)s\n"
+               "  user:\n"
+               "    client-certificate: cert.pem\n"
+               "    client-key: key.pem\n"
+               % {'name': bay.name, 'api_address': bay.api_address})
+
+    if os.path.exists(cfg_file) and not force:
+        raise exceptions.CommandError("File %s exists, aborting." % cfg_file)
+    else:
+        f = open(cfg_file, "w")
+        f.write(cfg)
+        f.close()
+    if 'csh' in os.environ['SHELL']:
+        return "setenv KUBECONFIG %s\n" % cfg_file
+    else:
+        return "export KUBECONFIG=%s\n" % cfg_file
+
+
+def _config_bay_swarm(bay, baymodel, cfg_dir='.', force=False):
+    """Return and write configuration for the given swarm bay."""
+    if 'csh' in os.environ['SHELL']:
+        result = ("setenv DOCKER_HOST %(docker_host)s\n"
+                  "setenv DOCKER_CERT_PATH %(cfg_dir)s\n"
+                  "setenv DOCKER_TLS_VERIFY %(tls)s\n"
+                  % {'docker_host': bay.api_address,
+                     'cfg_dir': cfg_dir,
+                     'tls': not baymodel.tls_disabled}
+                  )
+    else:
+        result = ("export DOCKER_HOST=%(docker_host)s\n"
+                  "export DOCKER_CERT_PATH=%(cfg_dir)s\n"
+                  "export DOCKER_TLS_VERIFY=%(tls)s\n"
+                  % {'docker_host': bay.api_address,
+                     'cfg_dir': cfg_dir,
+                     'tls': not baymodel.tls_disabled}
+                  )
+
+    return result
+
+
+def _generate_csr_and_key():
+    """Return a dict with a new csr and key."""
+    key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048,
+        backend=default_backend())
+
+    csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
+        x509.NameAttribute(NameOID.COMMON_NAME, u"Magnum User"),
+    ])).sign(key, hashes.SHA256(), default_backend())
+
+    result = {
+        'csr': csr.public_bytes(encoding=serialization.Encoding.PEM),
+        'key': key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption()),
+    }
+
+    return result
