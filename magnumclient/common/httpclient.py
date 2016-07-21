@@ -336,7 +336,8 @@ class SessionClient(adapter.LegacyJsonAdapter):
         kwargs.setdefault('headers', {})
         kwargs['headers'].setdefault('Content-Type', 'application/json')
         kwargs['headers'].setdefault('Accept', 'application/json')
-
+        kwargs['headers'].setdefault(
+            'OpenStack-API-Version', 'container-infra latest')
         if 'body' in kwargs:
             kwargs['data'] = json.dumps(kwargs.pop('body'))
 
