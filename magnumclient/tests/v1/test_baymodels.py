@@ -44,7 +44,9 @@ BAYMODEL1 = {'id': 123,
              'tls_disabled': False,
              'public': False,
              'registry_enabled': False,
-             'master_lb_enabled': True}
+             'master_lb_enabled': True,
+             'floating_ip_enabled': True,
+             }
 
 BAYMODEL2 = {'id': 124,
              'uuid': '66666666-7777-8888-9999-000000000002',
@@ -278,6 +280,8 @@ class BayModelManagerTest(testtools.TestCase):
                          baymodel.registry_enabled)
         self.assertEqual(BAYMODEL1['master_lb_enabled'],
                          baymodel.master_lb_enabled)
+        self.assertEqual(BAYMODEL1['floating_ip_enabled'],
+                         baymodel.floating_ip_enabled)
 
     def test_baymodel_show_by_name(self):
         baymodel = self.mgr.get(BAYMODEL1['name'])
@@ -306,6 +310,8 @@ class BayModelManagerTest(testtools.TestCase):
                          baymodel.registry_enabled)
         self.assertEqual(BAYMODEL1['master_lb_enabled'],
                          baymodel.master_lb_enabled)
+        self.assertEqual(BAYMODEL1['floating_ip_enabled'],
+                         baymodel.floating_ip_enabled)
 
     def test_baymodel_create(self):
         baymodel = self.mgr.create(**CREATE_BAYMODEL)

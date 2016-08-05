@@ -56,7 +56,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--docker-storage-driver devicemapper '
                                '--public '
                                '--server-type vm'
-                               '--master-lb-enabled')
+                               '--master-lb-enabled '
+                               '--floating-ip-enabled ')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('baymodel-create '
