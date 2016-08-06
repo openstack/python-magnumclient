@@ -191,9 +191,7 @@ class FormatLabelsTest(test_utils.BaseTestCase):
         l = utils.format_labels([
             'K1=V1',
             'K1=V2'])
-        self.assertIn('K1', l)
-        self.assertIn('V1', l['K1'])
-        self.assertIn('V2', l['K1'])
+        self.assertEqual({'K1': 'V1,V2'}, l)
 
     def test_format_label_special_label(self):
         labels = ['K1=V1,K22.2.2.2']
