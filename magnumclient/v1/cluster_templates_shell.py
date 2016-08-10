@@ -19,19 +19,14 @@ from magnumclient.common import utils as magnum_utils
 from magnumclient.i18n import _
 
 
-DEPRECATION_MESSAGE = (
-    'WARNING: Baymodel commands are deprecated and will be removed in a future'
-    ' release.\nUse cluster commands to avoid seeing this message.')
-
-
-def _show_baymodel(baymodel):
-    del baymodel._info['links']
-    utils.print_dict(baymodel._info)
+def _show_cluster_template(cluster_template):
+    del cluster_template._info['links']
+    utils.print_dict(cluster_template._info)
 
 
 @utils.arg('--name',
            metavar='<name>',
-           help='Name of the baymodel to create.')
+           help='Name of the cluster template to create.')
 @utils.arg('--image-id',
            required=True,
            metavar='<image-id>',
@@ -68,7 +63,7 @@ def _show_baymodel(baymodel):
 @utils.arg('--dns-nameserver',
            metavar='<dns-nameserver>',
            default='8.8.8.8',
-           help='The DNS nameserver to use for this baymodel.')
+           help='The DNS nameserver to use for this cluster template.')
 @utils.arg('--flavor-id',
            metavar='<flavor-id>',
            default='m1.medium',
@@ -99,14 +94,14 @@ def _show_baymodel(baymodel):
 @utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
            action='append', default=[],
            help='Arbitrary labels in the form of key=value pairs '
-                'to associate with a baymodel. '
+                'to associate with a cluster template. '
                 'May be used multiple times.')
 @utils.arg('--tls-disabled',
            action='store_true', default=False,
            help='Disable TLS in the Bay.')
 @utils.arg('--public',
            action='store_true', default=False,
-           help='Make baymodel public.')
+           help='Make cluster template public.')
 @utils.arg('--registry-enabled',
            action='store_true', default=False,
            help='Enable docker registry in the Bay')
@@ -120,9 +115,8 @@ def _show_baymodel(baymodel):
            action='store_true', default=False,
            help='Indicates whether created bays should have a load balancer '
                 'for master nodes or not.')
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_baymodel_create(cs, args):
-    """Create a baymodel."""
+def do_cluster_template_create(cs, args):
+    """Create a cluster template."""
     opts = {}
     opts['name'] = args.name
     opts['flavor_id'] = args.flavor_id
@@ -148,41 +142,40 @@ def do_baymodel_create(cs, args):
     opts['server_type'] = args.server_type
     opts['master_lb_enabled'] = args.master_lb_enabled
 
-    baymodel = cs.baymodels.create(**opts)
-    _show_baymodel(baymodel)
+    cluster_template = cs.cluster_templates.create(**opts)
+    _show_cluster_template(cluster_template)
 
 
-@utils.arg('baymodels',
-           metavar='<baymodels>',
+@utils.arg('cluster_templates',
+           metavar='<cluster_templates>',
            nargs='+',
-           help='ID or name of the (baymodel)s to delete.')
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_baymodel_delete(cs, args):
-    """Delete specified baymodel."""
-    for baymodel in args.baymodels:
+           help='ID or name of the (cluster template)s to delete.')
+def do_cluster_template_delete(cs, args):
+    """Delete specified cluster template."""
+    for cluster_template in args.cluster_templates:
         try:
-            cs.baymodels.delete(baymodel)
-            print("Request to delete baymodel %s has been accepted." %
-                  baymodel)
+            cs.cluster_templates.delete(cluster_template)
+            print("Request to delete cluster template %s has been accepted." %
+                  cluster_template)
         except Exception as e:
-            print("Delete for baymodel %(baymodel)s failed: %(e)s" %
-                  {'baymodel': baymodel, 'e': e})
+            print("Delete for cluster template "
+                  "%(cluster_template)s failed: %(e)s" %
+                  {'cluster_template': cluster_template, 'e': e})
 
 
-@utils.arg('baymodel',
-           metavar='<baymodel>',
-           help='ID or name of the baymodel to show.')
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_baymodel_show(cs, args):
-    """Show details about the given baymodel."""
-    baymodel = cs.baymodels.get(args.baymodel)
-    _show_baymodel(baymodel)
+@utils.arg('cluster_template',
+           metavar='<cluster_template>',
+           help='ID or name of the cluster template to show.')
+def do_cluster_template_show(cs, args):
+    """Show details about the given cluster template."""
+    cluster_template = cs.cluster_templates.get(args.cluster_template)
+    _show_cluster_template(cluster_template)
 
 
 @utils.arg('--limit',
            metavar='<limit>',
            type=int,
-           help='Maximum number of baymodels to return')
+           help='Maximum number of cluster templates to return')
 @utils.arg('--sort-key',
            metavar='<sort-key>',
            help='Column to sort results by')
@@ -198,12 +191,11 @@ def do_baymodel_show(cs, args):
                   'apiserver_port, server_type, tls_disabled, registry_enabled'
                   )
            )
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_baymodel_list(cs, args):
-    """Print a list of baymodels."""
-    nodes = cs.baymodels.list(limit=args.limit,
-                              sort_key=args.sort_key,
-                              sort_dir=args.sort_dir)
+def do_cluster_template_list(cs, args):
+    """Print a list of cluster templates."""
+    nodes = cs.cluster_templates.list(limit=args.limit,
+                                      sort_key=args.sort_key,
+                                      sort_dir=args.sort_dir)
     columns = ['uuid', 'name']
     columns += utils._get_list_table_columns_and_formatters(
         args.fields, nodes,
@@ -213,7 +205,9 @@ def do_baymodel_list(cs, args):
                      sortby_index=None)
 
 
-@utils.arg('baymodel', metavar='<baymodel>', help="UUID or name of baymodel")
+@utils.arg('cluster_template',
+           metavar='<cluster_template>',
+           help="UUID or name of cluster template")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -227,14 +221,14 @@ def do_baymodel_list(cs, args):
     default=[],
     help="Attributes to add/replace or remove "
          "(only PATH is necessary on remove)")
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_baymodel_update(cs, args):
-    """Updates one or more baymodel attributes."""
+def do_cluster_template_update(cs, args):
+    """Updates one or more cluster template attributes."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
     p = patch[0]
     if p['path'] == '/manifest' and os.path.isfile(p['value']):
         with open(p['value'], 'r') as f:
             p['value'] = f.read()
 
-    baymodel = cs.baymodels.update(args.baymodel, patch)
-    _show_baymodel(baymodel)
+    cluster_template = cs.cluster_templates.update(args.cluster_template,
+                                                   patch)
+    _show_cluster_template(cluster_template)

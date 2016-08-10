@@ -16,10 +16,10 @@ from magnumclient.v1 import basemodels
 CREATION_ATTRIBUTES = basemodels.CREATION_ATTRIBUTES
 
 
-class BayModel(basemodels.BaseModel):
-    model_name = "BayModel"
+class ClusterTemplate(basemodels.BaseModel):
+    model_name = "ClusterTemplate"
 
 
-class BayModelManager(basemodels.BaseModelManager):
-    api_name = "baymodels"
-    resource_class = BayModel
+class ClusterTemplateManager(basemodels.BaseModelManager):
+    api_name = "clustertemplates"
+    resource_class = ClusterTemplate

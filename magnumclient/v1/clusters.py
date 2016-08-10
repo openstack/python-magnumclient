@@ -1,3 +1,5 @@
+# Copyright 2014 NEC Corporation.  All rights reserved.
+#
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -10,16 +12,18 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from magnumclient.v1 import basemodels
+from magnumclient.v1 import baseunit
 
 
-CREATION_ATTRIBUTES = basemodels.CREATION_ATTRIBUTES
+CREATION_ATTRIBUTES = baseunit.CREATION_ATTRIBUTES
+CREATION_ATTRIBUTES.append('cluster_template_id')
+CREATION_ATTRIBUTES.append('create_timeout')
 
 
-class BayModel(basemodels.BaseModel):
-    model_name = "BayModel"
+class Cluster(baseunit.BaseTemplate):
+    template_name = "Clusters"
 
 
-class BayModelManager(basemodels.BaseModelManager):
-    api_name = "baymodels"
-    resource_class = BayModel
+class ClusterManager(baseunit.BaseTemplateManager):
+    resource_class = Cluster
+    template_name = 'clusters'
