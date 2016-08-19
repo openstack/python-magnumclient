@@ -55,7 +55,7 @@ from magnumclient.v1 import client as client_v1
 from magnumclient.v1 import shell as shell_v1
 from magnumclient import version
 
-DEFAULT_API_VERSION = '1'
+LATEST_API_VERSION = ('1', 'latest')
 DEFAULT_INTERFACE = 'public'
 DEFAULT_SERVICE_TYPE = 'container-infra'
 
@@ -386,7 +386,7 @@ class OpenStackMagnumShell(object):
                             metavar='<magnum-api-ver>',
                             default=cliutils.env(
                                 'MAGNUM_API_VERSION',
-                                default=DEFAULT_API_VERSION),
+                                default='latest'),
                             help='Accepts "api", '
                                  'defaults to env[MAGNUM_API_VERSION].')
         parser.add_argument('--magnum_api_version',
@@ -429,7 +429,7 @@ class OpenStackMagnumShell(object):
 
         try:
             actions_modules = {
-                '1': shell_v1.COMMAND_MODULES,
+                '1': shell_v1.COMMAND_MODULES
             }[version]
         except KeyError:
             actions_modules = shell_v1.COMMAND_MODULES
@@ -487,6 +487,34 @@ class OpenStackMagnumShell(object):
             logging.basicConfig(level=logging.CRITICAL,
                                 format=streamformat)
 
+    def _check_version(self, api_version):
+        if api_version == 'latest':
+            return LATEST_API_VERSION
+        else:
+            try:
+                versions = tuple(int(i) for i in api_version.split('.'))
+            except ValueError:
+                versions = ()
+            if len(versions) == 1:
+                # Default value of magnum_api_version is '1'.
+                # If user not specify the value of api version, not passing
+                # headers at all.
+                magnum_api_version = None
+            elif len(versions) == 2:
+                magnum_api_version = api_version
+                # In the case of '1.0'
+                if versions[1] == 0:
+                    magnum_api_version = None
+            else:
+                msg = _("The requested API version %(ver)s is an unexpected "
+                        "format. Acceptable formats are 'X', 'X.Y', or the "
+                        "literal string '%(latest)s'."
+                        ) % {'ver': api_version, 'latest': 'latest'}
+                raise exc.CommandError(msg)
+
+            api_major_version = versions[0]
+            return (api_major_version, magnum_api_version)
+
     def main(self, argv):
 
         # NOTE(Christoph Jansen): With Python 3.4 argv somehow becomes a Map.
@@ -506,8 +534,12 @@ class OpenStackMagnumShell(object):
             spot = argv.index('--endpoint_type')
             argv[spot] = '--endpoint-type'
 
+        # build available subcommands based on version
+        (api_major_version, magnum_api_version) = (
+            self._check_version(options.magnum_api_version))
+
         subcommand_parser = (
-            self.get_subcommand_parser(options.magnum_api_version)
+            self.get_subcommand_parser(api_major_version)
         )
         self.parser = subcommand_parser
 
@@ -566,7 +598,7 @@ class OpenStackMagnumShell(object):
         try:
             client = {
                 '1': client_v1,
-            }[options.magnum_api_version]
+            }[api_major_version]
         except KeyError:
             client = client_v1
 
@@ -595,6 +627,7 @@ class OpenStackMagnumShell(object):
             magnum_url=args.os_endpoint_override,
             interface=args.os_interface,
             insecure=args.insecure,
+            api_version=args.magnum_api_version,
         )
 
         args.func(self.cs, args)

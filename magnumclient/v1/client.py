@@ -80,7 +80,8 @@ def _load_session_client(session=None, endpoint_override=None, username=None,
                          user_domain_name=None, project_domain_id=None,
                          project_domain_name=None, auth_token=None,
                          timeout=None, service_type=None, service_name=None,
-                         interface=None, region_name=None, **kwargs):
+                         interface=None, region_name=None, api_version=None,
+                         **kwargs):
     if not session:
         session = _load_session(
             username=username,
@@ -115,6 +116,7 @@ def _load_session_client(session=None, endpoint_override=None, username=None,
         region_name=region_name,
         session=session,
         endpoint_override=endpoint_override,
+        api_version=api_version,
     )
 
 
@@ -128,7 +130,8 @@ class Client(object):
                  interface=None, service_name=None, insecure=False,
                  user_domain_id=None, user_domain_name=None,
                  project_domain_id=None, project_domain_name=None,
-                 auth_token=None, timeout=600, **kwargs):
+                 auth_token=None, timeout=600, api_version=None,
+                 **kwargs):
 
         # We have to keep the api_key are for backwards compat, but let's
         # remove it from the rest of our code since it's not a keystone
@@ -158,6 +161,7 @@ class Client(object):
             self.http_client = httpclient.HTTPClient(
                 endpoint_override,
                 token=auth_token,
+                api_version=api_version,
                 **kwargs
             )
         else:
@@ -181,6 +185,7 @@ class Client(object):
                 service_name=service_name,
                 interface=interface,
                 region_name=region_name,
+                api_version=api_version,
                 **kwargs
             )
 
