@@ -188,6 +188,7 @@ def do_bay_config(cs, args):
 
     Example: eval $(magnum bay-config <bay-name>).
     """
+    args.dir = os.path.abspath(args.dir)
     bay = cs.bays.get(args.bay)
     if bay.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
         raise exceptions.CommandError("Bay in status %s" % bay.status)
@@ -213,7 +214,7 @@ def do_bay_config(cs, args):
     print(_config_bay(bay, baymodel, cfg_dir=args.dir, force=args.force))
 
 
-def _config_bay(bay, baymodel, cfg_dir='.', force=False):
+def _config_bay(bay, baymodel, cfg_dir, force=False):
     """Return and write configuration for the given bay."""
     if baymodel.coe == 'kubernetes':
         return _config_bay_kubernetes(bay, baymodel, cfg_dir, force)
@@ -221,7 +222,7 @@ def _config_bay(bay, baymodel, cfg_dir='.', force=False):
         return _config_bay_swarm(bay, baymodel, cfg_dir, force)
 
 
-def _config_bay_kubernetes(bay, baymodel, cfg_dir='.', force=False):
+def _config_bay_kubernetes(bay, baymodel, cfg_dir, force=False):
     """Return and write configuration for the given kubernetes bay."""
     cfg_file = "%s/config" % cfg_dir
     if baymodel.tls_disabled:
@@ -275,7 +276,7 @@ def _config_bay_kubernetes(bay, baymodel, cfg_dir='.', force=False):
         return "export KUBECONFIG=%s\n" % cfg_file
 
 
-def _config_bay_swarm(bay, baymodel, cfg_dir='.', force=False):
+def _config_bay_swarm(bay, baymodel, cfg_dir, force=False):
     """Return and write configuration for the given swarm bay."""
     if 'csh' in os.environ['SHELL']:
         result = ("setenv DOCKER_HOST %(docker_host)s\n"
