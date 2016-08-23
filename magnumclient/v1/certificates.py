@@ -16,7 +16,7 @@ from magnumclient.common import base
 from magnumclient import exceptions
 
 
-CREATION_ATTRIBUTES = ['bay_uuid', 'csr']
+CREATION_ATTRIBUTES = ['cluster_uuid', 'csr']
 
 
 class Certificate(base.Resource):
@@ -31,9 +31,9 @@ class CertificateManager(base.Manager):
     def _path(id=None):
         return '/v1/certificates/%s' % id if id else '/v1/certificates'
 
-    def get(self, bay_uuid):
+    def get(self, cluster_uuid):
         try:
-            return self._list(self._path(bay_uuid))[0]
+            return self._list(self._path(cluster_uuid))[0]
         except IndexError:
             return None
 
