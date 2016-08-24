@@ -12,6 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import os
+
 from magnumclient.common import cliutils as utils
 from magnumclient.common import utils as magnum_utils
 from magnumclient import exceptions
@@ -23,28 +25,22 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-import os
 
 
-DEPRECATION_MESSAGE = (
-    'WARNING: Bay commands are deprecated and will be removed in a future '
-    'release.\nUse cluster commands to avoid seeing this message.')
-
-
-def _show_bay(bay):
-    del bay._info['links']
-    utils.print_dict(bay._info)
+def _show_cluster(cluster):
+    del cluster._info['links']
+    utils.print_dict(cluster._info)
 
 
 @utils.arg('--marker',
            metavar='<marker>',
            default=None,
-           help='The last bay UUID of the previous page; '
-                'displays list of bays after "marker".')
+           help='The last cluster UUID of the previous page; '
+                'displays list of clusters after "marker".')
 @utils.arg('--limit',
            metavar='<limit>',
            type=int,
-           help='Maximum number of bays to return.')
+           help='Maximum number of clusters to return.')
 @utils.arg('--sort-key',
            metavar='<sort-key>',
            help='Column to sort results by.')
@@ -57,42 +53,41 @@ def _show_bay(bay):
            metavar='<fields>',
            help=_('Comma-separated list of fields to display. '
                   'Available fields: uuid, name, baymodel_id, stack_id, '
-                  'status, master_count, node_count, links, bay_create_timeout'
+                  'status, master_count, node_count, links, '
+                  'cluster_create_timeout'
                   )
            )
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_bay_list(cs, args):
-    """Print a list of available bays."""
-    bays = cs.bays.list(marker=args.marker, limit=args.limit,
-                        sort_key=args.sort_key,
-                        sort_dir=args.sort_dir)
+def do_cluster_list(cs, args):
+    """Print a list of available clusters."""
+    clusters = cs.clusters.list(marker=args.marker, limit=args.limit,
+                                sort_key=args.sort_key,
+                                sort_dir=args.sort_dir)
     columns = ['uuid', 'name', 'node_count', 'master_count', 'status']
     columns += utils._get_list_table_columns_and_formatters(
-        args.fields, bays,
+        args.fields, clusters,
         exclude_fields=(c.lower() for c in columns))[0]
-    utils.print_list(bays, columns,
+    utils.print_list(clusters, columns,
                      {'versions': magnum_utils.print_list_field('versions')},
                      sortby_index=None)
 
 
-@utils.deprecated(DEPRECATION_MESSAGE)
 @utils.arg('--name',
            metavar='<name>',
-           help='Name of the bay to create.')
-@utils.arg('--baymodel',
+           help='Name of the cluster to create.')
+@utils.arg('--cluster-template',
            required=True,
-           metavar='<baymodel>',
-           help='ID or name of the baymodel.')
+           metavar='<cluster_template>',
+           help='ID or name of the cluster template.')
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,
            default=1,
-           help='The bay node count.')
+           help='The cluster node count.')
 @utils.arg('--master-count',
            metavar='<master-count>',
            type=int,
            default=1,
-           help='The number of master nodes for the bay.')
+           help='The number of master nodes for the cluster.')
 @utils.arg('--discovery-url',
            metavar='<discovery-url>',
            help='Specifies custom discovery url for node discovery.')
@@ -100,65 +95,65 @@ def do_bay_list(cs, args):
            metavar='<timeout>',
            type=int,
            default=60,
-           help='The timeout for bay creation in minutes. The default '
+           help='The timeout for cluster creation in minutes. The default '
                 'is 60 minutes.')
-def do_bay_create(cs, args):
-    """Create a bay."""
-    baymodel = cs.baymodels.get(args.baymodel)
+def do_cluster_create(cs, args):
+    """Create a cluster."""
+    cluster_template = cs.cluster_templates.get(args.cluster_template)
 
     opts = {}
     opts['name'] = args.name
-    opts['baymodel_id'] = baymodel.uuid
+    opts['cluster_template_id'] = cluster_template.uuid
     opts['node_count'] = args.node_count
     opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url
-    opts['bay_create_timeout'] = args.timeout
+    opts['create_timeout'] = args.timeout
     try:
-        bay = cs.bays.create(**opts)
-        _show_bay(bay)
+        cluster = cs.clusters.create(**opts)
+        _show_cluster(cluster)
     except Exception as e:
-        print("Create for bay %s failed: %s" %
+        print("Create for cluster %s failed: %s" %
               (opts['name'], e))
 
 
-@utils.arg('bay',
-           metavar='<bay>',
+@utils.arg('cluster',
+           metavar='<cluster>',
            nargs='+',
-           help='ID or name of the (bay)s to delete.')
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_bay_delete(cs, args):
-    """Delete specified bay."""
-    for id in args.bay:
+           help='ID or name of the (cluster)s to delete.')
+def do_cluster_delete(cs, args):
+    """Delete specified cluster."""
+    for id in args.cluster:
         try:
-            cs.bays.delete(id)
-            print("Request to delete bay %s has been accepted." %
+            cs.clusters.delete(id)
+            print("Request to delete cluster %s has been accepted." %
                   id)
         except Exception as e:
-            print("Delete for bay %(bay)s failed: %(e)s" %
-                  {'bay': id, 'e': e})
+            print("Delete for cluster %(cluster)s failed: %(e)s" %
+                  {'cluster': id, 'e': e})
 
 
-@utils.arg('bay',
-           metavar='<bay>',
-           help='ID or name of the bay to show.')
+@utils.arg('cluster',
+           metavar='<cluster>',
+           help='ID or name of the cluster to show.')
 @utils.arg('--long',
            action='store_true', default=False,
-           help='Display extra associated Baymodel info.')
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_bay_show(cs, args):
-    """Show details about the given bay."""
-    bay = cs.bays.get(args.bay)
+           help='Display extra associated cluster template info.')
+def do_cluster_show(cs, args):
+    """Show details about the given cluster."""
+    cluster = cs.clusters.get(args.cluster)
     if args.long:
-        baymodel = cs.baymodels.get(bay.baymodel_id)
-        del baymodel._info['links'], baymodel._info['uuid']
+        cluster_template = \
+            cs.cluster_templates.get(cluster.cluster_template_id)
+        del cluster_template._info['links'], cluster_template._info['uuid']
 
-        for key in baymodel._info:
-            if 'baymodel_' + key not in bay._info:
-                bay._info['baymodel_' + key] = baymodel._info[key]
-    _show_bay(bay)
+        for key in cluster_template._info:
+            if 'clustertemplate_' + key not in cluster._info:
+                cluster._info['clustertemplate_' + key] = \
+                    cluster_template._info[key]
+    _show_cluster(cluster)
 
 
-@utils.arg('bay', metavar='<bay>', help="UUID or name of bay")
+@utils.arg('cluster', metavar='<cluster>', help="UUID or name of cluster")
 @utils.arg(
     'op',
     metavar='<op>',
@@ -172,17 +167,16 @@ def do_bay_show(cs, args):
     default=[],
     help="Attributes to add/replace or remove "
          "(only PATH is necessary on remove)")
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_bay_update(cs, args):
-    """Update information about the given bay."""
+def do_cluster_update(cs, args):
+    """Update information about the given cluster."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
-    bay = cs.bays.update(args.bay, patch)
-    _show_bay(bay)
+    cluster = cs.clusters.update(args.cluster, patch)
+    _show_cluster(cluster)
 
 
-@utils.arg('bay',
-           metavar='<bay>',
-           help='ID or name of the bay to retrieve config.')
+@utils.arg('cluster',
+           metavar='<cluster>',
+           help='ID or name of the cluster to retrieve config.')
 @utils.arg('--dir',
            metavar='<dir>',
            default='.',
@@ -190,25 +184,23 @@ def do_bay_update(cs, args):
 @utils.arg('--force',
            action='store_true', default=False,
            help='Overwrite files if existing.')
-@utils.deprecated(DEPRECATION_MESSAGE)
-def do_bay_config(cs, args):
-    """Configure native client to access bay.
+def do_cluster_config(cs, args):
+    """Configure native client to access cluster.
 
     You can source the output of this command to get the native client of the
-    corresponding COE configured to access the bay.
+    corresponding COE configured to access the cluster.
 
-    Example: eval $(magnum bay-config <bay-name>).
+    Example: eval $(magnum cluster-config <cluster-name>).
     """
-    args.dir = os.path.abspath(args.dir)
-    bay = cs.bays.get(args.bay)
-    if bay.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
-        raise exceptions.CommandError("Bay in status %s" % bay.status)
-    baymodel = cs.baymodels.get(bay.baymodel_id)
+    cluster = cs.clusters.get(args.cluster)
+    if cluster.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
+        raise exceptions.CommandError("cluster in status %s" % cluster.status)
+    cluster_template = cs.cluster_templates.get(cluster.cluster_template_id)
     opts = {
-        'bay_uuid': bay.uuid,
+        'cluster_uuid': cluster.uuid,
     }
 
-    if not baymodel.tls_disabled:
+    if not cluster_template.tls_disabled:
         tls = _generate_csr_and_key()
         tls['ca'] = cs.certificates.get(**opts).pem
         opts['csr'] = tls['csr']
@@ -222,29 +214,32 @@ def do_bay_config(cs, args):
                 f.write(tls[k])
                 f.close()
 
-    print(_config_bay(bay, baymodel, cfg_dir=args.dir, force=args.force))
+    print(_config_cluster(cluster, cluster_template,
+                          cfg_dir=args.dir, force=args.force))
 
 
-def _config_bay(bay, baymodel, cfg_dir, force=False):
-    """Return and write configuration for the given bay."""
-    if baymodel.coe == 'kubernetes':
-        return _config_bay_kubernetes(bay, baymodel, cfg_dir, force)
-    elif baymodel.coe == 'swarm':
-        return _config_bay_swarm(bay, baymodel, cfg_dir, force)
+def _config_cluster(cluster, cluster_template, cfg_dir='.', force=False):
+    """Return and write configuration for the given cluster."""
+    if cluster_template.coe == 'kubernetes':
+        return _config_cluster_kubernetes(cluster, cluster_template,
+                                          cfg_dir, force)
+    elif cluster_template.coe == 'swarm':
+        return _config_cluster_swarm(cluster, cluster_template, cfg_dir, force)
 
 
-def _config_bay_kubernetes(bay, baymodel, cfg_dir, force=False):
-    """Return and write configuration for the given kubernetes bay."""
+def _config_cluster_kubernetes(cluster, cluster_template,
+                               cfg_dir='.', force=False):
+    """Return and write configuration for the given kubernetes cluster."""
     cfg_file = "%s/config" % cfg_dir
-    if baymodel.tls_disabled:
+    if cluster_template.tls_disabled:
         cfg = ("apiVersion: v1\n"
-               "bays:\n"
-               "- bay:\n"
+               "clusters:\n"
+               "- cluster:\n"
                "    server: %(api_address)s\n"
                "  name: %(name)s\n"
                "contexts:\n"
                "- context:\n"
-               "    bay: %(name)s\n"
+               "    cluster: %(name)s\n"
                "    user: %(name)s\n"
                "  name: default/%(name)s\n"
                "current-context: default/%(name)s\n"
@@ -252,17 +247,17 @@ def _config_bay_kubernetes(bay, baymodel, cfg_dir, force=False):
                "preferences: {}\n"
                "users:\n"
                "- name: %(name)s'\n"
-               % {'name': bay.name, 'api_address': bay.api_address})
+               % {'name': cluster.name, 'api_address': cluster.api_address})
     else:
         cfg = ("apiVersion: v1\n"
-               "bays:\n"
-               "- bay:\n"
+               "clusters:\n"
+               "- cluster:\n"
                "    certificate-authority: ca.pem\n"
                "    server: %(api_address)s\n"
                "  name: %(name)s\n"
                "contexts:\n"
                "- context:\n"
-               "    bay: %(name)s\n"
+               "    cluster: %(name)s\n"
                "    user: %(name)s\n"
                "  name: default/%(name)s\n"
                "current-context: default/%(name)s\n"
@@ -273,7 +268,7 @@ def _config_bay_kubernetes(bay, baymodel, cfg_dir, force=False):
                "  user:\n"
                "    client-certificate: cert.pem\n"
                "    client-key: key.pem\n"
-               % {'name': bay.name, 'api_address': bay.api_address})
+               % {'name': cluster.name, 'api_address': cluster.api_address})
 
     if os.path.exists(cfg_file) and not force:
         raise exceptions.CommandError("File %s exists, aborting." % cfg_file)
@@ -287,23 +282,23 @@ def _config_bay_kubernetes(bay, baymodel, cfg_dir, force=False):
         return "export KUBECONFIG=%s\n" % cfg_file
 
 
-def _config_bay_swarm(bay, baymodel, cfg_dir, force=False):
-    """Return and write configuration for the given swarm bay."""
+def _config_cluster_swarm(cluster, cluster_template, cfg_dir='.', force=False):
+    """Return and write configuration for the given swarm cluster."""
     if 'csh' in os.environ['SHELL']:
         result = ("setenv DOCKER_HOST %(docker_host)s\n"
                   "setenv DOCKER_CERT_PATH %(cfg_dir)s\n"
                   "setenv DOCKER_TLS_VERIFY %(tls)s\n"
-                  % {'docker_host': bay.api_address,
+                  % {'docker_host': cluster.api_address,
                      'cfg_dir': cfg_dir,
-                     'tls': not baymodel.tls_disabled}
+                     'tls': not cluster_template.tls_disabled}
                   )
     else:
         result = ("export DOCKER_HOST=%(docker_host)s\n"
                   "export DOCKER_CERT_PATH=%(cfg_dir)s\n"
                   "export DOCKER_TLS_VERIFY=%(tls)s\n"
-                  % {'docker_host': bay.api_address,
+                  % {'docker_host': cluster.api_address,
                      'cfg_dir': cfg_dir,
-                     'tls': not baymodel.tls_disabled}
+                     'tls': not cluster_template.tls_disabled}
                   )
 
     return result

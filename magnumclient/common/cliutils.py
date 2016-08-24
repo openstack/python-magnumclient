@@ -24,6 +24,7 @@ import os
 import sys
 import textwrap
 
+import decorator
 from magnumclient.common.apiclient import exceptions
 from oslo_utils import encodeutils
 from oslo_utils import strutils
@@ -73,6 +74,22 @@ def validate_args(fn, *args, **kwargs):
     missing = missing[len(args):]
     if missing:
         raise MissingArgs(missing)
+
+
+def deprecated(message):
+    '''Decorator for marking a call as deprecated by printing a given message.
+
+    Example:
+    >>> @deprecated("Bay functions are deprecated and should be replaced by "
+    ...             "calls to cluster")
+    ... def bay_create(args):
+    ...     pass
+    '''
+    @decorator.decorator
+    def wrapper(func, *args, **kwargs):
+        print(message)
+        return func(*args, **kwargs)
+    return wrapper
 
 
 def arg(*args, **kwargs):
