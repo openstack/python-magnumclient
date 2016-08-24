@@ -73,6 +73,51 @@ def _load_service_type(session,
     return service_type
 
 
+def _load_session_client(session=None, endpoint_override=None, username=None,
+                         project_id=None, project_name=None,
+                         auth_url=None, password=None, auth_type=None,
+                         insecure=None, user_domain_id=None,
+                         user_domain_name=None, project_domain_id=None,
+                         project_domain_name=None, auth_token=None,
+                         timeout=None, service_type=None, service_name=None,
+                         interface=None, region_name=None, **kwargs):
+    if not session:
+        session = _load_session(
+            username=username,
+            project_id=project_id,
+            project_name=project_name,
+            auth_url=auth_url,
+            password=password,
+            auth_type=auth_type,
+            insecure=insecure,
+            user_domain_id=user_domain_id,
+            user_domain_name=user_domain_name,
+            project_domain_id=project_domain_id,
+            project_domain_name=project_domain_name,
+            auth_token=auth_token,
+            timeout=timeout,
+            **kwargs
+        )
+
+    if not endpoint_override:
+        service_type = _load_service_type(
+            session,
+            service_type=service_type,
+            service_name=service_name,
+            interface=interface,
+            region_name=region_name,
+        )
+
+    return httpclient.SessionClient(
+        service_type=service_type,
+        service_name=service_name,
+        interface=interface,
+        region_name=region_name,
+        session=session,
+        endpoint_override=endpoint_override,
+    )
+
+
 class Client(object):
     def __init__(self, username=None, api_key=None, project_id=None,
                  project_name=None, auth_url=None, magnum_url=None,
@@ -109,10 +154,16 @@ class Client(object):
         if magnum_url and not endpoint_override:
             endpoint_override = magnum_url
 
-        if not session:
-            if auth_token:
-                auth_type = 'token'
-            session = _load_session(
+        if endpoint_override and auth_token:
+            self.http_client = httpclient.HTTPClient(
+                endpoint_override,
+                token=auth_token,
+                **kwargs
+            )
+        else:
+            self.http_client = _load_session_client(
+                session=session,
+                endpoint_override=endpoint_override,
                 username=username,
                 project_id=project_id,
                 project_name=project_name,
@@ -126,26 +177,13 @@ class Client(object):
                 project_domain_name=project_domain_name,
                 auth_token=auth_token,
                 timeout=timeout,
-                **kwargs
-            )
-
-        if not endpoint_override:
-            service_type = _load_service_type(
-                session,
                 service_type=service_type,
                 service_name=service_name,
                 interface=interface,
                 region_name=region_name,
+                **kwargs
             )
 
-        self.http_client = httpclient.SessionClient(
-            service_type=service_type,
-            service_name=service_name,
-            interface=interface,
-            region_name=region_name,
-            session=session,
-            endpoint_override=endpoint_override,
-        )
         self.bays = bays.BayManager(self.http_client)
         self.clusters = clusters.ClusterManager(self.http_client)
         self.certificates = certificates.CertificateManager(self.http_client)
