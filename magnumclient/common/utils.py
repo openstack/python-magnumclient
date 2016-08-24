@@ -112,9 +112,7 @@ def format_labels(lbls, parse_comma=True):
         if k not in labels:
             labels[k] = v
         else:
-            if not isinstance(labels[k], list):
-                labels[k] = [labels[k]]
-            labels[k].append(v)
+            labels[k] += ",%s" % v
 
     return labels
 
