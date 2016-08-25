@@ -17,19 +17,39 @@ import os.path
 from magnumclient.common import cliutils as utils
 
 
+DEPRECATION_MESSAGE = (
+    'WARNING: The bay parameter is deprecated and will be removed in a future '
+    'release.\nUse the cluster parameter to avoid seeing this message.')
+
+
 def _show_cert(certificate):
     print(certificate.pem)
 
 
+def _get_target_uuid(cs, args):
+    target = None
+    if args.cluster:
+        target = cs.clusters.get(args.cluster)
+    elif args.bay:
+        print(DEPRECATION_MESSAGE)
+        target = cs.bays.get(args.bay)
+    else:
+        raise utils.MissingArgs(['--cluster or --bay'])
+    return target.uuid
+
+
 @utils.arg('--bay',
-           required=True,
+           required=False,
            metavar='<bay>',
            help='ID or name of the bay.')
+@utils.arg('--cluster',
+           required=False,
+           metavar='<cluster>',
+           help='ID or name of the cluster.')
 def do_ca_show(cs, args):
-    """Show details about the CA certificate for a bay."""
-    bay = cs.bays.get(args.bay)
+    """Show details about the CA certificate for a bay or cluster."""
     opts = {
-        'bay_uuid': bay.uuid
+        'cluster_uuid': _get_target_uuid(cs, args)
     }
 
     cert = cs.certificates.get(**opts)
@@ -40,14 +60,17 @@ def do_ca_show(cs, args):
            metavar='<csr>',
            help='File path of the csr file to send to Magnum to get signed.')
 @utils.arg('--bay',
-           required=True,
+           required=False,
            metavar='<bay>',
            help='ID or name of the bay.')
+@utils.arg('--cluster',
+           required=False,
+           metavar='<cluster>',
+           help='ID or name of the cluster.')
 def do_ca_sign(cs, args):
-    """Generate the CA certificate for a bay."""
-    bay = cs.bays.get(args.bay)
+    """Generate the CA certificate for a bay or cluster."""
     opts = {
-        'bay_uuid': bay.uuid
+        'cluster_uuid': _get_target_uuid(cs, args)
     }
 
     if args.csr is None or not os.path.isfile(args.csr):

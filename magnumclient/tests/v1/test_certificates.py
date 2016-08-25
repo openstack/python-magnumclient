@@ -22,15 +22,15 @@ from magnumclient.v1 import certificates
 
 
 CERT1 = {
-    'bay_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
+    'cluster_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
     'pem': 'fake-pem'
 }
 CERT2 = {
-    'bay_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
+    'cluster_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
     'pem': 'fake-pem',
     'csr': 'fake-csr',
 }
-CREATE_CERT = {'bay_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
+CREATE_CERT = {'cluster_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
                'csr': 'fake-csr'}
 
 fake_responses = {
@@ -41,7 +41,7 @@ fake_responses = {
             CERT2,
         )
     },
-    '/v1/certificates/%s' % CERT1['bay_uuid']:
+    '/v1/certificates/%s' % CERT1['cluster_uuid']:
     {
         'GET': (
             {},
@@ -59,12 +59,12 @@ class CertificateManagerTest(testtools.TestCase):
         self.mgr = certificates.CertificateManager(self.api)
 
     def test_cert_show_by_id(self):
-        cert = self.mgr.get(CERT1['bay_uuid'])
+        cert = self.mgr.get(CERT1['cluster_uuid'])
         expect = [
-            ('GET', '/v1/certificates/%s' % CERT1['bay_uuid'], {}, None)
+            ('GET', '/v1/certificates/%s' % CERT1['cluster_uuid'], {}, None)
         ]
         self.assertEqual(expect, self.api.calls)
-        self.assertEqual(CERT1['bay_uuid'], cert.bay_uuid)
+        self.assertEqual(CERT1['cluster_uuid'], cert.cluster_uuid)
         self.assertEqual(CERT1['pem'], cert.pem)
 
     def test_cert_create(self):
@@ -73,7 +73,7 @@ class CertificateManagerTest(testtools.TestCase):
             ('POST', '/v1/certificates', {}, CREATE_CERT),
         ]
         self.assertEqual(expect, self.api.calls)
-        self.assertEqual(CERT2['bay_uuid'], cert.bay_uuid)
+        self.assertEqual(CERT2['cluster_uuid'], cert.cluster_uuid)
         self.assertEqual(CERT2['pem'], cert.pem)
         self.assertEqual(CERT2['csr'], cert.csr)
 

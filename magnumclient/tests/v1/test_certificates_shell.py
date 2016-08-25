@@ -30,6 +30,16 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--bay xxx')
         self.assertTrue(mock_cert_get.called)
 
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
+    def test_cluster_ca_show_success(self, mock_cert_get, mock_cluster_get):
+        mockcluster = mock.MagicMock()
+        mockcluster.status = "CREATE_COMPLETE"
+        mock_cluster_get.return_value = mockcluster
+        self._test_arg_success('ca-show '
+                               '--cluster xxx')
+        self.assertTrue(mock_cert_get.called)
+
     @mock.patch('os.path.isfile')
     @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.certificates.CertificateManager.create')
@@ -49,6 +59,24 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             self.assertTrue(mock_cert_create.called)
 
     @mock.patch('os.path.isfile')
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.create')
+    def test_cluster_ca_sign_success(
+        self, mock_cert_create, mock_cluster_get, mock_isfile):
+        mock_isfile.return_value = True
+        mockcluster = mock.MagicMock()
+        mockcluster.status = "CREATE_COMPLETE"
+        mock_cluster_get.return_value = mockcluster
+
+        fake_csr = 'fake-csr'
+        file_mock = mock.mock_open(read_data=fake_csr)
+        with mock.patch.object(certificates_shell, 'open', file_mock):
+            self._test_arg_success('ca-sign '
+                                   '--csr path/csr.pem '
+                                   '--cluster xxx')
+            self.assertTrue(mock_cert_create.called)
+
+    @mock.patch('os.path.isfile')
     @mock.patch('magnumclient.v1.bays.BayManager.get')
     @mock.patch('magnumclient.v1.certificates.CertificateManager.create')
     def test_ca_sign_with_not_csr(
@@ -64,6 +92,26 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             self._test_arg_success('ca-sign '
                                    '--csr path/csr.pem '
                                    '--bay xxx')
+            mock_isfile.assert_called_once_with('path/csr.pem')
+            self.assertFalse(file_mock.called)
+            self.assertFalse(mock_cert_create.called)
+
+    @mock.patch('os.path.isfile')
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.create')
+    def test_cluster_ca_sign_with_not_csr(
+        self, mock_cert_create, mock_cluster_get, mock_isfile):
+        mock_isfile.return_value = False
+        mockcluster = mock.MagicMock()
+        mockcluster.status = "CREATE_COMPLETE"
+        mock_cluster_get.return_value = mockcluster
+
+        fake_csr = 'fake-csr'
+        file_mock = mock.mock_open(read_data=fake_csr)
+        with mock.patch.object(certificates_shell, 'open', file_mock):
+            self._test_arg_success('ca-sign '
+                                   '--csr path/csr.pem '
+                                   '--cluster xxx')
             mock_isfile.assert_called_once_with('path/csr.pem')
             self.assertFalse(file_mock.called)
             self.assertFalse(mock_cert_create.called)
