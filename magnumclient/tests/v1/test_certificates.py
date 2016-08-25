@@ -30,8 +30,14 @@ CERT2 = {
     'pem': 'fake-pem',
     'csr': 'fake-csr',
 }
+
 CREATE_CERT = {'cluster_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
                'csr': 'fake-csr'}
+
+CREATE_BACKWARDS_CERT = {
+    'bay_uuid': '5d12f6fd-a196-4bf0-ae4c-1f639a523a53',
+    'csr': 'fake-csr'
+}
 
 fake_responses = {
     '/v1/certificates':
@@ -75,6 +81,17 @@ class CertificateManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(CERT2['cluster_uuid'], cert.cluster_uuid)
         self.assertEqual(CERT2['pem'], cert.pem)
+        self.assertEqual(CERT2['csr'], cert.csr)
+
+    def test_cert_create_backwards_compatibility(self):
+        # Using a CREATION_ATTRIBUTE of bay_uuid and expecting a
+        # cluster_uuid in return
+        cert = self.mgr.create(**CREATE_BACKWARDS_CERT)
+        expect = [
+            ('POST', '/v1/certificates', {}, CREATE_CERT),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(CERT2['cluster_uuid'], cert.cluster_uuid)
         self.assertEqual(CERT2['csr'], cert.csr)
 
     def test_create_fail(self):
