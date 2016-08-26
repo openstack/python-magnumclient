@@ -125,31 +125,20 @@ class ClientInitializeTest(testtools.TestCase):
             mock_http_client
         )
 
-    @mock.patch('magnumclient.common.httpclient.SessionClient')
-    @mock.patch('magnumclient.v1.client._load_session')
-    @mock.patch('magnumclient.v1.client._load_service_type',
-                return_value='container-infra')
+    @mock.patch('magnumclient.common.httpclient.HTTPClient')
     def test_init_with_auth_token(self,
-                                  mock_load_service_type,
-                                  mock_load_session,
                                   mock_http_client,):
         expected_token = 'expected_password'
-        session = mock.Mock()
-        mock_load_session.return_value = session
-        client.Client(auth_token=expected_token)
-        load_session_args = self._load_session_kwargs()
-        load_session_args['auth_token'] = expected_token
-        load_session_args['auth_type'] = 'token'
-        mock_load_session.assert_called_once_with(
-            **load_session_args
-        )
-        mock_load_service_type.assert_called_once_with(
-            session,
-            **self._load_service_type_kwargs()
-        )
+        expected_magnum_url = 'expected_magnum_url'
+        expected_kwargs = {'expected_key': 'expected_value'}
+        client.Client(auth_token=expected_token,
+                      magnum_url=expected_magnum_url,
+                      **expected_kwargs)
+
         mock_http_client.assert_called_once_with(
-            **self._session_client_kwargs(session)
-        )
+            expected_magnum_url,
+            token=expected_token,
+            **expected_kwargs)
 
     def _test_init_with_interface(self,
                                   init_func,
