@@ -115,6 +115,10 @@ def _show_cluster_template(cluster_template):
            action='store_true', default=False,
            help='Indicates whether created bays should have a load balancer '
                 'for master nodes or not.')
+@utils.arg('--floating-ip-enabled',
+           action='store_true', default=True,
+           help='Indicates whether created bays should have a floating ip'
+                'or not.')
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
     opts = {}
@@ -141,6 +145,7 @@ def do_cluster_template_create(cs, args):
     opts['registry_enabled'] = args.registry_enabled
     opts['server_type'] = args.server_type
     opts['master_lb_enabled'] = args.master_lb_enabled
+    opts['floating_ip_enabled'] = args.floating_ip_enabled
 
     cluster_template = cs.cluster_templates.create(**opts)
     _show_cluster_template(cluster_template)

@@ -46,7 +46,9 @@ CLUSTERTEMPLATE1 = {
     'tls_disabled': False,
     'public': False,
     'registry_enabled': False,
-    'master_lb_enabled': True}
+    'master_lb_enabled': True,
+    'floating_ip_enabled': True
+    }
 
 CLUSTERTEMPLATE2 = {
     'id': 124,
@@ -307,6 +309,8 @@ class ClusterTemplateManagerTest(testtools.TestCase):
                          cluster_template.registry_enabled)
         self.assertEqual(CLUSTERTEMPLATE1['master_lb_enabled'],
                          cluster_template.master_lb_enabled)
+        self.assertEqual(CLUSTERTEMPLATE1['floating_ip_enabled'],
+                         cluster_template.floating_ip_enabled)
 
     def test_clustertemplate_show_by_name(self):
         cluster_template = self.mgr.get(CLUSTERTEMPLATE1['name'])
@@ -351,6 +355,8 @@ class ClusterTemplateManagerTest(testtools.TestCase):
                          cluster_template.registry_enabled)
         self.assertEqual(CLUSTERTEMPLATE1['master_lb_enabled'],
                          cluster_template.master_lb_enabled)
+        self.assertEqual(CLUSTERTEMPLATE1['floating_ip_enabled'],
+                         cluster_template.floating_ip_enabled)
 
     def test_clustertemplate_create(self):
         cluster_template = self.mgr.create(**CREATE_CLUSTERTEMPLATE)
