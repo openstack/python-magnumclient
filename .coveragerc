@@ -1,7 +1,7 @@
 [run]
 branch = True
 source = magnumclient
-omit = magnumclient/tests/*,magnumclient/openstack/*
+omit = magnumclient/tests/*
 
 [report]
 ignore_errors = True
