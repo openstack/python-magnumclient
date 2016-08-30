@@ -222,7 +222,8 @@ class ShellTest(utils.TestCase):
             'project_domain_id': None, 'project_domain_name': None,
             'region_name': None, 'service_type': 'container-infra',
             'user_id': None, 'username': 'username',
-            'user_domain_id': None, 'user_domain_name': None
+            'user_domain_id': None, 'user_domain_name': None,
+            'api_version': 'latest'
         }
 
     @mock.patch('magnumclient.v1.client.Client')

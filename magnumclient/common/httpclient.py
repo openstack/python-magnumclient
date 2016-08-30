@@ -34,6 +34,7 @@ USER_AGENT = 'python-magnumclient'
 CHUNKSIZE = 1024 * 64  # 64kB
 
 API_VERSION = '/v1'
+DEFAULT_API_VERSION = 'latest'
 
 
 def _extract_error_json(body):
@@ -51,8 +52,11 @@ def _extract_error_json(body):
         else:
             error_body = body_json['errors'][0]
             raw_msg = error_body['title']
-            error_json = {'faultstring': error_body['title'],
-                          'debuginfo': error_body['detail']}
+            error_json = {'faultstring': error_body['title']}
+            if 'detail' in error_body:
+                error_json['debuginfo'] = error_body['detail']
+            elif 'description' in error_body:
+                error_json['debuginfo'] = error_body['description']
 
     except ValueError:
         return {}
@@ -62,10 +66,11 @@ def _extract_error_json(body):
 
 class HTTPClient(object):
 
-    def __init__(self, endpoint, **kwargs):
+    def __init__(self, endpoint, api_version=DEFAULT_API_VERSION, **kwargs):
         self.endpoint = endpoint
         self.auth_token = kwargs.get('token')
         self.auth_ref = kwargs.get('auth_ref')
+        self.api_version = kwargs.get('api_version')
         self.connection_params = self.get_connection_params(endpoint, **kwargs)
 
     @staticmethod
@@ -152,6 +157,10 @@ class HTTPClient(object):
         # Copy the kwargs so we can reuse the original in case of redirects
         kwargs['headers'] = copy.deepcopy(kwargs.get('headers', {}))
         kwargs['headers'].setdefault('User-Agent', USER_AGENT)
+        if self.api_version:
+            version_string = 'container-infra %s' % self.api_version
+            kwargs['headers'].setdefault(
+                'OpenStack-API-Version', version_string)
         if self.auth_token:
             kwargs['headers'].setdefault('X-Auth-Token', self.auth_token)
 
@@ -304,7 +313,10 @@ class VerifiedHTTPSConnection(six.moves.http_client.HTTPSConnection):
 class SessionClient(adapter.LegacyJsonAdapter):
     """HTTP client based on Keystone client session."""
 
-    def __init__(self, user_agent=USER_AGENT, logger=LOG, *args, **kwargs):
+    def __init__(self, user_agent=USER_AGENT, logger=LOG,
+                 api_version=DEFAULT_API_VERSION, *args, **kwargs):
+        self.user_agent = USER_AGENT
+        self.api_version = api_version
         super(SessionClient, self).__init__(*args, **kwargs)
 
     def _http_request(self, url, method, **kwargs):
@@ -314,6 +326,14 @@ class SessionClient(adapter.LegacyJsonAdapter):
         kwargs.setdefault('user_agent', self.user_agent)
         kwargs.setdefault('auth', self.auth)
         kwargs.setdefault('endpoint_override', self.endpoint_override)
+
+        # Copy the kwargs so we can reuse the original in case of redirects
+        kwargs['headers'] = copy.deepcopy(kwargs.get('headers', {}))
+        kwargs['headers'].setdefault('User-Agent', self.user_agent)
+        if self.api_version:
+            version_string = 'container-infra %s' % self.api_version
+            kwargs['headers'].setdefault(
+                'OpenStack-API-Version', version_string)
 
         endpoint_filter = kwargs.setdefault('endpoint_filter', {})
         endpoint_filter.setdefault('interface', self.interface)
@@ -340,8 +360,6 @@ class SessionClient(adapter.LegacyJsonAdapter):
         kwargs.setdefault('headers', {})
         kwargs['headers'].setdefault('Content-Type', 'application/json')
         kwargs['headers'].setdefault('Accept', 'application/json')
-        kwargs['headers'].setdefault(
-            'OpenStack-API-Version', 'container-infra latest')
         if 'body' in kwargs:
             kwargs['data'] = json.dumps(kwargs.pop('body'))
 
