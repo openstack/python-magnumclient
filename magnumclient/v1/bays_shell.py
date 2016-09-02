@@ -119,9 +119,8 @@ def do_bay_create(cs, args):
         if args.magnum_api_version and args.magnum_api_version == '1.1':
             _show_bay(bay)
         else:
-            fields = str(bay).split("u'")
-            uuid = fields[2]
-            print("Request to create bay %s has been accepted." % uuid[:-3])
+            uuid = str(bay._info['uuid'])
+            print("Request to create bay %s has been accepted." % uuid)
     except Exception as e:
         print("Create for bay %s failed: %s" %
               (opts['name'], e))
