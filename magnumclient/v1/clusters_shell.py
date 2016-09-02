@@ -114,9 +114,8 @@ def do_cluster_create(cs, args):
         if args.magnum_api_version and args.magnum_api_version == '1.1':
             _show_cluster(cluster)
         else:
-            fields = str(cluster).split("u'")
-            uuid = fields[2]
-            print("Request to create cluster %s has been accepted." % uuid[:3])
+            uuid = str(cluster._info['uuid'])
+            print("Request to create cluster %s has been accepted." % uuid)
     except Exception as e:
         print("Create for cluster %s failed: %s" %
               (opts['name'], e))
