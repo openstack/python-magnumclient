@@ -214,7 +214,7 @@ def do_bay_config(cs, args):
         raise exceptions.CommandError("Bay in status %s" % bay.status)
     baymodel = cs.baymodels.get(bay.baymodel_id)
     opts = {
-        'bay_uuid': bay.uuid,
+        'cluster_uuid': bay.uuid,
     }
 
     if not baymodel.tls_disabled:
