@@ -200,6 +200,7 @@ def do_cluster_config(cs, args):
 
     Example: eval $(magnum cluster-config <cluster-name>).
     """
+    args.dir = os.path.abspath(args.dir)
     cluster = cs.clusters.get(args.cluster)
     if cluster.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
         raise exceptions.CommandError("cluster in status %s" % cluster.status)
@@ -226,7 +227,7 @@ def do_cluster_config(cs, args):
                           cfg_dir=args.dir, force=args.force))
 
 
-def _config_cluster(cluster, cluster_template, cfg_dir='.', force=False):
+def _config_cluster(cluster, cluster_template, cfg_dir, force=False):
     """Return and write configuration for the given cluster."""
     if cluster_template.coe == 'kubernetes':
         return _config_cluster_kubernetes(cluster, cluster_template,
@@ -236,7 +237,7 @@ def _config_cluster(cluster, cluster_template, cfg_dir='.', force=False):
 
 
 def _config_cluster_kubernetes(cluster, cluster_template,
-                               cfg_dir='.', force=False):
+                               cfg_dir, force=False):
     """Return and write configuration for the given kubernetes cluster."""
     cfg_file = "%s/config" % cfg_dir
     if cluster_template.tls_disabled:
@@ -290,7 +291,7 @@ def _config_cluster_kubernetes(cluster, cluster_template,
         return "export KUBECONFIG=%s\n" % cfg_file
 
 
-def _config_cluster_swarm(cluster, cluster_template, cfg_dir='.', force=False):
+def _config_cluster_swarm(cluster, cluster_template, cfg_dir, force=False):
     """Return and write configuration for the given swarm cluster."""
     if 'csh' in os.environ['SHELL']:
         result = ("setenv DOCKER_HOST %(docker_host)s\n"
