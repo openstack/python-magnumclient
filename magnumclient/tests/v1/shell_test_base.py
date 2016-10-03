@@ -73,7 +73,7 @@ class TestCommandLineArgument(utils.TestCase):
     def _test_arg_success(self, command, keyword=None):
         stdout, stderr = self.shell(command)
         if keyword:
-            self.assertTrue(keyword in (stdout + stderr))
+            self.assertIn(keyword, (stdout + stderr))
 
     def _test_arg_failure(self, command, error_msg):
         stdout, stderr = self.shell(command, (2,))
