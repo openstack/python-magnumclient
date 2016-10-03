@@ -18,6 +18,7 @@ from magnumclient.v1 import baseunit
 CREATION_ATTRIBUTES = baseunit.CREATION_ATTRIBUTES
 CREATION_ATTRIBUTES.append('cluster_template_id')
 CREATION_ATTRIBUTES.append('create_timeout')
+CREATION_ATTRIBUTES.append('keypair')
 
 
 class Cluster(baseunit.BaseTemplate):

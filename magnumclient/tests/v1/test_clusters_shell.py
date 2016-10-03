@@ -24,6 +24,7 @@ class FakeCluster(Cluster):
     def __init__(self, manager=None, info={}, **kwargs):
         Cluster.__init__(self, manager=manager, info=info)
         self.uuid = kwargs.get('uuid', 'x')
+        self.keypair = kwargs.get('keypair_id', 'x')
         self.name = kwargs.get('name', 'x')
         self.cluster_template_id = kwargs.get('cluster_template_id', 'x')
         self.stack_id = kwargs.get('stack_id', 'x')
@@ -55,14 +56,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         mock_list.return_value = [FakeCluster()]
         self._test_arg_success(
             'cluster-list --fields status,status,status,name',
-            keyword=('\n| uuid | name | node_count | '
+            keyword=('\n| uuid | name | keypair_id | node_count | '
                      'master_count | status |\n'))
         # Output should be
-        # +------+------+------------+--------------+--------+
-        # | uuid | name | node_count | master_count | status |
-        # +------+------+------------+--------------+--------+
-        # | x    | x    | x          | x            | x      |
-        # +------+------+------------+--------------+--------+
+        # +------+------+------------+--------------+--------------+--------+
+        # | uuid | name | keypair_id | node_count   | master_count | status |
+        # +------+------+------------+--------------+--------------+--------+
+        # | x    | x    | x          | x            | x            | x      |
+        # +------+------+------------+--------------+--------------+--------+
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
@@ -100,6 +101,10 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('cluster-create --cluster-template xxx')
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_success('cluster-create --cluster-template xxx '
+                               '--keypair-id x')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('cluster-create --name test '
@@ -146,6 +151,12 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_name(self, mock_create):
         self._test_arg_failure('cluster-create --name test',
+                               self._mandatory_arg_error)
+        self.assertFalse(mock_create.called)
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
+    def test_cluster_create_failure_only_keypair(self, mock_create):
+        self._test_arg_failure('cluster-create --keypair-id test',
                                self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
 

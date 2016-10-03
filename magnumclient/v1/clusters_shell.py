@@ -52,9 +52,9 @@ def _show_cluster(cluster):
            default=None,
            metavar='<fields>',
            help=_('Comma-separated list of fields to display. '
-                  'Available fields: uuid, name, baymodel_id, stack_id, '
-                  'status, master_count, node_count, links, '
-                  'cluster_create_timeout'
+                  'Available fields: uuid, name, cluster_template_id, '
+                  'stack_id, status, master_count, node_count, links, '
+                  'create_timeout'
                   )
            )
 def do_cluster_list(cs, args):
@@ -62,12 +62,19 @@ def do_cluster_list(cs, args):
     clusters = cs.clusters.list(marker=args.marker, limit=args.limit,
                                 sort_key=args.sort_key,
                                 sort_dir=args.sort_dir)
-    columns = ['uuid', 'name', 'node_count', 'master_count', 'status']
+    columns = [
+        'uuid', 'name', 'keypair', 'node_count', 'master_count', 'status'
+    ]
     columns += utils._get_list_table_columns_and_formatters(
         args.fields, clusters,
         exclude_fields=(c.lower() for c in columns))[0]
+
+    labels = columns[:]
+    labels[2] = 'keypair_id'
+
     utils.print_list(clusters, columns,
                      {'versions': magnum_utils.print_list_field('versions')},
+                     field_labels=labels,
                      sortby_index=None)
 
 
@@ -78,6 +85,10 @@ def do_cluster_list(cs, args):
            required=True,
            metavar='<cluster_template>',
            help='ID or name of the cluster template.')
+@utils.arg('--keypair-id',
+           metavar='<keypair_id>',
+           default=None,
+           help='Name of the keypair to use for this cluster.')
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,
@@ -104,6 +115,7 @@ def do_cluster_create(cs, args):
     opts = {}
     opts['name'] = args.name
     opts['cluster_template_id'] = cluster_template.uuid
+    opts['keypair'] = args.keypair_id
     opts['node_count'] = args.node_count
     opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url
