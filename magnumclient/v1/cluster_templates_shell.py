@@ -30,16 +30,17 @@ def _show_cluster_template(cluster_template):
 @utils.arg('--image-id',
            required=True,
            metavar='<image-id>',
-           help='The name or UUID of the base image to customize for the bay.')
+           help='The name or UUID of the base image to customize for the '
+                'Cluster.')
 @utils.arg('--keypair-id',
-           required=True,
+           required=False,
            metavar='<keypair-id>',
-           help='The name or UUID of the SSH keypair to load into the'
-           ' Bay nodes.')
+           help='The name or UUID of the SSH keypair to load into the '
+                'Cluster nodes.')
 @utils.arg('--external-network-id',
            required=True,
            metavar='<external-network-id>',
-           help='The external Neutron network ID to connect to this bay'
+           help='The external Neutron network ID to connect to this Cluster'
            ' model.')
 @utils.arg('--coe',
            required=True,
@@ -47,11 +48,11 @@ def _show_cluster_template(cluster_template):
            help='Specify the Container Orchestration Engine to use.')
 @utils.arg('--fixed-network',
            metavar='<fixed-network>',
-           help='The private Neutron network name to connect to this bay'
+           help='The private Neutron network name to connect to this Cluster'
            ' model.')
 @utils.arg('--fixed-subnet',
            metavar='<fixed-subnet>',
-           help='The private Neutron subnet name to connect to bay.')
+           help='The private Neutron subnet name to connect to Cluster.')
 @utils.arg('--network-driver',
            metavar='<network-driver>',
            help='The network driver name for instantiating container'
@@ -67,11 +68,11 @@ def _show_cluster_template(cluster_template):
 @utils.arg('--flavor-id',
            metavar='<flavor-id>',
            default='m1.medium',
-           help='The nova flavor id to use when launching the bay.')
+           help='The nova flavor id to use when launching the Cluster.')
 @utils.arg('--master-flavor-id',
            metavar='<master-flavor-id>',
            help='The nova flavor id to use when launching the master node '
-           'of the bay.')
+           'of the Cluster.')
 @utils.arg('--docker-volume-size',
            metavar='<docker-volume-size>',
            type=int,
@@ -84,13 +85,13 @@ def _show_cluster_template(cluster_template):
                 'overlay. Default: devicemapper')
 @utils.arg('--http-proxy',
            metavar='<http-proxy>',
-           help='The http_proxy address to use for nodes in bay.')
+           help='The http_proxy address to use for nodes in Cluster.')
 @utils.arg('--https-proxy',
            metavar='<https-proxy>',
-           help='The https_proxy address to use for nodes in bay.')
+           help='The https_proxy address to use for nodes in Cluster.')
 @utils.arg('--no-proxy',
            metavar='<no-proxy>',
-           help='The no_proxy address to use for nodes in bay.')
+           help='The no_proxy address to use for nodes in Cluster.')
 @utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
            action='append', default=[],
            help='Arbitrary labels in the form of key=value pairs '
@@ -98,13 +99,13 @@ def _show_cluster_template(cluster_template):
                 'May be used multiple times.')
 @utils.arg('--tls-disabled',
            action='store_true', default=False,
-           help='Disable TLS in the Bay.')
+           help='Disable TLS in the Cluster.')
 @utils.arg('--public',
            action='store_true', default=False,
            help='Make cluster template public.')
 @utils.arg('--registry-enabled',
            action='store_true', default=False,
-           help='Enable docker registry in the Bay')
+           help='Enable docker registry in the Cluster')
 @utils.arg('--server-type',
            metavar='<server-type>',
            default='vm',
@@ -113,11 +114,11 @@ def _show_cluster_template(cluster_template):
                 'default server type will be vm.')
 @utils.arg('--master-lb-enabled',
            action='store_true', default=False,
-           help='Indicates whether created bays should have a load balancer '
-                'for master nodes or not.')
+           help='Indicates whether created Clusters should have a load '
+                'balancer for master nodes or not.')
 @utils.arg('--floating-ip-enabled',
            action='store_true', default=True,
-           help='Indicates whether created bays should have a floating ip'
+           help='Indicates whether created Clusters should have a floating ip'
                 'or not.')
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""

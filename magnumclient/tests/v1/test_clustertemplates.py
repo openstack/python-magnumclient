@@ -29,7 +29,6 @@ CLUSTERTEMPLATE1 = {
     'image_id': 'clustertemplate1-image',
     'master_flavor_id': 'm1.tiny',
     'flavor_id': 'm1.small',
-    'keypair_id': 'keypair1',
     'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e21',
     'fixed_network': 'private',
     'fixed_subnet': 'private-subnet',
@@ -57,7 +56,6 @@ CLUSTERTEMPLATE2 = {
     'image_id': 'clustertemplate2-image',
     'flavor_id': 'm2.small',
     'master_flavor_id': 'm2.tiny',
-    'keypair_id': 'keypair2',
     'external_network_id': 'd1f02cfb-d27f-4068-9332-84d907cb0e22',
     'fixed_network': 'private2',
     'network_driver': 'flannel',
@@ -362,6 +360,23 @@ class ClusterTemplateManagerTest(testtools.TestCase):
         cluster_template = self.mgr.create(**CREATE_CLUSTERTEMPLATE)
         expect = [
             ('POST', '/v1/clustertemplates', {}, CREATE_CLUSTERTEMPLATE),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(cluster_template)
+        self.assertEqual(CLUSTERTEMPLATE1['docker_volume_size'],
+                         cluster_template.docker_volume_size)
+        self.assertEqual(CLUSTERTEMPLATE1['docker_storage_driver'],
+                         cluster_template.docker_storage_driver)
+
+    def test_clustertemplate_create_with_keypair(self):
+        cluster_template_with_keypair = dict()
+        cluster_template_with_keypair.update(CREATE_CLUSTERTEMPLATE)
+        cluster_template_with_keypair['keypair_id'] = 'test_key'
+
+        cluster_template = self.mgr.create(**cluster_template_with_keypair)
+        expect = [
+            ('POST', '/v1/clustertemplates', {},
+             cluster_template_with_keypair),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(cluster_template)
