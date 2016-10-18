@@ -35,6 +35,12 @@ from six import moves
 from magnumclient.i18n import _
 
 
+def deprecation_message(preamble, new_name):
+    msg = ('%s This parameter is deprecated and will be removed in a future '
+           'release. Use --%s instead.' % (preamble, new_name))
+    return msg
+
+
 class MissingArgs(Exception):
     """Supplied arguments are not sufficient for calling a function."""
     def __init__(self, missing):
@@ -77,19 +83,70 @@ def validate_args(fn, *args, **kwargs):
 
 
 def deprecated(message):
-    '''Decorator for marking a call as deprecated by printing a given message.
+    """Decorator for marking a call as deprecated by printing a given message.
 
     Example:
     >>> @deprecated("Bay functions are deprecated and should be replaced by "
     ...             "calls to cluster")
     ... def bay_create(args):
     ...     pass
-    '''
+    """
     @decorator.decorator
     def wrapper(func, *args, **kwargs):
         print(message)
         return func(*args, **kwargs)
     return wrapper
+
+
+def deprecation_map(dep_map):
+    """Decorator for applying a map of deprecating arguments to a function.
+
+    The map connects deprecating arguments and their replacements. The
+    shell.py script uses this map to create mutually exclusive argument groups
+    in argparse and also prints a deprecation warning telling the user to
+    switch to the updated argument.
+
+    NOTE: This decorator MUST be the outermost in the chain of argument
+    decorators to work correctly.
+
+    Example usage:
+    >>> @deprecation_map({ "old-argument": "new-argument" })
+    ... @args("old-argument", required=True)
+    ... @args("new-argument", required=True)
+    ... def do_command_line_stuff():
+    ...     pass
+    """
+    def _decorator(func):
+        if not hasattr(func, 'arguments'):
+            return func
+
+        func.deprecated_groups = []
+        for old_param, new_param in dep_map.items():
+            old_info, new_info = None, None
+            required = False
+            for (args, kwargs) in func.arguments:
+                if old_param in args:
+                    old_info = (args, kwargs)
+                    # Old arguments shouldn't be required if they were not
+                    # previously, so prioritize old requirement
+                    if 'required' in kwargs:
+                        required = kwargs['required']
+                    # Set to false so argparse doesn't get angry
+                    kwargs['required'] = False
+                elif new_param in args:
+                    new_info = (args, kwargs)
+                    kwargs['required'] = False
+                if old_info and new_info:
+                    break
+            # Add a tuple of (old, new, required), which in turn is:
+            # ((old_args, old_kwargs), (new_args, new_kwargs), required)
+            func.deprecated_groups.append((old_info, new_info, required))
+            # Remove arguments that would be duplicated by the groups we made
+            func.arguments.remove(old_info)
+            func.arguments.remove(new_info)
+
+        return func
+    return _decorator
 
 
 def arg(*args, **kwargs):
