@@ -19,29 +19,62 @@ from magnumclient.common import utils as magnum_utils
 from magnumclient.i18n import _
 
 
+# Maps old parameter names to their new names and whether they are required
+DEPRECATING_PARAMS = {
+    "--external-network-id": "--external-network",
+    "--flavor-id": "--flavor",
+    "--image-id": "--image",
+    "--keypair-id": "--keypair",
+    "--master-flavor-id": "--master-flavor",
+}
+
+
 def _show_cluster_template(cluster_template):
     del cluster_template._info['links']
     utils.print_dict(cluster_template._info)
 
 
+@utils.deprecation_map(DEPRECATING_PARAMS)
 @utils.arg('--name',
            metavar='<name>',
            help='Name of the cluster template to create.')
 @utils.arg('--image-id',
+           dest='image',
            required=True,
-           metavar='<image-id>',
+           metavar='<image>',
+           help=utils.deprecation_message(
+               'The name or UUID of the base image to customize for the '
+               'Cluster.', 'image'))
+@utils.arg('--image',
+           dest='image',
+           required=True,
+           metavar='<image>',
            help='The name or UUID of the base image to customize for the '
                 'Cluster.')
 @utils.arg('--keypair-id',
-           required=False,
-           metavar='<keypair-id>',
-           help='The name or UUID of the SSH keypair to load into the '
-                'Cluster nodes.')
+           dest='keypair',
+           metavar='<keypair>',
+           help=utils.deprecation_message(
+               'The name or UUID of the SSH keypair to load into the '
+               'Cluster nodes.', 'keypair'))
+@utils.arg('--keypair',
+           dest='keypair',
+           metavar='<keypair>',
+           help='The name or UUID of the SSH keypair to load into the Cluster '
+                'nodes.')
 @utils.arg('--external-network-id',
+           dest='external_network',
            required=True,
-           metavar='<external-network-id>',
-           help='The external Neutron network ID to connect to this Cluster'
-           ' model.')
+           metavar='<external-network>',
+           help=utils.deprecation_message(
+                'The external Neutron network name or UUID to connect to '
+                'this Cluster Template.', 'external-network'))
+@utils.arg('--external-network',
+           dest='external_network',
+           required=True,
+           metavar='<external-network>',
+           help='The external Neutron network name or UUID to connect to '
+                'this Cluster Template.')
 @utils.arg('--coe',
            required=True,
            metavar='<coe>',
@@ -66,13 +99,29 @@ def _show_cluster_template(cluster_template):
            default='8.8.8.8',
            help='The DNS nameserver to use for this cluster template.')
 @utils.arg('--flavor-id',
-           metavar='<flavor-id>',
+           dest='flavor',
+           metavar='<flavor>',
            default='m1.medium',
-           help='The nova flavor id to use when launching the Cluster.')
+           help=utils.deprecation_message(
+                'The nova flavor name or UUID to use when launching the '
+                'Cluster.', 'flavor'))
+@utils.arg('--flavor',
+           dest='flavor',
+           metavar='<flavor>',
+           default='m1.medium',
+           help='The nova flavor name or UUID to use when launching the '
+                'Cluster.')
 @utils.arg('--master-flavor-id',
-           metavar='<master-flavor-id>',
-           help='The nova flavor id to use when launching the master node '
-           'of the Cluster.')
+           dest='master_flavor',
+           metavar='<master-flavor>',
+           help=utils.deprecation_message(
+                'The nova flavor name or UUID to use when launching the master'
+                ' node of the Cluster.', 'master-flavor'))
+@utils.arg('--master-flavor',
+           dest='master_flavor',
+           metavar='<master-flavor>',
+           help='The nova flavor name or UUID to use when launching the master'
+                ' node of the Cluster.')
 @utils.arg('--docker-volume-size',
            metavar='<docker-volume-size>',
            type=int,
@@ -124,11 +173,11 @@ def do_cluster_template_create(cs, args):
     """Create a cluster template."""
     opts = {}
     opts['name'] = args.name
-    opts['flavor_id'] = args.flavor_id
-    opts['master_flavor_id'] = args.master_flavor_id
-    opts['image_id'] = args.image_id
-    opts['keypair_id'] = args.keypair_id
-    opts['external_network_id'] = args.external_network_id
+    opts['flavor_id'] = args.flavor
+    opts['master_flavor_id'] = args.master_flavor
+    opts['image_id'] = args.image
+    opts['keypair_id'] = args.keypair
+    opts['external_network_id'] = args.external_network
     opts['fixed_network'] = args.fixed_network
     opts['fixed_subnet'] = args.fixed_subnet
     opts['network_driver'] = args.network_driver

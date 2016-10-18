@@ -24,7 +24,7 @@ class FakeCluster(Cluster):
     def __init__(self, manager=None, info={}, **kwargs):
         Cluster.__init__(self, manager=manager, info=info)
         self.uuid = kwargs.get('uuid', 'x')
-        self.keypair = kwargs.get('keypair_id', 'x')
+        self.keypair = kwargs.get('keypair', 'x')
         self.name = kwargs.get('name', 'x')
         self.cluster_template_id = kwargs.get('cluster_template_id', 'x')
         self.stack_id = kwargs.get('stack_id', 'x')
@@ -56,14 +56,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         mock_list.return_value = [FakeCluster()]
         self._test_arg_success(
             'cluster-list --fields status,status,status,name',
-            keyword=('\n| uuid | name | keypair_id | node_count | '
+            keyword=('\n| uuid | name | keypair | node_count | '
                      'master_count | status |\n'))
         # Output should be
-        # +------+------+------------+--------------+--------------+--------+
-        # | uuid | name | keypair_id | node_count   | master_count | status |
-        # +------+------+------------+--------------+--------------+--------+
-        # | x    | x    | x          | x            | x            | x      |
-        # +------+------+------------+--------------+--------------+--------+
+        # +------+------+---------+--------------+--------------+--------+
+        # | uuid | name | keypair | node_count   | master_count | status |
+        # +------+------+---------+--------------+--------------+--------+
+        # | x    | x    | x       | x            | x            | x      |
+        # +------+------+---------+--------------+--------------+--------+
         self.assertTrue(mock_list.called)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
@@ -104,7 +104,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('cluster-create --cluster-template xxx '
-                               '--keypair-id x')
+                               '--keypair x')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('cluster-create --name test '
@@ -122,6 +122,26 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self._test_arg_success('cluster-create --cluster-template xxx '
                                '--timeout 15')
         self.assertTrue(mock_create.called)
+
+    @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
+    def test_cluster_create_deprecation_warnings(self, mock_create, mock_get):
+        self._test_arg_failure('cluster-create --cluster-template xxx '
+                               '--keypair-id x',
+                               self._deprecated_warning)
+        self.assertTrue(mock_create.called)
+        self.assertTrue(mock_get.called)
+
+    @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
+    def test_cluster_create_deprecation_errors(self,
+                                               mock_create,
+                                               mock_get):
+        self._test_arg_failure('cluster-create --cluster-template xxx '
+                               '--keypair-id x --keypair x',
+                               self._too_many_group_arg_error)
+        self.assertFalse(mock_create.called)
+        self.assertFalse(mock_get.called)
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
@@ -156,7 +176,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_keypair(self, mock_create):
-        self._test_arg_failure('cluster-create --keypair-id test',
+        self._test_arg_failure('cluster-create --keypair test',
                                self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
 
