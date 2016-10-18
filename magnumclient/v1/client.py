@@ -162,6 +162,8 @@ class Client(object):
                 endpoint_override,
                 token=auth_token,
                 api_version=api_version,
+                timeout=timeout,
+                insecure=insecure,
                 **kwargs
             )
         else:
