@@ -12,8 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import os.path
-
 from magnumclient.common import cliutils as utils
 from magnumclient.common import utils as magnum_utils
 from magnumclient.i18n import _
@@ -236,10 +234,6 @@ def do_baymodel_list(cs, args):
 def do_baymodel_update(cs, args):
     """Updates one or more baymodel attributes."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
-    p = patch[0]
-    if p['path'] == '/manifest' and os.path.isfile(p['value']):
-        with open(p['value'], 'r') as f:
-            p['value'] = f.read()
 
     baymodel = cs.baymodels.update(args.baymodel, patch)
     _show_baymodel(baymodel)
