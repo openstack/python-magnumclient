@@ -124,7 +124,10 @@ def _show_baymodel(baymodel):
                 'or not.')
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_baymodel_create(cs, args):
-    """Create a baymodel."""
+    """Create a baymodel.
+
+    (Deprecated in favor of cluster-template-create.)
+    """
     opts = {}
     opts['name'] = args.name
     opts['flavor_id'] = args.flavor_id
@@ -161,7 +164,10 @@ def do_baymodel_create(cs, args):
            help='ID or name of the (baymodel)s to delete.')
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_baymodel_delete(cs, args):
-    """Delete specified baymodel."""
+    """Delete specified baymodel.
+
+    (Deprecated in favor of cluster-template-delete.)
+    """
     for baymodel in args.baymodels:
         try:
             cs.baymodels.delete(baymodel)
@@ -177,7 +183,10 @@ def do_baymodel_delete(cs, args):
            help='ID or name of the baymodel to show.')
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_baymodel_show(cs, args):
-    """Show details about the given baymodel."""
+    """Show details about the given baymodel.
+
+    (Deprecated in favor of cluster-template-show.)
+    """
     baymodel = cs.baymodels.get(args.baymodel)
     _show_baymodel(baymodel)
 
@@ -203,7 +212,10 @@ def do_baymodel_show(cs, args):
            )
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_baymodel_list(cs, args):
-    """Print a list of baymodels."""
+    """Print a list of baymodels.
+
+    (Deprecated in favor of cluster-template-list.)
+    """
     nodes = cs.baymodels.list(limit=args.limit,
                               sort_key=args.sort_key,
                               sort_dir=args.sort_dir)
@@ -232,7 +244,10 @@ def do_baymodel_list(cs, args):
          "(only PATH is necessary on remove)")
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_baymodel_update(cs, args):
-    """Updates one or more baymodel attributes."""
+    """Updates one or more baymodel attributes.
+
+    (Deprecated in favor of cluster-template-update.)
+    """
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
 
     baymodel = cs.baymodels.update(args.baymodel, patch)
