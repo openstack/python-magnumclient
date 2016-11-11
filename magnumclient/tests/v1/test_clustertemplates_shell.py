@@ -349,6 +349,50 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertFalse(mock_delete.called)
 
     @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
+    def test_cluster_template_update_success(self, mock_update):
+        self._test_arg_success('cluster-template-update test add test=test')
+        self.assertTrue(mock_update.called)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
+    def test_cluster_template_update_success_many_attribute(self, mock_update):
+        self._test_arg_success('cluster-template-update test '
+                               'add test=test test1=test1')
+        self.assertTrue(mock_update.called)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
+    def test_cluster_template_update_failure_wrong_op(self, mock_update):
+        _error_msg = [
+            '.*?^usage: magnum cluster-template-update ',
+            '.*?^error: argument <op>: invalid choice: ',
+            ".*?^Try 'magnum help cluster-template-update' "
+            "for more information."
+            ]
+        self._test_arg_failure('cluster-template-update test wrong test=test',
+                               _error_msg)
+        self.assertFalse(mock_update.called)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
+    def test_cluster_template_update_failure_few_args(self, mock_update):
+        _error_msg = [
+            '.*?^usage: magnum cluster-template-update ',
+            '.*?^error: (the following arguments|too few arguments)',
+            ".*?^Try 'magnum help cluster-template-update' "
+            "for more information."
+            ]
+        self._test_arg_failure('cluster-template-update', _error_msg)
+        self.assertFalse(mock_update.called)
+
+        self._test_arg_failure('cluster-template-update test', _error_msg)
+        self.assertFalse(mock_update.called)
+
+        self._test_arg_failure('cluster-template-update test add', _error_msg)
+        self.assertFalse(mock_update.called)
+
+    @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
     def test_cluster_template_list_success(self, mock_list):
         self._test_arg_success('cluster-template-list')
