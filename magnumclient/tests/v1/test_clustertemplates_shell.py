@@ -58,7 +58,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--public '
                                '--server-type vm'
                                '--master-lb-enabled '
-                               '--floating-ip-disabled ')
+                               '--floating-ip-enabled ')
         self.assertTrue(mock_create.called)
 
         self._test_arg_success('cluster-template-create '

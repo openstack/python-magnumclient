@@ -120,8 +120,8 @@ def _show_baymodel(baymodel):
            action='store_true', default=False,
            help='Indicates whether created bays should have a load balancer '
                 'for master nodes or not.')
-@utils.arg('--floating-ip-disabled',
-           action='store_true', default=False,
+@utils.arg('--floating-ip-enabled',
+           action='store_true', default=True,
            help='Indicates whether created bays should have a floating ip'
                 'or not.')
 @utils.deprecated(DEPRECATION_MESSAGE)
@@ -151,7 +151,7 @@ def do_baymodel_create(cs, args):
     opts['registry_enabled'] = args.registry_enabled
     opts['server_type'] = args.server_type
     opts['master_lb_enabled'] = args.master_lb_enabled
-    opts['floating_ip_enabled'] = not args.floating_ip_disabled
+    opts['floating_ip_enabled'] = args.floating_ip_enabled
 
     baymodel = cs.baymodels.create(**opts)
     _show_baymodel(baymodel)
