@@ -27,6 +27,13 @@ from cryptography import x509
 from cryptography.x509.oid import NameOID
 
 
+# Maps old parameter names to their new names and whether they are required
+# e.g. keypair-id to keypair
+DEPRECATING_PARAMS = {
+    "--keypair-id": "--keypair",
+}
+
+
 def _show_cluster(cluster):
     del cluster._info['links']
     utils.print_dict(cluster._info)
@@ -69,15 +76,12 @@ def do_cluster_list(cs, args):
         args.fields, clusters,
         exclude_fields=(c.lower() for c in columns))[0]
 
-    labels = columns[:]
-    labels[2] = 'keypair_id'
-
     utils.print_list(clusters, columns,
                      {'versions': magnum_utils.print_list_field('versions')},
-                     field_labels=labels,
                      sortby_index=None)
 
 
+@utils.deprecation_map(DEPRECATING_PARAMS)
 @utils.arg('--name',
            metavar='<name>',
            help='Name of the cluster to create.')
@@ -86,9 +90,17 @@ def do_cluster_list(cs, args):
            metavar='<cluster_template>',
            help='ID or name of the cluster template.')
 @utils.arg('--keypair-id',
-           metavar='<keypair_id>',
+           dest='keypair',
+           metavar='<keypair>',
            default=None,
-           help='Name of the keypair to use for this cluster.')
+           help=utils.deprecation_message(
+                'UUID or name of the keypair to use for this cluster.',
+                'keypair'))
+@utils.arg('--keypair',
+           dest='keypair',
+           metavar='<keypair>',
+           default=None,
+           help='UUID or name of the keypair to use for this cluster.')
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,
@@ -110,16 +122,17 @@ def do_cluster_list(cs, args):
                 'is 60 minutes.')
 def do_cluster_create(cs, args):
     """Create a cluster."""
-    cluster_template = cs.cluster_templates.get(args.cluster_template)
 
-    opts = {}
+    cluster_template = cs.cluster_templates.get(args.cluster_template)
+    opts = dict()
     opts['name'] = args.name
     opts['cluster_template_id'] = cluster_template.uuid
-    opts['keypair'] = args.keypair_id
+    opts['keypair'] = args.keypair
     opts['node_count'] = args.node_count
     opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url
     opts['create_timeout'] = args.timeout
+
     try:
         cluster = cs.clusters.create(**opts)
         # support for non-async in 1.1

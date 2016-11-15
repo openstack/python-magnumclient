@@ -26,7 +26,7 @@ class FakeClusterTemplate(ClusterTemplate):
         self.uuid = kwargs.get('uuid', 'x')
         self.links = kwargs.get('links', [])
         self.server_type = kwargs.get('server_type', 'vm')
-        self.image_id = kwargs.get('image_id', 'x')
+        self.image_id = kwargs.get('image', 'x')
         self.tls_disabled = kwargs.get('tls_disabled', False)
         self.registry_enabled = kwargs.get('registry_enabled', False)
         self.coe = kwargs.get('coe', 'x')
@@ -305,7 +305,20 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self.assertFalse(mock_create.called)
 
         self._test_arg_failure('cluster-template-create '
-                               '--coe test', self._mandatory_arg_error)
+                               '--coe test',
+                               self._mandatory_group_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('cluster-template-create '
+                               '--coe test '
+                               '--external-network test ',
+                               self._mandatory_group_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('cluster-template-create '
+                               '--coe test '
+                               '--image test ',
+                               self._mandatory_group_arg_error)
         self.assertFalse(mock_create.called)
 
         self._test_arg_failure('cluster-template-create '
@@ -315,6 +328,76 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self._test_arg_failure('cluster-template-create',
                                self._mandatory_arg_error)
         self.assertFalse(mock_create.called)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
+    def test_cluster_template_create_deprecation_errors(self, mock_create):
+        required_args = ('cluster-template-create '
+                         '--coe test --external-network public --image test ')
+        self._test_arg_failure('cluster-template-create --coe test '
+                               '--external-network-id test '
+                               '--external-network test ',
+                               self._too_many_group_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure('cluster-template-create --coe test '
+                               '--image-id test '
+                               '--image test ',
+                               self._too_many_group_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure(required_args +
+                               '--flavor test --flavor-id test',
+                               self._too_many_group_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure(required_args +
+                               '--master-flavor test --master-flavor-id test',
+                               self._too_many_group_arg_error)
+        self.assertFalse(mock_create.called)
+
+        self._test_arg_failure(required_args +
+                               '--keypair test --keypair-id test',
+                               self._too_many_group_arg_error)
+        self.assertFalse(mock_create.called)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
+    def test_cluster_template_create_deprecation_warnings(self, mock_create):
+        required_args = ('cluster-template-create '
+                         '--coe test --external-network public --image test ')
+        self._test_arg_failure('cluster-template-create '
+                               '--coe test '
+                               '--external-network-id test '
+                               '--image test ',
+                               self._deprecated_warning)
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_failure('cluster-template-create '
+                               '--coe test '
+                               '--external-network test '
+                               '--image-id test ',
+                               self._deprecated_warning)
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_failure('cluster-template-create '
+                               '--coe test '
+                               '--external-network-id test '
+                               '--image-id test ',
+                               self._deprecated_warning)
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_failure(required_args + '--keypair-id test',
+                               self._deprecated_warning)
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_failure(required_args + '--flavor-id test',
+                               self._deprecated_warning)
+        self.assertTrue(mock_create.called)
+
+        self._test_arg_failure(required_args + '--master-flavor-id test',
+                               self._deprecated_warning)
+        self.assertTrue(mock_create.called)
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     def test_cluster_template_show_success(self, mock_show):

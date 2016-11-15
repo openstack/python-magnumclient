@@ -33,11 +33,28 @@ class TestCommandLineArgument(utils.TestCase):
         ".*?^Try 'magnum help ' for more information.",
         ]
 
+    _mandatory_group_arg_error = [
+        '.*?^usage: ',
+        '.*?^error: one of the arguments',
+        ".*?^Try 'magnum help ",
+    ]
+
+    _too_many_group_arg_error = [
+        '.*?^usage: ',
+        '.*?^error: (argument \-\-[a-z\-]*: not allowed with argument )',
+        ".*?^Try 'magnum help ",
+    ]
+
     _mandatory_arg_error = [
         '.*?^usage: ',
         '.*?^error: (the following arguments|argument)',
         ".*?^Try 'magnum help ",
         ]
+
+    _deprecated_warning = [
+        '.*(WARNING: The \-\-[a-z\-]*-id parameter is deprecated)+',
+        '.*(Use the \-\-[a-z\-]* parameter to avoid seeing this message)+'
+    ]
 
     _few_argument_error = [
         '.*?^usage: magnum ',
