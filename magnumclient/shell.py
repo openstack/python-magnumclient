@@ -459,6 +459,7 @@ class OpenStackMagnumShell(object):
             desc = callback.__doc__ or ''
             action_help = desc.strip()
             arguments = getattr(callback, 'arguments', [])
+            group_args = getattr(callback, 'deprecated_groups', [])
 
             subparser = (
                 subparsers.add_parser(command,
@@ -471,6 +472,12 @@ class OpenStackMagnumShell(object):
                                    action='help',
                                    help=argparse.SUPPRESS,)
             self.subcommands[command] = subparser
+
+            for (old_info, new_info, req) in group_args:
+                group = subparser.add_mutually_exclusive_group(required=req)
+                group.add_argument(*old_info[0], **old_info[1])
+                group.add_argument(*new_info[0], **new_info[1])
+
             for (args, kwargs) in arguments:
                 subparser.add_argument(*args, **kwargs)
             subparser.set_defaults(func=callback)
@@ -630,7 +637,30 @@ class OpenStackMagnumShell(object):
             api_version=args.magnum_api_version,
         )
 
+        self._check_deprecation(args.func, argv)
         args.func(self.cs, args)
+
+    def _check_deprecation(self, func, argv):
+        if not hasattr(func, 'deprecated_groups'):
+            return
+
+        for (old_info, new_info, required) in func.deprecated_groups:
+            old_param = old_info[0][0]
+            new_param = new_info[0][0]
+            old_value, new_value = None, None
+            for i in range(len(argv)):
+                cur_arg = argv[i]
+                if cur_arg == old_param:
+                    old_value = argv[i + 1]
+                elif cur_arg == new_param[0]:
+                    new_value = argv[i + 1]
+
+            if old_value and not new_value:
+                print(
+                    'WARNING: The %s parameter is deprecated and will be '
+                    'removed in a future release. Use the %s parameter to '
+                    'avoid seeing this message.'
+                    % (old_param, new_param))
 
     def _dump_timings(self, timings):
         class Tyme(object):
