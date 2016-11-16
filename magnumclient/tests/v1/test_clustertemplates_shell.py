@@ -48,7 +48,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--dns-nameserver test_dns '
                                '--flavor-id test_flavor '
                                '--fixed-network private '
-                               '--fixed-network private-subnet '
+                               '--fixed-subnet private-subnet '
                                '--volume-driver test_volume '
                                '--network-driver test_driver '
                                '--labels key=val '
@@ -56,7 +56,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--docker-volume-size 10 '
                                '--docker-storage-driver devicemapper '
                                '--public '
-                               '--server-type vm'
+                               '--server-type vm '
                                '--master-lb-enabled '
                                '--floating-ip-enabled ')
         self.assertTrue(mock_create.called)
@@ -122,7 +122,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--keypair-id test_keypair '
                                '--external-network-id test_net '
                                '--image-id test_image '
-                               '--coe swarm'
+                               '--coe swarm '
                                '--public '
                                '--server-type vm')
         self.assertTrue(mock_create.called)
