@@ -37,10 +37,36 @@ class FakeCluster(Cluster):
 
 class ShellTest(shell_test_base.TestCommandLineArgument):
 
+    def _get_expected_args_list(self, marker=None, limit=None,
+                                sort_dir=None, sort_key=None):
+        expected_args = {}
+        expected_args['marker'] = marker
+        expected_args['limit'] = limit
+        expected_args['sort_dir'] = sort_dir
+        expected_args['sort_key'] = sort_key
+
+        return expected_args
+
+    def _get_expected_args_create(self, cluster_template_id, name=None,
+                                  master_count=1, node_count=1,
+                                  create_timeout=60, keypair=None,
+                                  discovery_url=None):
+        expected_args = {}
+        expected_args['name'] = name
+        expected_args['cluster_template_id'] = cluster_template_id
+        expected_args['master_count'] = master_count
+        expected_args['node_count'] = node_count
+        expected_args['create_timeout'] = create_timeout
+        expected_args['discovery_url'] = discovery_url
+        expected_args['keypair'] = keypair
+
+        return expected_args
+
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
     def test_cluster_list_success(self, mock_list):
         self._test_arg_success('cluster-list')
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list()
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
     def test_cluster_list_success_with_arg(self, mock_list):
@@ -49,7 +75,9 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--limit 1 '
                                '--sort-dir asc '
                                '--sort-key uuid')
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list('some_uuid', 1,
+                                                     'asc', 'uuid')
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
     def test_cluster_list_ignored_duplicated_field(self, mock_list):
@@ -64,7 +92,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         # +------+------+---------+--------------+--------------+--------+
         # | x    | x    | x       | x            | x            | x      |
         # +------+------+---------+--------------+--------------+--------+
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list()
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
     def test_cluster_list_failure_with_invalid_field(self, mock_list):
@@ -74,7 +103,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                           self._test_arg_failure,
                           'cluster-list --fields xxx,stack_id,zzz,status',
                           _error_msg)
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list()
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
     def test_cluster_list_failure_invalid_arg(self, mock_list):
@@ -84,44 +114,62 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             ".*?^Try 'magnum help cluster-list' for more information."
             ]
         self._test_arg_failure('cluster-list --sort-dir aaa', _error_msg)
-        self.assertFalse(mock_list.called)
+        mock_list.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.list')
     def test_cluster_list_failure(self, mock_list):
         self._test_arg_failure('cluster-list --wrong',
                                self._unrecognized_arg_error)
-        self.assertFalse(mock_list.called)
+        mock_list.assert_not_called()
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_success(self, mock_create, mock_get):
+        mock_ct = mock.MagicMock()
+        mock_ct.uuid = 'xxx'
+        mock_get.return_value = mock_ct
         self._test_arg_success('cluster-create --name test '
                                '--cluster-template xxx '
                                '--node-count 123 --timeout 15')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx', name='test',
+                                                       node_count=123,
+                                                       create_timeout=15)
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-create --cluster-template xxx')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-create --cluster-template xxx '
                                '--keypair x')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx',
+                                                       keypair='x')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-create --name test '
                                '--cluster-template xxx')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx',
+                                                       name='test')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-create --cluster-template xxx '
                                '--node-count 123')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx',
+                                                       node_count=123)
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-create --cluster-template xxx '
                                '--node-count 123 --master-count 123')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx',
+                                                       master_count=123,
+                                                       node_count=123)
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-create --cluster-template xxx '
                                '--timeout 15')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx',
+                                                       create_timeout=15)
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
@@ -148,107 +196,113 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     def test_cluster_show_clustertemplate_metadata(self,
                                                    mock_cluster,
                                                    mock_clustertemplate):
-        mock_cluster.return_value = FakeCluster(info={'links': 0,
-                                                      'baymodel_id': 0})
+        mock_cluster.return_value = mock.MagicMock(cluster_template_id=0)
+
         mock_clustertemplate.return_value = \
             test_clustertemplates_shell.FakeClusterTemplate(info={'links': 0,
                                                                   'uuid': 0,
                                                                   'id': 0,
                                                                   'name': ''})
 
-        self._test_arg_success('cluster-show --long x', 'clustertemplate_name')
-        self.assertTrue(mock_cluster.called)
-        self.assertTrue(mock_clustertemplate.called)
+        self._test_arg_success('cluster-show --long x')
+        mock_cluster.assert_called_once_with('x')
+        mock_clustertemplate.assert_called_once_with(0)
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_success_only_clustertemplate_arg(self,
                                                              mock_create,
                                                              mock_get):
+        mock_ct = mock.MagicMock()
+        mock_ct.uuid = 'xxx'
+        mock_get.return_value = mock_ct
         self._test_arg_success('cluster-create --cluster-template xxx')
-        self.assertTrue(mock_create.called)
+        expected_args = self._get_expected_args_create('xxx')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_name(self, mock_create):
         self._test_arg_failure('cluster-create --name test',
                                self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_keypair(self, mock_create):
         self._test_arg_failure('cluster-create --keypair test',
                                self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_node_count(self, mock_create):
         self._test_arg_failure('cluster-create --node-count 1',
                                self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_invalid_node_count(self, mock_create):
         self._test_arg_failure('cluster-create --cluster-template xxx '
                                '--node-count test',
                                self._invalid_value_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_cluster_create_timeout(self,
                                                                 mock_create):
         self._test_arg_failure('cluster-create --timeout 15',
                                self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_no_arg(self, mock_create):
         self._test_arg_failure('cluster-create',
                                self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_invalid_master_count(self, mock_create):
         self._test_arg_failure('cluster-create --cluster-template xxx '
                                '--master-count test',
                                self._invalid_value_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.delete')
     def test_cluster_delete_success(self, mock_delete):
         self._test_arg_success('cluster-delete xxx')
-        self.assertTrue(mock_delete.called)
-        self.assertEqual(1, mock_delete.call_count)
+        mock_delete.assert_called_once_with('xxx')
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.delete')
     def test_cluster_delete_multiple_id_success(self, mock_delete):
         self._test_arg_success('cluster-delete xxx xyz')
-        self.assertTrue(mock_delete.called)
-        self.assertEqual(2, mock_delete.call_count)
+        calls = [mock.call('xxx'), mock.call('xyz')]
+        mock_delete.assert_has_calls(calls)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.delete')
     def test_cluster_delete_failure_no_arg(self, mock_delete):
         self._test_arg_failure('cluster-delete', self._few_argument_error)
-        self.assertFalse(mock_delete.called)
+        mock_delete.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
     def test_cluster_show_success(self, mock_show):
         self._test_arg_success('cluster-show xxx')
-        self.assertTrue(mock_show.called)
+        mock_show.assert_called_once_with('xxx')
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
     def test_cluster_show_failure_no_arg(self, mock_show):
         self._test_arg_failure('cluster-show', self._few_argument_error)
-        self.assertFalse(mock_show.called)
+        mock_show.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
     def test_cluster_update_success(self, mock_update):
         self._test_arg_success('cluster-update test add test=test')
-        self.assertTrue(mock_update.called)
+        patch = [{'op': 'add', 'path': '/test', 'value': 'test'}]
+        mock_update.assert_called_once_with('test', patch)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
     def test_cluster_update_success_many_attribute(self, mock_update):
         self._test_arg_success('cluster-update test add test=test test1=test1')
-        self.assertTrue(mock_update.called)
+        patch = [{'op': 'add', 'path': '/test', 'value': 'test'},
+                 {'op': 'add', 'path': '/test1', 'value': 'test1'}]
+        mock_update.assert_called_once_with('test', patch)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
     def test_cluster_update_failure_wrong_op(self, mock_update):
@@ -259,7 +313,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             ]
         self._test_arg_failure('cluster-update test wrong test=test',
                                _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
     def test_cluster_update_failure_wrong_attribute(self, mock_update):
@@ -268,7 +322,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             ]
         self.assertRaises(exceptions.CommandError, self._test_arg_failure,
                           'cluster-update test add test', _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
     def test_cluster_update_failure_few_args(self, mock_update):
@@ -278,33 +332,33 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             ".*?^Try 'magnum help cluster-update' for more information."
             ]
         self._test_arg_failure('cluster-update', _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
         self._test_arg_failure('cluster-update test', _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
         self._test_arg_failure('cluster-update test add', _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
     def test_cluster_config_success(self, mock_cluster, mock_clustertemplate):
         mock_cluster.return_value = FakeCluster(status='UPDATE_COMPLETE')
         self._test_arg_success('cluster-config xxx')
-        self.assertTrue(mock_cluster.called)
+        mock_cluster.assert_called_with('xxx')
 
         mock_cluster.return_value = FakeCluster(status='CREATE_COMPLETE')
         self._test_arg_success('cluster-config xxx')
-        self.assertTrue(mock_cluster.called)
+        mock_cluster.assert_called_with('xxx')
 
         self._test_arg_success('cluster-config --dir /tmp xxx')
-        self.assertTrue(mock_cluster.called)
+        mock_cluster.assert_called_with('xxx')
 
         self._test_arg_success('cluster-config --force xxx')
-        self.assertTrue(mock_cluster.called)
+        mock_cluster.assert_called_with('xxx')
 
         self._test_arg_success('cluster-config --dir /tmp --force xxx')
-        self.assertTrue(mock_cluster.called)
+        mock_cluster.assert_called_with('xxx')
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
@@ -320,10 +374,10 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
     def test_cluster_config_failure_no_arg(self, mock_cluster):
         self._test_arg_failure('cluster-config', self._few_argument_error)
-        self.assertFalse(mock_cluster.called)
+        mock_cluster.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
     def test_cluster_config_failure_wrong_arg(self, mock_cluster):
         self._test_arg_failure('cluster-config xxx yyy',
                                self._unrecognized_arg_error)
-        self.assertFalse(mock_cluster.called)
+        mock_cluster.assert_not_called()
