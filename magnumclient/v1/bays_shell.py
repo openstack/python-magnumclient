@@ -62,7 +62,10 @@ def _show_bay(bay):
            )
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_list(cs, args):
-    """Print a list of available bays."""
+    """Print a list of available bays.
+
+    (Deprecated in favor of cluster-list.)
+    """
     bays = cs.bays.list(marker=args.marker, limit=args.limit,
                         sort_key=args.sort_key,
                         sort_dir=args.sort_dir)
@@ -103,7 +106,10 @@ def do_bay_list(cs, args):
            help='The timeout for bay creation in minutes. The default '
                 'is 60 minutes.')
 def do_bay_create(cs, args):
-    """Create a bay."""
+    """Create a bay.
+
+    (Deprecated in favor of cluster-create.)
+    """
     baymodel = cs.baymodels.get(args.baymodel)
 
     opts = {}
@@ -132,7 +138,10 @@ def do_bay_create(cs, args):
            help='ID or name of the (bay)s to delete.')
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_delete(cs, args):
-    """Delete specified bay."""
+    """Delete specified bay.
+
+    (Deprecated in favor of cluster-delete.)
+    """
     for id in args.bay:
         try:
             cs.bays.delete(id)
@@ -151,7 +160,10 @@ def do_bay_delete(cs, args):
            help='Display extra associated Baymodel info.')
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_show(cs, args):
-    """Show details about the given bay."""
+    """Show details about the given bay.
+
+    (Deprecated in favor of cluster-show.)
+    """
     bay = cs.bays.get(args.bay)
     if args.long:
         baymodel = cs.baymodels.get(bay.baymodel_id)
@@ -179,7 +191,10 @@ def do_bay_show(cs, args):
          "(only PATH is necessary on remove)")
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_update(cs, args):
-    """Update information about the given bay."""
+    """Update information about the given bay.
+
+    (Deprecated in favor of cluster-update.)
+    """
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
     bay = cs.bays.update(args.bay, patch)
     if args.magnum_api_version and args.magnum_api_version == '1.1':
@@ -206,6 +221,8 @@ def do_bay_config(cs, args):
     corresponding COE configured to access the bay.
 
     Example: eval $(magnum bay-config <bay-name>).
+
+    (Deprecated in favor of cluster-config.)
     """
     args.dir = os.path.abspath(args.dir)
     bay = cs.bays.get(args.bay)
