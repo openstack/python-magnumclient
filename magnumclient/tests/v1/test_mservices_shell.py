@@ -22,10 +22,10 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     @mock.patch('magnumclient.v1.mservices.MServiceManager.list')
     def test_magnum_service_list_success(self, mock_list):
         self._test_arg_success('service-list')
-        self.assertTrue(mock_list.called)
+        mock_list.assert_called_once_with()
 
     @mock.patch('magnumclient.v1.mservices.MServiceManager.list')
     def test_magnum_service_list_failure(self, mock_list):
         self._test_arg_failure('service-list --wrong',
                                self._unrecognized_arg_error)
-        self.assertFalse(mock_list.called)
+        mock_list.assert_not_called()
