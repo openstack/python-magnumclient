@@ -36,6 +36,57 @@ class FakeClusterTemplate(ClusterTemplate):
 
 class ShellTest(shell_test_base.TestCommandLineArgument):
 
+    def _get_expected_args_list(self, limit=None, sort_dir=None,
+                                sort_key=None):
+        expected_args = {}
+        expected_args['limit'] = limit
+        expected_args['sort_dir'] = sort_dir
+        expected_args['sort_key'] = sort_key
+
+        return expected_args
+
+    def _get_expected_args(self, image_id, external_network_id, coe,
+                           master_flavor_id=None, name=None,
+                           keypair_id=None, fixed_network=None,
+                           fixed_subnet=None, network_driver=None,
+                           volume_driver=None, dns_nameserver='8.8.8.8',
+                           flavor_id='m1.medium',
+                           docker_storage_driver='devicemapper',
+                           docker_volume_size=None, http_proxy=None,
+                           https_proxy=None, no_proxy=None, labels={},
+                           tls_disabled=False, public=False,
+                           master_lb_enabled=False, server_type='vm',
+                           floating_ip_enabled=True,
+                           registry_enabled=False):
+
+        expected_args = {}
+        expected_args['image_id'] = image_id
+        expected_args['external_network_id'] = external_network_id
+        expected_args['coe'] = coe
+        expected_args['master_flavor_id'] = master_flavor_id
+        expected_args['name'] = name
+        expected_args['keypair_id'] = keypair_id
+        expected_args['fixed_network'] = fixed_network
+        expected_args['fixed_subnet'] = fixed_subnet
+        expected_args['network_driver'] = network_driver
+        expected_args['volume_driver'] = volume_driver
+        expected_args['dns_nameserver'] = dns_nameserver
+        expected_args['flavor_id'] = flavor_id
+        expected_args['docker_volume_size'] = docker_volume_size
+        expected_args['docker_storage_driver'] = docker_storage_driver
+        expected_args['http_proxy'] = http_proxy
+        expected_args['https_proxy'] = https_proxy
+        expected_args['no_proxy'] = no_proxy
+        expected_args['labels'] = labels
+        expected_args['tls_disabled'] = tls_disabled
+        expected_args['public'] = public
+        expected_args['master_lb_enabled'] = master_lb_enabled
+        expected_args['server_type'] = server_type
+        expected_args['floating_ip_enabled'] = floating_ip_enabled
+        expected_args['registry_enabled'] = registry_enabled
+
+        return expected_args
+
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
     def test_cluster_template_create_success(self, mock_create):
@@ -59,7 +110,24 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--server-type vm '
                                '--master-lb-enabled '
                                '--floating-ip-enabled ')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    dns_nameserver='test_dns', public=True,
+                                    flavor_id='test_flavor',
+                                    master_flavor_id='test_flavor',
+                                    fixed_network='private',
+                                    fixed_subnet='private-subnet',
+                                    server_type='vm',
+                                    network_driver='test_driver',
+                                    volume_driver='test_volume',
+                                    docker_storage_driver='devicemapper',
+                                    docker_volume_size=10,
+                                    master_lb_enabled=True,
+                                    floating_ip_enabled=True,
+                                    labels={'key': 'val'})
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-template-create '
                                '--keypair-id test_keypair '
@@ -69,7 +137,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--name test '
                                '--server-type vm')
 
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair',
+                                    coe='kubernetes',
+                                    external_network_id='test_net',
+                                    server_type='vm')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -89,7 +163,19 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--docker-volume-size 10 '
                                '--docker-storage-driver devicemapper '
                                '--public ')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    dns_nameserver='test_dns', public=True,
+                                    flavor_id='test_flavor',
+                                    master_flavor_id='test_flavor',
+                                    fixed_network='public',
+                                    network_driver='test_driver',
+                                    docker_storage_driver='devicemapper',
+                                    docker_volume_size=10,
+                                    labels={'key': 'val'})
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-template-create '
                                '--keypair-id test_keypair '
@@ -98,7 +184,12 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--coe kubernetes '
                                '--name test ')
 
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair',
+                                    coe='kubernetes',
+                                    external_network_id='test_net')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -112,7 +203,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--registry-enabled')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    network_driver='test_driver',
+                                    registry_enabled=True)
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -125,7 +222,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--coe swarm '
                                '--public '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    public=True, server_type='vm',
+                                    network_driver='test_driver')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -139,7 +242,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--coe swarm '
                                '--dns-nameserver test_dns '
                                '--master-flavor-id test_flavor')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    dns_nameserver='test_dns',
+                                    master_flavor_id='test_flavor')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -152,7 +261,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    docker_volume_size=4514)
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -166,7 +281,12 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--docker-storage-driver devicemapper '
                                '--coe swarm'
                                )
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    docker_storage_driver='devicemapper')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -178,7 +298,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    fixed_network='private',
+                                    external_network_id='test_net',
+                                    server_type='vm')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -190,7 +316,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    network_driver='test_driver')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -202,7 +334,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    volume_driver='test_volume')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -215,7 +353,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--coe swarm '
                                '--http-proxy http_proxy '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    fixed_network='private',
+                                    server_type='vm',
+                                    http_proxy='http_proxy')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -228,7 +373,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--coe swarm '
                                '--https-proxy https_proxy '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    fixed_network='private',
+                                    server_type='vm',
+                                    https_proxy='https_proxy')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -241,6 +393,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--coe swarm '
                                '--no-proxy no_proxy '
                                '--server-type vm')
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    fixed_network='private',
+                                    server_type='vm',
+                                    no_proxy='no_proxy')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -253,7 +413,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    labels={'key': 'val'})
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -268,7 +434,13 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    labels={'key1': 'val1', 'key2': 'val2'})
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -282,52 +454,58 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--image-id test_image '
                                '--coe swarm '
                                '--server-type vm')
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    labels={'key1': 'val1', 'key2': 'val2'})
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
     def test_cluster_template_create_failure_few_arg(self, mock_create):
         self._test_arg_failure('cluster-template-create '
                                '--name test', self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create '
                                '--image-id test', self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create '
                                '--keypair-id test', self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create '
                                '--external-network-id test',
                                self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create '
                                '--coe test',
                                self._mandatory_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create '
                                '--coe test '
                                '--external-network test ',
                                self._mandatory_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create '
                                '--coe test '
                                '--image test ',
                                self._mandatory_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create '
                                '--server-type test', self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create',
                                self._mandatory_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -338,28 +516,28 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--external-network-id test '
                                '--external-network test ',
                                self._too_many_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure('cluster-template-create --coe test '
                                '--image-id test '
                                '--image test ',
                                self._too_many_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure(required_args +
                                '--flavor test --flavor-id test',
                                self._too_many_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure(required_args +
                                '--master-flavor test --master-flavor-id test',
                                self._too_many_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
         self._test_arg_failure(required_args +
                                '--keypair test --keypair-id test',
                                self._too_many_group_arg_error)
-        self.assertFalse(mock_create.called)
+        mock_create.assert_not_called()
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
@@ -371,78 +549,101 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--external-network-id test '
                                '--image test ',
                                self._deprecated_warning)
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(image_id='test', coe='test',
+                                    external_network_id='test')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_failure('cluster-template-create '
                                '--coe test '
                                '--external-network test '
                                '--image-id test ',
                                self._deprecated_warning)
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(image_id='test', coe='test',
+                                    external_network_id='test')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_failure('cluster-template-create '
                                '--coe test '
                                '--external-network-id test '
                                '--image-id test ',
                                self._deprecated_warning)
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(image_id='test', coe='test',
+                                    external_network_id='test')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_failure(required_args + '--keypair-id test',
                                self._deprecated_warning)
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(image_id='test', coe='test',
+                                    keypair_id='test',
+                                    external_network_id='public')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_failure(required_args + '--flavor-id test',
                                self._deprecated_warning)
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(image_id='test', coe='test',
+                                    flavor_id='test',
+                                    external_network_id='public')
+        mock_create.assert_called_with(**expected_args)
 
         self._test_arg_failure(required_args + '--master-flavor-id test',
                                self._deprecated_warning)
-        self.assertTrue(mock_create.called)
+        expected_args = \
+            self._get_expected_args(image_id='test', coe='test',
+                                    master_flavor_id='test',
+                                    external_network_id='public')
+        mock_create.assert_called_with(**expected_args)
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     def test_cluster_template_show_success(self, mock_show):
         self._test_arg_success('cluster-template-show xxx')
-        self.assertTrue(mock_show.called)
+        mock_show.assert_called_once_with('xxx')
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     def test_cluster_template_show_failure_no_arg(self, mock_show):
         self._test_arg_failure('cluster-template-show',
                                self._few_argument_error)
-        self.assertFalse(mock_show.called)
+        mock_show.assert_not_called()
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.delete')
     def test_cluster_template_delete_success(self, mock_delete):
         self._test_arg_success('cluster-template-delete xxx')
-        self.assertTrue(mock_delete.called)
-        self.assertEqual(1, mock_delete.call_count)
+        mock_delete.assert_called_once_with('xxx')
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.delete')
     def test_cluster_template_delete_multiple_id_success(self, mock_delete):
         self._test_arg_success('cluster-template-delete xxx xyz')
-        self.assertTrue(mock_delete.called)
-        self.assertEqual(2, mock_delete.call_count)
+        calls = [mock.call('xxx'), mock.call('xyz')]
+        mock_delete.assert_has_calls(calls)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.delete')
     def test_cluster_template_delete_failure_no_arg(self, mock_delete):
         self._test_arg_failure('cluster-template-delete',
                                self._few_argument_error)
-        self.assertFalse(mock_delete.called)
+        mock_delete.assert_not_called()
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
     def test_cluster_template_update_success(self, mock_update):
         self._test_arg_success('cluster-template-update test add test=test')
-        self.assertTrue(mock_update.called)
+        patch = [{'op': 'add', 'path': '/test', 'value': 'test'}]
+        mock_update.assert_called_once_with('test', patch)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
     def test_cluster_template_update_success_many_attribute(self, mock_update):
         self._test_arg_success('cluster-template-update test '
                                'add test=test test1=test1')
-        self.assertTrue(mock_update.called)
+        patch = [{'op': 'add', 'path': '/test', 'value': 'test'},
+                 {'op': 'add', 'path': '/test1', 'value': 'test1'}]
+        mock_update.assert_called_once_with('test', patch)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
@@ -455,7 +656,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             ]
         self._test_arg_failure('cluster-template-update test wrong test=test',
                                _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
@@ -467,19 +668,20 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             "for more information."
             ]
         self._test_arg_failure('cluster-template-update', _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
         self._test_arg_failure('cluster-template-update test', _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
         self._test_arg_failure('cluster-template-update test add', _error_msg)
-        self.assertFalse(mock_update.called)
+        mock_update.assert_not_called()
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
     def test_cluster_template_list_success(self, mock_list):
         self._test_arg_success('cluster-template-list')
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list()
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
@@ -488,7 +690,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--limit 1 '
                                '--sort-dir asc '
                                '--sort-key uuid')
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list(1, 'asc', 'uuid')
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
@@ -503,7 +706,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         # +------+------+-----+
         # | x    | x    | x   |
         # +------+------+-----+
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list()
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
@@ -514,7 +718,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                           self._test_arg_failure,
                           'cluster-template-list --fields xxx,coe,zzz',
                           _error_msg)
-        self.assertTrue(mock_list.called)
+        expected_args = self._get_expected_args_list()
+        mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
@@ -526,11 +731,11 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             ]
         self._test_arg_failure('cluster-template-list --sort-dir aaa',
                                _error_msg)
-        self.assertFalse(mock_list.called)
+        mock_list.assert_not_called()
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
     def test_cluster_template_list_failure(self, mock_list):
         self._test_arg_failure('cluster-template-list --wrong',
                                self._unrecognized_arg_error)
-        self.assertFalse(mock_list.called)
+        mock_list.assert_not_called()
