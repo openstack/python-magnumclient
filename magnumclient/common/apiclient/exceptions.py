@@ -93,11 +93,6 @@ class AuthSystemNotFound(AuthorizationFailure):
         self.auth_system = auth_system
 
 
-class NoUniqueMatch(ClientException):
-    """Multiple entities found instead of one."""
-    pass
-
-
 class EndpointException(ClientException):
     """Something is rotten in Service Catalog."""
     pass
