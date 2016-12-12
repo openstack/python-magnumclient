@@ -35,6 +35,11 @@ class FakeCluster(Cluster):
         self.create_timeout = kwargs.get('create_timeout', 60)
 
 
+class FakeCert(object):
+    def __init__(self, pem):
+        self.pem = pem
+
+
 class ShellTest(shell_test_base.TestCommandLineArgument):
 
     def _get_expected_args_list(self, marker=None, limit=None,
@@ -381,3 +386,67 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self._test_arg_failure('cluster-config xxx yyy',
                                self._unrecognized_arg_error)
         mock_cluster.assert_not_called()
+
+    @mock.patch('os.path.exists')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.create')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
+    @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    def _test_cluster_config_success(self, mock_cluster, mock_ct,
+                                     mock_cert_get, mock_cert_create,
+                                     mock_exists, coe, shell, tls_disable):
+        cert = FakeCert(pem='foo bar')
+        mock_exists.return_value = False
+        mock_cluster.return_value = FakeCluster(status='CREATE_COMPLETE',
+                                                info={
+                                                    'name': 'Kluster',
+                                                    'api_address': '10.0.0.1'},
+                                                cluster_template_id='fake_ct',
+                                                uuid='fake_cluster')
+        mock_cert_get.return_value = cert
+        mock_cert_create.return_value = cert
+        mock_ct.return_value = test_clustertemplates_shell.\
+            FakeClusterTemplate(coe=coe, name='fake_ct',
+                                tls_disabled=tls_disable)
+        with mock.patch.dict('os.environ', {'SHELL': shell}):
+            self._test_arg_success('cluster-config test_cluster')
+
+        self.assertTrue(mock_exists.called)
+        mock_cluster.assert_called_once_with('test_cluster')
+        mock_ct.assert_called_once_with('fake_ct')
+        if not tls_disable:
+            mock_cert_create.assert_called_once_with(
+                cluster_uuid='fake_cluster', csr=mock.ANY)
+            mock_cert_get.assert_called_once_with(cluster_uuid='fake_cluster')
+
+    def test_cluster_config_swarm_success_with_tls_csh(self):
+        self._test_cluster_config_success(coe='swarm', shell='csh',
+                                          tls_disable=False)
+
+    def test_cluster_config_swarm_success_with_tls_non_csh(self):
+        self._test_cluster_config_success(coe='swarm', shell='zsh',
+                                          tls_disable=False)
+
+    def test_cluster_config_swarm_success_without_tls_csh(self):
+        self._test_cluster_config_success(coe='swarm', shell='csh',
+                                          tls_disable=True)
+
+    def test_cluster_config_swarm_success_without_tls_non_csh(self):
+        self._test_cluster_config_success(coe='swarm', shell='zsh',
+                                          tls_disable=True)
+
+    def test_cluster_config_k8s_success_with_tls_csh(self):
+        self._test_cluster_config_success(coe='kubernetes', shell='csh',
+                                          tls_disable=False)
+
+    def test_cluster_config_k8s_success_with_tls_non_csh(self):
+        self._test_cluster_config_success(coe='kubernetes', shell='zsh',
+                                          tls_disable=False)
+
+    def test_cluster_config_k8s_success_without_tls_csh(self):
+        self._test_cluster_config_success(coe='kubernetes', shell='csh',
+                                          tls_disable=True)
+
+    def test_cluster_config_k8s_success_without_tls_non_csh(self):
+        self._test_cluster_config_success(coe='kubernetes', shell='zsh',
+                                          tls_disable=True)
