@@ -184,6 +184,9 @@ def do_cluster_show(cs, args):
 
 
 @utils.arg('cluster', metavar='<cluster>', help="UUID or name of cluster")
+@utils.arg('--rollback',
+           action='store_true', default=False,
+           help='Rollback cluster on update failure.')
 @utils.arg(
     'op',
     metavar='<op>',
@@ -199,8 +202,13 @@ def do_cluster_show(cs, args):
          "(only PATH is necessary on remove)")
 def do_cluster_update(cs, args):
     """Update information about the given cluster."""
+    if args.rollback and args.magnum_api_version and \
+            args.magnum_api_version in ('1.0', '1.1', '1.2'):
+        raise exceptions.CommandError(
+            "Rollback is not supported in API v%s. "
+            "Please use API v1.3+." % args.magnum_api_version)
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
-    cluster = cs.clusters.update(args.cluster, patch)
+    cluster = cs.clusters.update(args.cluster, patch, args.rollback)
     if args.magnum_api_version and args.magnum_api_version == '1.1':
         _show_cluster(cluster)
     else:

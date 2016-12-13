@@ -104,5 +104,8 @@ class BaseTemplateManager(base.Manager):
     def delete(self, id):
         return self._delete(self._path(id))
 
-    def update(self, id, patch):
-        return self._update(self._path(id), patch)
+    def update(self, id, patch, rollback=False):
+        url = self._path(id)
+        if rollback:
+            url += '/?rollback=True'
+        return self._update(url, patch)

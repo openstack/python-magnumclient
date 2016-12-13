@@ -176,6 +176,9 @@ def do_bay_show(cs, args):
 
 
 @utils.arg('bay', metavar='<bay>', help="UUID or name of bay")
+@utils.arg('--rollback',
+           action='store_true', default=False,
+           help='Rollback bay on update failure.')
 @utils.arg(
     'op',
     metavar='<op>',
@@ -195,8 +198,13 @@ def do_bay_update(cs, args):
 
     (Deprecated in favor of cluster-update.)
     """
+    if args.rollback and args.magnum_api_version and \
+            args.magnum_api_version in ('1.0', '1.1', '1.2'):
+        raise exceptions.CommandError(
+            "Rollback is not supported in API v%s. "
+            "Please use API v1.3+." % args.magnum_api_version)
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
-    bay = cs.bays.update(args.bay, patch)
+    bay = cs.bays.update(args.bay, patch, args.rollback)
     if args.magnum_api_version and args.magnum_api_version == '1.1':
         _show_bay(bay)
     else:

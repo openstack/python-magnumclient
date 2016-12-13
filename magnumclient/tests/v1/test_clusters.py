@@ -81,6 +81,13 @@ fake_responses = {
             UPDATED_CLUSTER,
         ),
     },
+    '/v1/clusters/%s/?rollback=True' % CLUSTER1['id']:
+        {
+            'PATCH': (
+                {},
+                UPDATED_CLUSTER,
+            ),
+        },
     '/v1/clusters/%s' % CLUSTER1['name']:
     {
         'GET': (
@@ -310,6 +317,19 @@ class ClusterManagerTest(testtools.TestCase):
         cluster = self.mgr.update(id=CLUSTER1['id'], patch=patch)
         expect = [
             ('PATCH', '/v1/clusters/%s' % CLUSTER1['id'], {}, patch),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(NEW_NAME, cluster.name)
+
+    def test_cluster_update_with_rollback(self):
+        patch = {'op': 'replace',
+                 'value': NEW_NAME,
+                 'path': '/name'}
+        cluster = self.mgr.update(id=CLUSTER1['id'], patch=patch,
+                                  rollback=True)
+        expect = [
+            ('PATCH', '/v1/clusters/%s/?rollback=True' % CLUSTER1['id'],
+             {}, patch),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(NEW_NAME, cluster.name)

@@ -81,6 +81,13 @@ fake_responses = {
             UPDATED_BAY,
         ),
     },
+    '/v1/bays/%s/?rollback=True' % BAY1['id']:
+        {
+            'PATCH': (
+                {},
+                UPDATED_BAY,
+            ),
+        },
     '/v1/bays/%s' % BAY1['name']:
     {
         'GET': (
@@ -294,6 +301,17 @@ class BayManagerTest(testtools.TestCase):
         bay = self.mgr.update(id=BAY1['id'], patch=patch)
         expect = [
             ('PATCH', '/v1/bays/%s' % BAY1['id'], {}, patch),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(NEW_NAME, bay.name)
+
+    def test_bay_update_with_rollback(self):
+        patch = {'op': 'replace',
+                 'value': NEW_NAME,
+                 'path': '/name'}
+        bay = self.mgr.update(id=BAY1['id'], patch=patch, rollback=True)
+        expect = [
+            ('PATCH', '/v1/bays/%s/?rollback=True' % BAY1['id'], {}, patch),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(NEW_NAME, bay.name)
