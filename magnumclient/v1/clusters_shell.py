@@ -350,11 +350,12 @@ def _generate_csr_and_key():
     ])).sign(key, hashes.SHA256(), default_backend())
 
     result = {
-        'csr': csr.public_bytes(encoding=serialization.Encoding.PEM),
+        'csr': csr.public_bytes(
+            encoding=serialization.Encoding.PEM).decode("utf-8"),
         'key': key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption()),
+            encryption_algorithm=serialization.NoEncryption()).decode("utf-8"),
     }
 
     return result
