@@ -300,14 +300,29 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     def test_cluster_update_success(self, mock_update):
         self._test_arg_success('cluster-update test add test=test')
         patch = [{'op': 'add', 'path': '/test', 'value': 'test'}]
-        mock_update.assert_called_once_with('test', patch)
+        mock_update.assert_called_once_with('test', patch, False)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
     def test_cluster_update_success_many_attribute(self, mock_update):
         self._test_arg_success('cluster-update test add test=test test1=test1')
         patch = [{'op': 'add', 'path': '/test', 'value': 'test'},
                  {'op': 'add', 'path': '/test1', 'value': 'test1'}]
-        mock_update.assert_called_once_with('test', patch)
+        mock_update.assert_called_once_with('test', patch, False)
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
+    def test_cluster_update_success_rollback(self, mock_update):
+        self._test_arg_success('cluster-update test add test=test --rollback')
+        patch = [{'op': 'add', 'path': '/test', 'value': 'test'}]
+        mock_update.assert_called_once_with('test', patch, True)
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
+    def test_cluster_update_rollback_old_api_version(self, mock_update):
+        self.assertRaises(
+            exceptions.CommandError,
+            self.shell,
+            '--magnum-api-version 1.2 cluster-update '
+            'test add test=test --rollback')
+        mock_update.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.update')
     def test_cluster_update_failure_wrong_op(self, mock_update):
