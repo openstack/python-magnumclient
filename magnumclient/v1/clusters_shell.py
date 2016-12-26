@@ -235,7 +235,8 @@ def do_cluster_config(cs, args):
     """
     args.dir = os.path.abspath(args.dir)
     cluster = cs.clusters.get(args.cluster)
-    if cluster.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
+    if cluster.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE',
+                              'ROLLBACK_COMPLETE'):
         raise exceptions.CommandError("cluster in status %s" % cluster.status)
     cluster_template = cs.cluster_templates.get(cluster.cluster_template_id)
     opts = {
