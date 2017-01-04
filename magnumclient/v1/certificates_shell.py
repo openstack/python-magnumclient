@@ -15,6 +15,7 @@
 import os.path
 
 from magnumclient.common import cliutils as utils
+from magnumclient.i18n import _
 
 
 DEPRECATION_MESSAGE = (
@@ -41,11 +42,11 @@ def _get_target_uuid(cs, args):
 @utils.arg('--bay',
            required=False,
            metavar='<bay>',
-           help='ID or name of the bay.')
+           help=_('ID or name of the bay.'))
 @utils.arg('--cluster',
            required=False,
            metavar='<cluster>',
-           help='ID or name of the cluster.')
+           help=_('ID or name of the cluster.'))
 def do_ca_show(cs, args):
     """Show details about the CA certificate for a bay or cluster."""
     opts = {
@@ -58,15 +59,16 @@ def do_ca_show(cs, args):
 
 @utils.arg('--csr',
            metavar='<csr>',
-           help='File path of the csr file to send to Magnum to get signed.')
+           help=_('File path of the csr file to send to Magnum'
+                  ' to get signed.'))
 @utils.arg('--bay',
            required=False,
            metavar='<bay>',
-           help='ID or name of the bay.')
+           help=_('ID or name of the bay.'))
 @utils.arg('--cluster',
            required=False,
            metavar='<cluster>',
-           help='ID or name of the cluster.')
+           help=_('ID or name of the cluster.'))
 def do_ca_sign(cs, args):
     """Generate the CA certificate for a bay or cluster."""
     opts = {

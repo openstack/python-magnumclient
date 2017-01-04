@@ -42,19 +42,19 @@ def _show_cluster(cluster):
 @utils.arg('--marker',
            metavar='<marker>',
            default=None,
-           help='The last cluster UUID of the previous page; '
-                'displays list of clusters after "marker".')
+           help=_('The last cluster UUID of the previous page; '
+                  'displays list of clusters after "marker".'))
 @utils.arg('--limit',
            metavar='<limit>',
            type=int,
-           help='Maximum number of clusters to return.')
+           help=_('Maximum number of clusters to return.'))
 @utils.arg('--sort-key',
            metavar='<sort-key>',
-           help='Column to sort results by.')
+           help=_('Column to sort results by.'))
 @utils.arg('--sort-dir',
            metavar='<sort-dir>',
            choices=['desc', 'asc'],
-           help='Direction to sort. "asc" or "desc".')
+           help=_('Direction to sort. "asc" or "desc".'))
 @utils.arg('--fields',
            default=None,
            metavar='<fields>',
@@ -84,11 +84,11 @@ def do_cluster_list(cs, args):
 @utils.deprecation_map(DEPRECATING_PARAMS)
 @utils.arg('--name',
            metavar='<name>',
-           help='Name of the cluster to create.')
+           help=_('Name of the cluster to create.'))
 @utils.arg('--cluster-template',
            required=True,
            metavar='<cluster_template>',
-           help='ID or name of the cluster template.')
+           help=_('ID or name of the cluster template.'))
 @utils.arg('--keypair-id',
            dest='keypair',
            metavar='<keypair>',
@@ -100,26 +100,26 @@ def do_cluster_list(cs, args):
            dest='keypair',
            metavar='<keypair>',
            default=None,
-           help='UUID or name of the keypair to use for this cluster.')
+           help=_('UUID or name of the keypair to use for this cluster.'))
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,
            default=1,
-           help='The cluster node count.')
+           help=_('The cluster node count.'))
 @utils.arg('--master-count',
            metavar='<master-count>',
            type=int,
            default=1,
-           help='The number of master nodes for the cluster.')
+           help=_('The number of master nodes for the cluster.'))
 @utils.arg('--discovery-url',
            metavar='<discovery-url>',
-           help='Specifies custom discovery url for node discovery.')
+           help=_('Specifies custom discovery url for node discovery.'))
 @utils.arg('--timeout',
            metavar='<timeout>',
            type=int,
            default=60,
-           help='The timeout for cluster creation in minutes. The default '
-                'is 60 minutes.')
+           help=_('The timeout for cluster creation in minutes. The default '
+                  'is 60 minutes.'))
 def do_cluster_create(cs, args):
     """Create a cluster."""
 
@@ -149,7 +149,7 @@ def do_cluster_create(cs, args):
 @utils.arg('cluster',
            metavar='<cluster>',
            nargs='+',
-           help='ID or name of the (cluster)s to delete.')
+           help=_('ID or name of the (cluster)s to delete.'))
 def do_cluster_delete(cs, args):
     """Delete specified cluster."""
     for id in args.cluster:
@@ -164,10 +164,10 @@ def do_cluster_delete(cs, args):
 
 @utils.arg('cluster',
            metavar='<cluster>',
-           help='ID or name of the cluster to show.')
+           help=_('ID or name of the cluster to show.'))
 @utils.arg('--long',
            action='store_true', default=False,
-           help='Display extra associated cluster template info.')
+           help=_('Display extra associated cluster template info.'))
 def do_cluster_show(cs, args):
     """Show details about the given cluster."""
     cluster = cs.clusters.get(args.cluster)
@@ -183,23 +183,23 @@ def do_cluster_show(cs, args):
     _show_cluster(cluster)
 
 
-@utils.arg('cluster', metavar='<cluster>', help="UUID or name of cluster")
+@utils.arg('cluster', metavar='<cluster>', help=_("UUID or name of cluster"))
 @utils.arg('--rollback',
            action='store_true', default=False,
-           help='Rollback cluster on update failure.')
+           help=_('Rollback cluster on update failure.'))
 @utils.arg(
     'op',
     metavar='<op>',
     choices=['add', 'replace', 'remove'],
-    help="Operations: 'add', 'replace' or 'remove'")
+    help=_("Operations: 'add', 'replace' or 'remove'"))
 @utils.arg(
     'attributes',
     metavar='<path=value>',
     nargs='+',
     action='append',
     default=[],
-    help="Attributes to add/replace or remove "
-         "(only PATH is necessary on remove)")
+    help=_("Attributes to add/replace or remove "
+           "(only PATH is necessary on remove)"))
 def do_cluster_update(cs, args):
     """Update information about the given cluster."""
     if args.rollback and args.magnum_api_version and \
@@ -217,14 +217,14 @@ def do_cluster_update(cs, args):
 
 @utils.arg('cluster',
            metavar='<cluster>',
-           help='ID or name of the cluster to retrieve config.')
+           help=_('ID or name of the cluster to retrieve config.'))
 @utils.arg('--dir',
            metavar='<dir>',
            default='.',
-           help='Directory to save the certificate and config files.')
+           help=_('Directory to save the certificate and config files.'))
 @utils.arg('--force',
            action='store_true', default=False,
-           help='Overwrite files if existing.')
+           help=_('Overwrite files if existing.'))
 def do_cluster_config(cs, args):
     """Configure native client to access cluster.
 

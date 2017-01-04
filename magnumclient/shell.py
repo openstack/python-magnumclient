@@ -51,6 +51,7 @@ except ImportError:
 
 from magnumclient.common import cliutils
 from magnumclient import exceptions as exc
+from magnumclient.i18n import _
 from magnumclient.v1 import client as client_v1
 from magnumclient.v1 import shell as shell_v1
 from magnumclient import version
@@ -242,19 +243,20 @@ class OpenStackMagnumShell(object):
         parser.add_argument('--debug',
                             default=False,
                             action='store_true',
-                            help="Print debugging output.")
+                            help=_("Print debugging output."))
 
         parser.add_argument('--os-cache',
                             default=strutils.bool_from_string(
                                 cliutils.env('OS_CACHE', default=False)),
                             action='store_true',
-                            help="Use the auth token cache. Defaults to False "
-                            "if env[OS_CACHE] is not set.")
+                            help=_("Use the auth token cache. Defaults to "
+                                   "False if env[OS_CACHE] is not set."))
 
         parser.add_argument('--os-region-name',
                             metavar='<region-name>',
                             default=os.environ.get('OS_REGION_NAME'),
-                            help='Region name. Default=env[OS_REGION_NAME].')
+                            help=_('Region name. '
+                                   'Default=env[OS_REGION_NAME].'))
 
 
 # TODO(mattf) - add get_timings support to Client
@@ -273,41 +275,41 @@ class OpenStackMagnumShell(object):
         parser.add_argument('--os-auth-url',
                             metavar='<auth-auth-url>',
                             default=cliutils.env('OS_AUTH_URL', default=None),
-                            help='Defaults to env[OS_AUTH_URL].')
+                            help=_('Defaults to env[OS_AUTH_URL].'))
 
         parser.add_argument('--os-user-id',
                             metavar='<auth-user-id>',
                             default=cliutils.env('OS_USER_ID', default=None),
-                            help='Defaults to env[OS_USER_ID].')
+                            help=_('Defaults to env[OS_USER_ID].'))
 
         parser.add_argument('--os-username',
                             metavar='<auth-username>',
                             default=cliutils.env('OS_USERNAME', default=None),
-                            help='Defaults to env[OS_USERNAME].')
+                            help=_('Defaults to env[OS_USERNAME].'))
 
         parser.add_argument('--os-user-domain-id',
                             metavar='<auth-user-domain-id>',
                             default=cliutils.env('OS_USER_DOMAIN_ID',
                                                  default=None),
-                            help='Defaults to env[OS_USER_DOMAIN_ID].')
+                            help=_('Defaults to env[OS_USER_DOMAIN_ID].'))
 
         parser.add_argument('--os-user-domain-name',
                             metavar='<auth-user-domain-name>',
                             default=cliutils.env('OS_USER_DOMAIN_NAME',
                                                  default=None),
-                            help='Defaults to env[OS_USER_DOMAIN_NAME].')
+                            help=_('Defaults to env[OS_USER_DOMAIN_NAME].'))
 
         parser.add_argument('--os-project-id',
                             metavar='<auth-project-id>',
                             default=cliutils.env('OS_PROJECT_ID',
                                                  default=None),
-                            help='Defaults to env[OS_PROJECT_ID].')
+                            help=_('Defaults to env[OS_PROJECT_ID].'))
 
         parser.add_argument('--os-project-name',
                             metavar='<auth-project-name>',
                             default=cliutils.env('OS_PROJECT_NAME',
                                                  default=None),
-                            help='Defaults to env[OS_PROJECT_NAME].')
+                            help=_('Defaults to env[OS_PROJECT_NAME].'))
 
         parser.add_argument('--os-tenant-id',
                             metavar='<auth-tenant-id>',
@@ -325,29 +327,30 @@ class OpenStackMagnumShell(object):
                             metavar='<auth-project-domain-id>',
                             default=cliutils.env('OS_PROJECT_DOMAIN_ID',
                                                  default=None),
-                            help='Defaults to env[OS_PROJECT_DOMAIN_ID].')
+                            help=_('Defaults to env[OS_PROJECT_DOMAIN_ID].'))
 
         parser.add_argument('--os-project-domain-name',
                             metavar='<auth-project-domain-name>',
                             default=cliutils.env('OS_PROJECT_DOMAIN_NAME',
                                                  default=None),
-                            help='Defaults to env[OS_PROJECT_DOMAIN_NAME].')
+                            help=_('Defaults to '
+                                   'env[OS_PROJECT_DOMAIN_NAME].'))
 
         parser.add_argument('--os-token',
                             metavar='<auth-token>',
                             default=cliutils.env('OS_TOKEN', default=None),
-                            help='Defaults to env[OS_TOKEN].')
+                            help=_('Defaults to env[OS_TOKEN].'))
 
         parser.add_argument('--os-password',
                             metavar='<auth-password>',
                             default=cliutils.env('OS_PASSWORD',
                                                  default=None),
-                            help='Defaults to env[OS_PASSWORD].')
+                            help=_('Defaults to env[OS_PASSWORD].'))
 
         parser.add_argument('--service-type',
                             metavar='<service-type>',
-                            help='Defaults to container-infra for all '
-                                 'actions.')
+                            help=_('Defaults to container-infra for all '
+                                   'actions.'))
         parser.add_argument('--service_type',
                             help=argparse.SUPPRESS)
 
@@ -361,7 +364,7 @@ class OpenStackMagnumShell(object):
                             metavar='<os-endpoint-type>',
                             default=cliutils.env('OS_ENDPOINT_TYPE',
                                                  default=None),
-                            help='Defaults to env[OS_ENDPOINT_TYPE]')
+                            help=_('Defaults to env[OS_ENDPOINT_TYPE]'))
 
         parser.add_argument('--os-interface',
                             metavar='<os-interface>',
@@ -373,7 +376,7 @@ class OpenStackMagnumShell(object):
         parser.add_argument('--os-cloud',
                             metavar='<auth-cloud>',
                             default=cliutils.env('OS_CLOUD', default=None),
-                            help='Defaults to env[OS_CLOUD].')
+                            help=_('Defaults to env[OS_CLOUD].'))
 
         # NOTE(dtroyer): We can't add --endpoint_type here due to argparse
         #                thinking usage-list --end is ambiguous; but it
@@ -387,24 +390,24 @@ class OpenStackMagnumShell(object):
                             default=cliutils.env(
                                 'MAGNUM_API_VERSION',
                                 default='latest'),
-                            help='Accepts "api", '
-                                 'defaults to env[MAGNUM_API_VERSION].')
+                            help=_('Accepts "api", '
+                                   'defaults to env[MAGNUM_API_VERSION].'))
         parser.add_argument('--magnum_api_version',
                             help=argparse.SUPPRESS)
 
         parser.add_argument('--os-cacert',
                             metavar='<ca-certificate>',
                             default=cliutils.env('OS_CACERT', default=None),
-                            help='Specify a CA bundle file to use in '
-                            'verifying a TLS (https) server certificate. '
-                            'Defaults to env[OS_CACERT].')
+                            help=_('Specify a CA bundle file to use in '
+                                   'verifying a TLS (https) server '
+                                   'certificate. Defaults to env[OS_CACERT].'))
 
         parser.add_argument('--os-endpoint-override',
                             metavar='<endpoint-override>',
                             default=cliutils.env('OS_ENDPOINT_OVERRIDE',
                                                  default=None),
-                            help="Use this API endpoint instead of the "
-                            "Service Catalog.")
+                            help=_("Use this API endpoint instead of the "
+                                   "Service Catalog."))
         parser.add_argument('--bypass-url',
                             metavar='<bypass-url>',
                             default=cliutils.env('BYPASS_URL', default=None),
@@ -417,7 +420,7 @@ class OpenStackMagnumShell(object):
                             default=cliutils.env('MAGNUMCLIENT_INSECURE',
                                                  default=False),
                             action='store_true',
-                            help="Do not verify https connections")
+                            help=_("Do not verify https connections"))
 
         return parser
 
@@ -692,7 +695,7 @@ class OpenStackMagnumShell(object):
         print(' '.join(commands | options))
 
     @cliutils.arg('command', metavar='<subcommand>', nargs='?',
-                  help='Display help for <subcommand>.')
+                  help=_('Display help for <subcommand>.'))
     def do_help(self, args):
         """Display help about this program or one of its subcommands."""
         # NOTE(jamespage): args.command is not guaranteed with python >= 3.4
