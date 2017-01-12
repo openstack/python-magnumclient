@@ -70,7 +70,7 @@ class HTTPClient(object):
         self.endpoint = endpoint
         self.auth_token = kwargs.get('token')
         self.auth_ref = kwargs.get('auth_ref')
-        self.api_version = kwargs.get('api_version')
+        self.api_version = api_version
         self.connection_params = self.get_connection_params(endpoint, **kwargs)
 
     @staticmethod
