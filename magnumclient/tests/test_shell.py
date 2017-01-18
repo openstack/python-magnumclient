@@ -215,7 +215,7 @@ class ShellTest(utils.TestCase):
     def _expected_client_kwargs(self):
         return {
             'password': 'password', 'auth_token': None,
-            'auth_url': self.AUTH_URL,
+            'auth_url': self.AUTH_URL, 'profile': None,
             'cloud': None, 'interface': 'public',
             'insecure': False, 'magnum_url': None,
             'project_id': None, 'project_name': 'project_name',

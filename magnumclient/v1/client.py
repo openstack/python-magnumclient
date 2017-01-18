@@ -16,6 +16,7 @@
 from keystoneauth1.exceptions import catalog
 from keystoneauth1 import session as ksa_session
 import os_client_config
+from oslo_utils import importutils
 
 from magnumclient.common import httpclient
 from magnumclient.v1 import baymodels
@@ -24,6 +25,8 @@ from magnumclient.v1 import certificates
 from magnumclient.v1 import cluster_templates
 from magnumclient.v1 import clusters
 from magnumclient.v1 import mservices
+
+profiler = importutils.try_import("osprofiler.profiler")
 
 
 DEFAULT_SERVICE_TYPE = 'container-infra'
@@ -198,3 +201,13 @@ class Client(object):
         self.cluster_templates = \
             cluster_templates.ClusterTemplateManager(self.http_client)
         self.mservices = mservices.MServiceManager(self.http_client)
+
+        profile = kwargs.pop("profile", None)
+        if profiler and profile:
+            # Initialize the root of the future trace: the created trace ID
+            # will be used as the very first parent to which all related
+            # traces will be bound to. The given HMAC key must correspond to
+            # the one set in magnum-api magnum.conf, otherwise the latter
+            # will fail to check the request signature and will skip
+            # initialization of osprofiler on the server side.
+            profiler.init(profile)
