@@ -333,6 +333,9 @@ def _config_cluster_swarm(cluster, cluster_template, cfg_dir, force=False):
                   "setenv DOCKER_TLS_VERIFY %(tls)s\n"
                   % {'docker_host': cluster.api_address,
                      'cfg_dir': cfg_dir,
+                     'tls': ""} if cluster_template.tls_disabled else
+                    {'docker_host': cluster.api_address,
+                     'cfg_dir': cfg_dir,
                      'tls': not cluster_template.tls_disabled}
                   )
     else:
@@ -340,6 +343,9 @@ def _config_cluster_swarm(cluster, cluster_template, cfg_dir, force=False):
                   "export DOCKER_CERT_PATH=%(cfg_dir)s\n"
                   "export DOCKER_TLS_VERIFY=%(tls)s\n"
                   % {'docker_host': cluster.api_address,
+                     'cfg_dir': cfg_dir,
+                     'tls': ""} if cluster_template.tls_disabled else
+                    {'docker_host': cluster.api_address,
                      'cfg_dir': cfg_dir,
                      'tls': not cluster_template.tls_disabled}
                   )
