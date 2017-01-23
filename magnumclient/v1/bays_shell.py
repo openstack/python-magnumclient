@@ -39,19 +39,19 @@ def _show_bay(bay):
 @utils.arg('--marker',
            metavar='<marker>',
            default=None,
-           help='The last bay UUID of the previous page; '
-                'displays list of bays after "marker".')
+           help=_('The last bay UUID of the previous page; '
+                  'displays list of bays after "marker".'))
 @utils.arg('--limit',
            metavar='<limit>',
            type=int,
-           help='Maximum number of bays to return.')
+           help=_('Maximum number of bays to return.'))
 @utils.arg('--sort-key',
            metavar='<sort-key>',
-           help='Column to sort results by.')
+           help=_('Column to sort results by.'))
 @utils.arg('--sort-dir',
            metavar='<sort-dir>',
            choices=['desc', 'asc'],
-           help='Direction to sort. "asc" or "desc".')
+           help=_('Direction to sort. "asc" or "desc".'))
 @utils.arg('--fields',
            default=None,
            metavar='<fields>',
@@ -81,30 +81,30 @@ def do_bay_list(cs, args):
 @utils.deprecated(DEPRECATION_MESSAGE)
 @utils.arg('--name',
            metavar='<name>',
-           help='Name of the bay to create.')
+           help=_('Name of the bay to create.'))
 @utils.arg('--baymodel',
            required=True,
            metavar='<baymodel>',
-           help='ID or name of the baymodel.')
+           help=_('ID or name of the baymodel.'))
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,
            default=1,
-           help='The bay node count.')
+           help=_('The bay node count.'))
 @utils.arg('--master-count',
            metavar='<master-count>',
            type=int,
            default=1,
-           help='The number of master nodes for the bay.')
+           help=_('The number of master nodes for the bay.'))
 @utils.arg('--discovery-url',
            metavar='<discovery-url>',
-           help='Specifies custom discovery url for node discovery.')
+           help=_('Specifies custom discovery url for node discovery.'))
 @utils.arg('--timeout',
            metavar='<timeout>',
            type=int,
            default=60,
-           help='The timeout for bay creation in minutes. The default '
-                'is 60 minutes.')
+           help=_('The timeout for bay creation in minutes. The default '
+                  'is 60 minutes.'))
 def do_bay_create(cs, args):
     """Create a bay.
 
@@ -135,7 +135,7 @@ def do_bay_create(cs, args):
 @utils.arg('bay',
            metavar='<bay>',
            nargs='+',
-           help='ID or name of the (bay)s to delete.')
+           help=_('ID or name of the (bay)s to delete.'))
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_delete(cs, args):
     """Delete specified bay.
@@ -154,10 +154,10 @@ def do_bay_delete(cs, args):
 
 @utils.arg('bay',
            metavar='<bay>',
-           help='ID or name of the bay to show.')
+           help=_('ID or name of the bay to show.'))
 @utils.arg('--long',
            action='store_true', default=False,
-           help='Display extra associated Baymodel info.')
+           help=_('Display extra associated Baymodel info.'))
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_show(cs, args):
     """Show details about the given bay.
@@ -175,23 +175,23 @@ def do_bay_show(cs, args):
     _show_bay(bay)
 
 
-@utils.arg('bay', metavar='<bay>', help="UUID or name of bay")
+@utils.arg('bay', metavar='<bay>', help=_("UUID or name of bay"))
 @utils.arg('--rollback',
            action='store_true', default=False,
-           help='Rollback bay on update failure.')
+           help=_('Rollback bay on update failure.'))
 @utils.arg(
     'op',
     metavar='<op>',
     choices=['add', 'replace', 'remove'],
-    help="Operations: 'add', 'replace' or 'remove'")
+    help=_("Operations: 'add', 'replace' or 'remove'"))
 @utils.arg(
     'attributes',
     metavar='<path=value>',
     nargs='+',
     action='append',
     default=[],
-    help="Attributes to add/replace or remove "
-         "(only PATH is necessary on remove)")
+    help=_("Attributes to add/replace or remove "
+           "(only PATH is necessary on remove)"))
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_update(cs, args):
     """Update information about the given bay.
@@ -213,14 +213,14 @@ def do_bay_update(cs, args):
 
 @utils.arg('bay',
            metavar='<bay>',
-           help='ID or name of the bay to retrieve config.')
+           help=_('ID or name of the bay to retrieve config.'))
 @utils.arg('--dir',
            metavar='<dir>',
            default='.',
-           help='Directory to save the certificate and config files.')
+           help=_('Directory to save the certificate and config files.'))
 @utils.arg('--force',
            action='store_true', default=False,
-           help='Overwrite files if existing.')
+           help=_('Overwrite files if existing.'))
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_bay_config(cs, args):
     """Configure native client to access bay.

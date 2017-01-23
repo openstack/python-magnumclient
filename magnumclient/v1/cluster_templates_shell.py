@@ -35,7 +35,7 @@ def _show_cluster_template(cluster_template):
 @utils.deprecation_map(DEPRECATING_PARAMS)
 @utils.arg('--name',
            metavar='<name>',
-           help='Name of the cluster template to create.')
+           help=_('Name of the cluster template to create.'))
 @utils.arg('--image-id',
            dest='image',
            required=True,
@@ -47,8 +47,8 @@ def _show_cluster_template(cluster_template):
            dest='image',
            required=True,
            metavar='<image>',
-           help='The name or UUID of the base image to customize for the '
-                'Cluster.')
+           help=_('The name or UUID of the base image to customize for the '
+                  'Cluster.'))
 @utils.arg('--keypair-id',
            dest='keypair',
            metavar='<keypair>',
@@ -58,8 +58,8 @@ def _show_cluster_template(cluster_template):
 @utils.arg('--keypair',
            dest='keypair',
            metavar='<keypair>',
-           help='The name or UUID of the SSH keypair to load into the Cluster '
-                'nodes.')
+           help=_('The name or UUID of the SSH keypair to load into the '
+                  'Cluster nodes.'))
 @utils.arg('--external-network-id',
            dest='external_network',
            required=True,
@@ -71,31 +71,31 @@ def _show_cluster_template(cluster_template):
            dest='external_network',
            required=True,
            metavar='<external-network>',
-           help='The external Neutron network name or UUID to connect to '
-                'this Cluster Template.')
+           help=_('The external Neutron network name or UUID to connect to '
+                  'this Cluster Template.'))
 @utils.arg('--coe',
            required=True,
            metavar='<coe>',
-           help='Specify the Container Orchestration Engine to use.')
+           help=_('Specify the Container Orchestration Engine to use.'))
 @utils.arg('--fixed-network',
            metavar='<fixed-network>',
-           help='The private Neutron network name to connect to this Cluster'
-           ' model.')
+           help=_('The private Neutron network name to connect to this Cluster'
+                  ' model.'))
 @utils.arg('--fixed-subnet',
            metavar='<fixed-subnet>',
-           help='The private Neutron subnet name to connect to Cluster.')
+           help=_('The private Neutron subnet name to connect to Cluster.'))
 @utils.arg('--network-driver',
            metavar='<network-driver>',
-           help='The network driver name for instantiating container'
-           ' networks.')
+           help=_('The network driver name for instantiating container'
+                  ' networks.'))
 @utils.arg('--volume-driver',
            metavar='<volume-driver>',
-           help='The volume driver name for instantiating container'
-           ' volume.')
+           help=_('The volume driver name for instantiating container'
+                  ' volume.'))
 @utils.arg('--dns-nameserver',
            metavar='<dns-nameserver>',
            default='8.8.8.8',
-           help='The DNS nameserver to use for this cluster template.')
+           help=_('The DNS nameserver to use for this cluster template.'))
 @utils.arg('--flavor-id',
            dest='flavor',
            metavar='<flavor>',
@@ -107,8 +107,8 @@ def _show_cluster_template(cluster_template):
            dest='flavor',
            metavar='<flavor>',
            default='m1.medium',
-           help='The nova flavor name or UUID to use when launching the '
-                'Cluster.')
+           help=_('The nova flavor name or UUID to use when launching the '
+                  'Cluster.'))
 @utils.arg('--master-flavor-id',
            dest='master_flavor',
            metavar='<master-flavor>',
@@ -118,55 +118,55 @@ def _show_cluster_template(cluster_template):
 @utils.arg('--master-flavor',
            dest='master_flavor',
            metavar='<master-flavor>',
-           help='The nova flavor name or UUID to use when launching the master'
-                ' node of the Cluster.')
+           help=_('The nova flavor name or UUID to use when launching the'
+                  ' master node of the Cluster.'))
 @utils.arg('--docker-volume-size',
            metavar='<docker-volume-size>',
            type=int,
-           help='Specify the number of size in GB '
-                'for the docker volume to use.')
+           help=_('Specify the number of size in GB '
+                  'for the docker volume to use.'))
 @utils.arg('--docker-storage-driver',
            metavar='<docker-storage-driver>',
            default='devicemapper',
-           help='Select a docker storage driver. Supported: devicemapper, '
-                'overlay. Default: devicemapper')
+           help=_('Select a docker storage driver. Supported: devicemapper, '
+                  'overlay. Default: devicemapper'))
 @utils.arg('--http-proxy',
            metavar='<http-proxy>',
-           help='The http_proxy address to use for nodes in Cluster.')
+           help=_('The http_proxy address to use for nodes in Cluster.'))
 @utils.arg('--https-proxy',
            metavar='<https-proxy>',
-           help='The https_proxy address to use for nodes in Cluster.')
+           help=_('The https_proxy address to use for nodes in Cluster.'))
 @utils.arg('--no-proxy',
            metavar='<no-proxy>',
-           help='The no_proxy address to use for nodes in Cluster.')
+           help=_('The no_proxy address to use for nodes in Cluster.'))
 @utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
            action='append', default=[],
-           help='Arbitrary labels in the form of key=value pairs '
-                'to associate with a cluster template. '
-                'May be used multiple times.')
+           help=_('Arbitrary labels in the form of key=value pairs '
+                  'to associate with a cluster template. '
+                  'May be used multiple times.'))
 @utils.arg('--tls-disabled',
            action='store_true', default=False,
-           help='Disable TLS in the Cluster.')
+           help=_('Disable TLS in the Cluster.'))
 @utils.arg('--public',
            action='store_true', default=False,
-           help='Make cluster template public.')
+           help=_('Make cluster template public.'))
 @utils.arg('--registry-enabled',
            action='store_true', default=False,
-           help='Enable docker registry in the Cluster')
+           help=_('Enable docker registry in the Cluster'))
 @utils.arg('--server-type',
            metavar='<server-type>',
            default='vm',
-           help='Specify the server type to be used '
-                'for example vm. For this release '
-                'default server type will be vm.')
+           help=_('Specify the server type to be used '
+                  'for example vm. For this release '
+                  'default server type will be vm.'))
 @utils.arg('--master-lb-enabled',
            action='store_true', default=False,
-           help='Indicates whether created Clusters should have a load '
-                'balancer for master nodes or not.')
+           help=_('Indicates whether created Clusters should have a load '
+                  'balancer for master nodes or not.'))
 @utils.arg('--floating-ip-enabled',
            action='store_true', default=True,
-           help='Indicates whether created Clusters should have a floating ip'
-                'or not.')
+           help=_('Indicates whether created Clusters should have a '
+                  'floating ip or not.'))
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
     opts = {}
@@ -202,7 +202,7 @@ def do_cluster_template_create(cs, args):
 @utils.arg('cluster_templates',
            metavar='<cluster_templates>',
            nargs='+',
-           help='ID or name of the (cluster template)s to delete.')
+           help=_('ID or name of the (cluster template)s to delete.'))
 def do_cluster_template_delete(cs, args):
     """Delete specified cluster template."""
     for cluster_template in args.cluster_templates:
@@ -218,7 +218,7 @@ def do_cluster_template_delete(cs, args):
 
 @utils.arg('cluster_template',
            metavar='<cluster_template>',
-           help='ID or name of the cluster template to show.')
+           help=_('ID or name of the cluster template to show.'))
 def do_cluster_template_show(cs, args):
     """Show details about the given cluster template."""
     cluster_template = cs.cluster_templates.get(args.cluster_template)
@@ -228,14 +228,14 @@ def do_cluster_template_show(cs, args):
 @utils.arg('--limit',
            metavar='<limit>',
            type=int,
-           help='Maximum number of cluster templates to return')
+           help=_('Maximum number of cluster templates to return'))
 @utils.arg('--sort-key',
            metavar='<sort-key>',
-           help='Column to sort results by')
+           help=_('Column to sort results by'))
 @utils.arg('--sort-dir',
            metavar='<sort-dir>',
            choices=['desc', 'asc'],
-           help='Direction to sort. "asc" or "desc".')
+           help=_('Direction to sort. "asc" or "desc".'))
 @utils.arg('--fields',
            default=None,
            metavar='<fields>',
@@ -260,20 +260,20 @@ def do_cluster_template_list(cs, args):
 
 @utils.arg('cluster_template',
            metavar='<cluster_template>',
-           help="UUID or name of cluster template")
+           help=_("UUID or name of cluster template"))
 @utils.arg(
     'op',
     metavar='<op>',
     choices=['add', 'replace', 'remove'],
-    help="Operations: 'add', 'replace' or 'remove'")
+    help=_("Operations: 'add', 'replace' or 'remove'"))
 @utils.arg(
     'attributes',
     metavar='<path=value>',
     nargs='+',
     action='append',
     default=[],
-    help="Attributes to add/replace or remove "
-         "(only PATH is necessary on remove)")
+    help=_("Attributes to add/replace or remove "
+           "(only PATH is necessary on remove)"))
 def do_cluster_template_update(cs, args):
     """Updates one or more cluster template attributes."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
