@@ -108,6 +108,14 @@ class ArgsArrayToPatchTest(test_utils.BaseTestCase):
         self.assertEqual([{'op': 'remove', 'path': '/foo'},
                           {'op': 'remove', 'path': '/extra/bar'}], patch)
 
+    def test_args_array_to_patch_invalid_op(self):
+        my_args = {
+            'attributes': ['/foo', 'extra/bar'],
+            'op': 'invalid',
+        }
+        self.assertRaises(exc.CommandError, utils.args_array_to_patch,
+                          my_args['op'], my_args['attributes'])
+
 
 class FormatLabelsTest(test_utils.BaseTestCase):
 

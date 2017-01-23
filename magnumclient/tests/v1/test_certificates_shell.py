@@ -14,6 +14,7 @@
 
 import mock
 
+from magnumclient.common import cliutils as utils
 from magnumclient.tests.v1 import shell_test_base
 from magnumclient.v1 import certificates_shell
 
@@ -129,3 +130,15 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             mock_isfile.assert_called_once_with('path/csr.pem')
             mock_file.assert_not_called()
             mock_cert_create.assert_not_called()
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
+    def test_ca_show_failure_with_invalid_field(self, mock_cert_get,
+                                                mock_cluster_get):
+        _error_msg = [".*?^--cluster or --bay"]
+        self.assertRaises(utils.MissingArgs,
+                          self._test_arg_failure,
+                          'ca-show',
+                          _error_msg)
+        mock_cert_get.assert_not_called()
+        mock_cluster_get.assert_not_called()
