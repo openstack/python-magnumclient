@@ -327,16 +327,14 @@ def _config_cluster_kubernetes(cluster, cluster_template,
 
 def _config_cluster_swarm(cluster, cluster_template, cfg_dir, force=False):
     """Return and write configuration for the given swarm cluster."""
+    tls = "" if cluster_template.tls_disabled else True
     if 'csh' in os.environ['SHELL']:
         result = ("setenv DOCKER_HOST %(docker_host)s\n"
                   "setenv DOCKER_CERT_PATH %(cfg_dir)s\n"
                   "setenv DOCKER_TLS_VERIFY %(tls)s\n"
                   % {'docker_host': cluster.api_address,
                      'cfg_dir': cfg_dir,
-                     'tls': ""} if cluster_template.tls_disabled else
-                    {'docker_host': cluster.api_address,
-                     'cfg_dir': cfg_dir,
-                     'tls': not cluster_template.tls_disabled}
+                     'tls': tls}
                   )
     else:
         result = ("export DOCKER_HOST=%(docker_host)s\n"
@@ -344,10 +342,7 @@ def _config_cluster_swarm(cluster, cluster_template, cfg_dir, force=False):
                   "export DOCKER_TLS_VERIFY=%(tls)s\n"
                   % {'docker_host': cluster.api_address,
                      'cfg_dir': cfg_dir,
-                     'tls': ""} if cluster_template.tls_disabled else
-                    {'docker_host': cluster.api_address,
-                     'cfg_dir': cfg_dir,
-                     'tls': not cluster_template.tls_disabled}
+                     'tls': tls}
                   )
 
     return result

@@ -322,16 +322,14 @@ def _config_bay_kubernetes(bay, baymodel, cfg_dir, force=False):
 
 def _config_bay_swarm(bay, baymodel, cfg_dir, force=False):
     """Return and write configuration for the given swarm bay."""
+    tls = "" if baymodel.tls_disabled else True
     if 'csh' in os.environ['SHELL']:
         result = ("setenv DOCKER_HOST %(docker_host)s\n"
                   "setenv DOCKER_CERT_PATH %(cfg_dir)s\n"
                   "setenv DOCKER_TLS_VERIFY %(tls)s\n"
                   % {'docker_host': bay.api_address,
                      'cfg_dir': cfg_dir,
-                     'tls': ""} if baymodel.tls_disabled else
-                    {'docker_host': bay.api_address,
-                     'cfg_dir': cfg_dir,
-                     'tls': not baymodel.tls_disabled}
+                     'tls': tls}
                   )
     else:
         result = ("export DOCKER_HOST=%(docker_host)s\n"
@@ -339,10 +337,7 @@ def _config_bay_swarm(bay, baymodel, cfg_dir, force=False):
                   "export DOCKER_TLS_VERIFY=%(tls)s\n"
                   % {'docker_host': bay.api_address,
                      'cfg_dir': cfg_dir,
-                     'tls': ""} if baymodel.tls_disabled else
-                    {'docker_host': bay.api_address,
-                     'cfg_dir': cfg_dir,
-                     'tls': not baymodel.tls_disabled}
+                     'tls': tls}
                   )
 
     return result
