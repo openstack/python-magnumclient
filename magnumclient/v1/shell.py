@@ -19,6 +19,7 @@ from magnumclient.v1 import certificates_shell
 from magnumclient.v1 import cluster_templates_shell
 from magnumclient.v1 import clusters_shell
 from magnumclient.v1 import mservices_shell
+from magnumclient.v1 import stats_shell
 
 COMMAND_MODULES = [
     baymodels_shell,
@@ -27,4 +28,5 @@ COMMAND_MODULES = [
     clusters_shell,
     cluster_templates_shell,
     mservices_shell,
+    stats_shell,
 ]
