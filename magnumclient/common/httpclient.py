@@ -51,7 +51,6 @@ def _extract_error_json(body):
                           'debuginfo': error_body['message']}
         else:
             error_body = body_json['errors'][0]
-            raw_msg = error_body['title']
             error_json = {'faultstring': error_body['title']}
             if 'detail' in error_body:
                 error_json['debuginfo'] = error_body['detail']
@@ -101,11 +100,8 @@ class HTTPClient(object):
 
     def get_connection(self):
         _class = self.connection_params[0]
-        try:
-            return _class(*self.connection_params[1][0:2],
-                          **self.connection_params[2])
-        except six.moves.http_client.InvalidURL:
-            raise exceptions.EndpointException()
+        return _class(*self.connection_params[1][0:2],
+                      **self.connection_params[2])
 
     def log_curl_request(self, method, url, kwargs):
         curl = ['curl -i -X %s' % method]
