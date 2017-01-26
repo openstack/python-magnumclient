@@ -17,20 +17,36 @@ import json
 
 import mock
 import six
+import socket
 
 from magnumclient.common.apiclient.exceptions import GatewayTimeout
+from magnumclient.common.apiclient.exceptions import MultipleChoices
 from magnumclient.common import httpclient as http
 from magnumclient import exceptions as exc
 from magnumclient.tests import utils
 
+NORMAL_ERROR = 0
+ERROR_DICT = 1
+ERROR_LIST_WITH_DETAIL = 2
+ERROR_LIST_WITH_DESC = 3
 
-def _get_error_body(faultstring=None, debuginfo=None):
-    error_body = {
-        'faultstring': faultstring,
-        'debuginfo': debuginfo
-    }
-    raw_error_body = json.dumps(error_body)
-    body = {'error_message': raw_error_body}
+
+def _get_error_body(faultstring=None, debuginfo=None, err_type=NORMAL_ERROR):
+    if err_type == NORMAL_ERROR:
+        error_body = {
+            'faultstring': faultstring,
+            'debuginfo': debuginfo
+        }
+        raw_error_body = json.dumps(error_body)
+        body = {'error_message': raw_error_body}
+    elif err_type == ERROR_DICT:
+        body = {'error': {'title': faultstring, 'message': debuginfo}}
+    elif err_type == ERROR_LIST_WITH_DETAIL:
+        main_body = {'title': faultstring, 'detail': debuginfo}
+        body = {'errors': [main_body]}
+    elif err_type == ERROR_LIST_WITH_DESC:
+        main_body = {'title': faultstring, 'description': debuginfo}
+        body = {'errors': [main_body]}
     raw_body = json.dumps(body)
     return raw_body
 
@@ -79,7 +95,7 @@ class HttpClientTest(utils.BaseTestCase):
 
     def test_server_exception_msg_only(self):
         error_msg = 'test error msg'
-        error_body = _get_error_body(error_msg)
+        error_body = _get_error_body(error_msg, err_type=ERROR_DICT)
         fake_resp = utils.FakeResponse({'content-type': 'application/json'},
                                        six.StringIO(error_body),
                                        version=1,
@@ -97,7 +113,8 @@ class HttpClientTest(utils.BaseTestCase):
         error_msg = 'another test error'
         error_trace = ("\"Traceback (most recent call last):\\n\\n  "
                        "File \\\"/usr/local/lib/python2.7/...")
-        error_body = _get_error_body(error_msg, error_trace)
+        error_body = _get_error_body(error_msg, error_trace,
+                                     ERROR_LIST_WITH_DESC)
         fake_resp = utils.FakeResponse({'content-type': 'application/json'},
                                        six.StringIO(error_body),
                                        version=1,
@@ -116,15 +133,41 @@ class HttpClientTest(utils.BaseTestCase):
             "%(error)s\n%(details)s" % {'error': str(error),
                                         'details': str(error.details)})
 
-    def test_get_connection_params(self):
-        endpoint = 'http://magnum-host:6385'
-        expected = (HTTP_CLASS,
-                    ('magnum-host', 6385, ''),
-                    {'timeout': DEFAULT_TIMEOUT})
-        params = http.HTTPClient.get_connection_params(endpoint)
-        self.assertEqual(expected, params)
+    def test_server_exception_address(self):
+        endpoint = 'https://magnum-host:6385'
+        client = http.HTTPClient(endpoint, token='foobar', insecure=True,
+                                 ca_file='/path/to/ca_file')
+        client.get_connection = (
+            lambda *a, **kw: utils.FakeConnection(exc=socket.gaierror))
 
-    def test_get_connection_params_with_trailing_slash(self):
+        self.assertRaises(exc.EndpointNotFound, client.json_request,
+                          'GET', '/v1/resources', body='farboo')
+
+    def test_server_exception_socket(self):
+        client = http.HTTPClient('http://localhost/', token='foobar')
+        client.get_connection = (
+            lambda *a, **kw: utils.FakeConnection(exc=socket.error))
+
+        self.assertRaises(exc.ConnectionRefused, client.json_request,
+                          'GET', '/v1/resources')
+
+    def test_server_exception_endpoint(self):
+        endpoint = 'https://magnum-host:6385'
+        client = http.HTTPClient(endpoint, token='foobar', insecure=True,
+                                 ca_file='/path/to/ca_file')
+        client.get_connection = (
+            lambda *a, **kw: utils.FakeConnection(exc=socket.gaierror))
+
+        self.assertRaises(exc.EndpointNotFound, client.json_request,
+                          'GET', '/v1/resources', body='farboo')
+
+    def test_get_connection(self):
+        endpoint = 'https://magnum-host:6385'
+        client = http.HTTPClient(endpoint)
+        conn = client.get_connection()
+        self.assertTrue(conn, http.VerifiedHTTPSConnection)
+
+    def test_get_connection_exception(self):
         endpoint = 'http://magnum-host:6385/'
         expected = (HTTP_CLASS,
                     ('magnum-host', 6385, ''),
@@ -219,8 +262,13 @@ class HttpClientTest(utils.BaseTestCase):
         params = http.HTTPClient.get_connection_params(endpoint)
         self.assertEqual(expected, params)
 
+    def test_get_connection_params_with_unsupported_scheme(self):
+        endpoint = 'foo://magnum-host:6385/magnum/v1/'
+        self.assertRaises(exc.EndpointException,
+                          http.HTTPClient.get_connection_params, endpoint)
+
     def test_401_unauthorized_exception(self):
-        error_body = _get_error_body()
+        error_body = _get_error_body(err_type=ERROR_LIST_WITH_DETAIL)
         fake_resp = utils.FakeResponse({'content-type': 'text/plain'},
                                        six.StringIO(error_body),
                                        version=1,
@@ -231,6 +279,75 @@ class HttpClientTest(utils.BaseTestCase):
 
         self.assertRaises(exc.Unauthorized, client.json_request,
                           'GET', '/v1/resources')
+
+    def test_server_redirect_exception(self):
+        fake_redirect_resp = utils.FakeResponse(
+            {'content-type': 'application/octet-stream'},
+            'foo', version=1, status=301)
+        fake_resp = utils.FakeResponse(
+            {'content-type': 'application/octet-stream'},
+            'bar', version=1, status=300)
+        client = http.HTTPClient('http://localhost/')
+        conn = utils.FakeConnection(fake_redirect_resp,
+                                    redirect_resp=fake_resp)
+        client.get_connection = (lambda *a, **kw: conn)
+
+        self.assertRaises(MultipleChoices, client.json_request,
+                          'GET', '/v1/resources')
+
+    def test_server_body_undecode_json(self):
+        err = "foo"
+        fake_resp = utils.FakeResponse(
+            {'content-type': 'application/json'},
+            six.StringIO(err), version=1, status=200)
+        client = http.HTTPClient('http://localhost/')
+        conn = utils.FakeConnection(fake_resp)
+        client.get_connection = (lambda *a, **kw: conn)
+
+        resp, body = client.json_request('GET', '/v1/resources')
+
+        self.assertEqual(resp, fake_resp)
+        self.assertEqual(err, body)
+
+    def test_server_success_body_app(self):
+        fake_resp = utils.FakeResponse(
+            {'content-type': 'application/octet-stream'},
+            'bar', version=1, status=200)
+        client = http.HTTPClient('http://localhost/')
+        conn = utils.FakeConnection(fake_resp)
+        client.get_connection = (lambda *a, **kw: conn)
+
+        resp, body = client.json_request('GET', '/v1/resources')
+
+        self.assertEqual(resp, fake_resp)
+        self.assertIsNone(body)
+
+    def test_server_success_body_none(self):
+        fake_resp = utils.FakeResponse(
+            {'content-type': None},
+            six.StringIO('bar'), version=1, status=200)
+        client = http.HTTPClient('http://localhost/')
+        conn = utils.FakeConnection(fake_resp)
+        client.get_connection = (lambda *a, **kw: conn)
+
+        resp, body = client.json_request('GET', '/v1/resources')
+
+        self.assertEqual(resp, fake_resp)
+        self.assertTrue(isinstance(body, list))
+
+    def test_server_success_body_json(self):
+        err = _get_error_body()
+        fake_resp = utils.FakeResponse(
+            {'content-type': 'application/json'},
+            six.StringIO(err), version=1, status=200)
+        client = http.HTTPClient('http://localhost/')
+        conn = utils.FakeConnection(fake_resp)
+        client.get_connection = (lambda *a, **kw: conn)
+
+        resp, body = client.json_request('GET', '/v1/resources')
+
+        self.assertEqual(resp, fake_resp)
+        self.assertEqual(json.dumps(body), err)
 
 
 class SessionClientTest(utils.BaseTestCase):
