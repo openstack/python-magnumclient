@@ -392,6 +392,11 @@ class ResponseBodyIterator(object):
         while True:
             yield self.next()
 
+    def __bool__(self):
+        return hasattr(self, 'items')
+
+    __nonzero__ = __bool__  # Python 2.x compatibility
+
     def next(self):
         chunk = self.resp.read(CHUNKSIZE)
         if chunk:
