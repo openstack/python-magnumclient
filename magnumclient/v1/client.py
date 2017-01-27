@@ -25,6 +25,7 @@ from magnumclient.v1 import certificates
 from magnumclient.v1 import cluster_templates
 from magnumclient.v1 import clusters
 from magnumclient.v1 import mservices
+from magnumclient.v1 import quotas
 from magnumclient.v1 import stats
 
 profiler = importutils.try_import("osprofiler.profiler")
@@ -213,3 +214,4 @@ class Client(object):
             # initialization of osprofiler on the server side.
             profiler.init(profile)
         self.stats = stats.StatsManager(self.http_client)
+        self.quotas = quotas.QuotasManager(self.http_client)
