@@ -30,8 +30,11 @@ import os
 import sys
 
 from oslo_utils import encodeutils
+from oslo_utils import importutils
 from oslo_utils import strutils
 import six
+
+profiler = importutils.try_import("osprofiler.profiler")
 
 HAS_KEYRING = False
 all_errors = ValueError
@@ -422,6 +425,19 @@ class OpenStackMagnumShell(object):
                             action='store_true',
                             help=_("Do not verify https connections"))
 
+        if profiler:
+            parser.add_argument('--profile',
+                                metavar='HMAC_KEY',
+                                help='HMAC key to use for encrypting context '
+                                'data for performance profiling of operation. '
+                                'This key should be the value of the HMAC key '
+                                'configured for the OSprofiler middleware in '
+                                'nova; it is specified in the Nova '
+                                'configuration file at "/etc/nova/nova.conf". '
+                                'Without the key, profiling will not be '
+                                'triggered even if OSprofiler is enabled on '
+                                'the server side.')
+
         return parser
 
     def get_subcommand_parser(self, version):
@@ -619,6 +635,10 @@ class OpenStackMagnumShell(object):
         if args.os_interface.endswith('URL'):
             args.os_interface = args.os_interface[:-3]
 
+        kwargs = {}
+        if profiler:
+            kwargs["profile"] = args.profile
+
         self.cs = client.Client(
             cloud=args.os_cloud,
             user_id=args.os_user_id,
@@ -638,10 +658,16 @@ class OpenStackMagnumShell(object):
             interface=args.os_interface,
             insecure=args.insecure,
             api_version=args.magnum_api_version,
+            **kwargs
         )
 
         self._check_deprecation(args.func, argv)
         args.func(self.cs, args)
+
+        if profiler and args.profile:
+            trace_id = profiler.get().get_base_id()
+            print("To display trace use the command:\n\n"
+                  "  osprofiler trace show --html %s " % trace_id)
 
     def _check_deprecation(self, func, argv):
         if not hasattr(func, 'deprecated_groups'):

@@ -23,11 +23,13 @@ import socket
 import ssl
 
 from keystoneauth1 import adapter
+from oslo_utils import importutils
 import six
 import six.moves.urllib.parse as urlparse
 
 from magnumclient import exceptions
 
+osprofiler_web = importutils.try_import("osprofiler.web")
 
 LOG = logging.getLogger(__name__)
 USER_AGENT = 'python-magnumclient'
@@ -326,6 +328,10 @@ class SessionClient(adapter.LegacyJsonAdapter):
         # Copy the kwargs so we can reuse the original in case of redirects
         kwargs['headers'] = copy.deepcopy(kwargs.get('headers', {}))
         kwargs['headers'].setdefault('User-Agent', self.user_agent)
+        # NOTE(tovin07): osprofiler_web.get_trace_id_headers does not add any
+        # headers in case if osprofiler is not initialized.
+        if osprofiler_web:
+            kwargs['headers'].update(osprofiler_web.get_trace_id_headers())
         if self.api_version:
             version_string = 'container-infra %s' % self.api_version
             kwargs['headers'].setdefault(
