@@ -349,6 +349,19 @@ class HttpClientTest(utils.BaseTestCase):
         self.assertEqual(resp, fake_resp)
         self.assertEqual(json.dumps(body), err)
 
+    def test_raw_request(self):
+        fake_resp = utils.FakeResponse(
+            {'content-type': 'application/octet-stream'},
+            'bar', version=1, status=200)
+        client = http.HTTPClient('http://localhost/')
+        conn = utils.FakeConnection(fake_resp)
+        client.get_connection = (lambda *a, **kw: conn)
+
+        resp, body = client.raw_request('GET', '/v1/resources')
+
+        self.assertEqual(resp, fake_resp)
+        self.assertIsInstance(body, http.ResponseBodyIterator)
+
 
 class SessionClientTest(utils.BaseTestCase):
 
@@ -414,3 +427,32 @@ class SessionClientTest(utils.BaseTestCase):
         self.assertRaises(GatewayTimeout,
                           client.json_request,
                           'GET', '/v1/resources')
+
+    def test_construct_http_client_return_httpclient(self):
+        client = http._construct_http_client('http://localhost/')
+
+        self.assertIsInstance(client, http.HTTPClient)
+
+    def test_construct_http_client_return_sessionclient(self):
+        fake_session = mock.MagicMock()
+        client = http._construct_http_client(session=fake_session)
+
+        self.assertIsInstance(client, http.SessionClient)
+
+    def test_raw_request(self):
+        fake_response = utils.FakeSessionResponse(
+            {'content-type': 'application/octet-stream'},
+            content="", status_code=200)
+        fake_session = mock.MagicMock()
+        fake_session.request.side_effect = [fake_response]
+
+        client = http.SessionClient(
+            session=fake_session, endpoint_override='http://magnum')
+
+        resp = client.raw_request('GET', '/v1/bays')
+
+        self.assertEqual(
+            fake_session.request.call_args[1]['headers']['Content-Type'],
+            'application/octet-stream'
+        )
+        self.assertEqual(fake_response, resp)
