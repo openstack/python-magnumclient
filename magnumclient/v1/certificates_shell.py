@@ -43,12 +43,20 @@ def _get_target_uuid(cs, args):
            required=False,
            metavar='<bay>',
            help=_('ID or name of the bay.'))
-@utils.arg('--cluster',
-           required=False,
+@utils.arg('postional_cluster',
            metavar='<cluster>',
+           nargs='?',
+           default=None,
            help=_('ID or name of the cluster.'))
+@utils.arg('--cluster',
+           metavar='<cluster>',
+           default=None,
+           help=(_('ID or name of the cluster. %s') %
+                 utils.CLUSTER_DEPRECATION_HELP))
 def do_ca_show(cs, args):
     """Show details about the CA certificate for a bay or cluster."""
+    utils.validate_cluster_args(args.postional_cluster, args.cluster)
+    args.cluster = args.postional_cluster or args.cluster
     opts = {
         'cluster_uuid': _get_target_uuid(cs, args)
     }
