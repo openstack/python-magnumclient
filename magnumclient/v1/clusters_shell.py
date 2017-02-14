@@ -208,7 +208,12 @@ def do_cluster_update(cs, args):
             "Rollback is not supported in API v%s. "
             "Please use API v1.3+." % args.magnum_api_version)
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])
-    cluster = cs.clusters.update(args.cluster, patch, args.rollback)
+    try:
+        cluster = cs.clusters.update(args.cluster, patch, args.rollback)
+    except Exception as e:
+        print("ERROR: %s" % e.details)
+        return
+
     if args.magnum_api_version and args.magnum_api_version == '1.1':
         _show_cluster(cluster)
     else:
