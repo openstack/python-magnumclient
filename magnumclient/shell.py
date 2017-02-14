@@ -662,7 +662,11 @@ class OpenStackMagnumShell(object):
         )
 
         self._check_deprecation(args.func, argv)
-        args.func(self.cs, args)
+        try:
+            args.func(self.cs, args)
+        except (cliutils.DuplicateArgs, cliutils.MissingArgs):
+            self.do_help(args)
+            raise
 
         if profiler and args.profile:
             trace_id = profiler.get().get_base_id()
