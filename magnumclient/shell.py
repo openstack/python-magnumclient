@@ -541,6 +541,36 @@ class OpenStackMagnumShell(object):
             api_major_version = versions[0]
             return (api_major_version, magnum_api_version)
 
+    def _ensure_auth_info(self, args):
+        if not cliutils.isunauthenticated(args.func):
+            if (not (args.os_token and
+                     (args.os_auth_url or args.os_endpoint_override)) and
+                not args.os_cloud
+                ):
+
+                if not (args.os_username or args.os_user_id):
+                    raise exc.CommandError(
+                        "You must provide a username via either --os-username "
+                        "or via env[OS_USERNAME]"
+                    )
+                if not args.os_password:
+                    raise exc.CommandError(
+                        "You must provide a password via either "
+                        "--os-password, env[OS_PASSWORD], or prompted "
+                        "response"
+                    )
+                if (not args.os_project_name and not args.os_project_id):
+                    raise exc.CommandError(
+                        "You must provide a project name or project id via "
+                        "--os-project-name, --os-project-id, "
+                        "env[OS_PROJECT_NAME] or env[OS_PROJECT_ID]"
+                    )
+                if not args.os_auth_url:
+                    raise exc.CommandError(
+                        "You must provide an auth url via either "
+                        "--os-auth-url or via env[OS_AUTH_URL]"
+                    )
+
     def main(self, argv):
 
         # NOTE(Christoph Jansen): With Python 3.4 argv somehow becomes a Map.
@@ -593,34 +623,8 @@ class OpenStackMagnumShell(object):
         args.os_project_id = (args.os_project_id or args.os_tenant_id)
         args.os_project_name = (args.os_project_name or args.os_tenant_name)
 
-        if not cliutils.isunauthenticated(args.func):
-            if (not (args.os_token and
-                     (args.os_auth_url or args.os_endpoint_override)) and
-                not args.os_cloud
-                ):
+        self._ensure_auth_info(args)
 
-                if not (args.os_username or args.os_user_id):
-                    raise exc.CommandError(
-                        "You must provide a username via either --os-username "
-                        "or via env[OS_USERNAME]"
-                    )
-                if not args.os_password:
-                    raise exc.CommandError(
-                        "You must provide a password via either "
-                        "--os-password, env[OS_PASSWORD], or prompted "
-                        "response"
-                    )
-                if (not args.os_project_name and not args.os_project_id):
-                    raise exc.CommandError(
-                        "You must provide a project name or project id via "
-                        "--os-project-name, --os-project-id, "
-                        "env[OS_PROJECT_NAME] or env[OS_PROJECT_ID]"
-                    )
-                if not args.os_auth_url:
-                    raise exc.CommandError(
-                        "You must provide an auth url via either "
-                        "--os-auth-url or via env[OS_AUTH_URL]"
-                    )
         try:
             client = {
                 '1': client_v1,
