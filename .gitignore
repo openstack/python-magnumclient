@@ -25,6 +25,7 @@ pip-log.txt
 .coverage
 .tox
 cover
+cover-master
 nosetests.xml
 .testrepository
 .venv
