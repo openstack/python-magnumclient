@@ -35,6 +35,16 @@ from six import moves
 from magnumclient.i18n import _
 
 
+NAME_DEPRECATION_BASE = ('%sThe --name parameter is deprecated and '
+                         'will be removed in a future release. Use the '
+                         '<name> positional parameter %s.')
+
+NAME_DEPRECATION_HELP = NAME_DEPRECATION_BASE % ('', 'instead')
+
+NAME_DEPRECATION_WARNING = NAME_DEPRECATION_BASE % (
+    'WARNING: ', 'to avoid seeing this message')
+
+
 def deprecation_message(preamble, new_name):
     msg = ('%s This parameter is deprecated and will be removed in a future '
            'release. Use --%s instead.' % (preamble, new_name))
@@ -47,6 +57,14 @@ class MissingArgs(Exception):
         self.missing = missing
         msg = _("Missing arguments: %s") % ", ".join(missing)
         super(MissingArgs, self).__init__(msg)
+
+
+class DuplicateArgs(Exception):
+    """More than one of the same argument type was passed."""
+    def __init__(self, param, dupes):
+        msg = _('Duplicate "%(param)s" arguments: %(dupes)s') % {
+            'param': param, 'dupes': ", ".join(dupes)}
+        super(DuplicateArgs, self).__init__(msg)
 
 
 def validate_args(fn, *args, **kwargs):
@@ -80,6 +98,13 @@ def validate_args(fn, *args, **kwargs):
     missing = missing[len(args):]
     if missing:
         raise MissingArgs(missing)
+
+
+def validate_name_args(positional_name, optional_name):
+    if optional_name:
+        print(NAME_DEPRECATION_WARNING)
+    if positional_name and optional_name:
+        raise DuplicateArgs("<name>", (positional_name, optional_name))
 
 
 def deprecated(message):

@@ -33,9 +33,16 @@ def _show_cluster_template(cluster_template):
 
 
 @utils.deprecation_map(DEPRECATING_PARAMS)
+@utils.arg('positional_name',
+           metavar='<name>',
+           nargs='?',
+           default=None,
+           help=_('Name of the cluster template to create.'))
 @utils.arg('--name',
            metavar='<name>',
-           help=_('Name of the cluster template to create.'))
+           default=None,
+           help=(_('Name of the cluster template to create. %s') %
+                 utils.NAME_DEPRECATION_HELP))
 @utils.arg('--image-id',
            dest='image',
            required=True,
@@ -169,8 +176,12 @@ def _show_cluster_template(cluster_template):
                   'floating ip or not.'))
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
+    args.command = 'cluster-template-create'
+
+    utils.validate_name_args(args.positional_name, args.name)
+
     opts = {}
-    opts['name'] = args.name
+    opts['name'] = args.positional_name or args.name
     opts['flavor_id'] = args.flavor
     opts['master_flavor_id'] = args.master_flavor
     opts['image_id'] = args.image

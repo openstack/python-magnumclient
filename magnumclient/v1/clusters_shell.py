@@ -82,9 +82,16 @@ def do_cluster_list(cs, args):
 
 
 @utils.deprecation_map(DEPRECATING_PARAMS)
+@utils.arg('positional_name',
+           metavar='<name>',
+           nargs='?',
+           default=None,
+           help=_('Name of the cluster to create.'))
 @utils.arg('--name',
            metavar='<name>',
-           help=_('Name of the cluster to create.'))
+           default=None,
+           help=(_('Name of the cluster to create. %s') %
+                 utils.NAME_DEPRECATION_HELP))
 @utils.arg('--cluster-template',
            required=True,
            metavar='<cluster_template>',
@@ -122,10 +129,13 @@ def do_cluster_list(cs, args):
                   'is 60 minutes.'))
 def do_cluster_create(cs, args):
     """Create a cluster."""
+    args.command = 'cluster-create'
+
+    utils.validate_name_args(args.positional_name, args.name)
 
     cluster_template = cs.cluster_templates.get(args.cluster_template)
     opts = dict()
-    opts['name'] = args.name
+    opts['name'] = args.positional_name or args.name
     opts['cluster_template_id'] = cluster_template.uuid
     opts['keypair'] = args.keypair
     opts['node_count'] = args.node_count

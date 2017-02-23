@@ -464,6 +464,33 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
+    def test_cluster_template_create_success_only_positional_name(self,
+                                                                  mock_create):
+        self._test_arg_success('cluster-template-create '
+                               'test '
+                               '--labels key1=val1,key2=val2 '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe swarm '
+                               '--server-type vm')
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair', coe='swarm',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    labels={'key1': 'val1', 'key2': 'val2'})
+        mock_create.assert_called_with(**expected_args)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
+    def test_cluster_template_create_failure_duplicate_name(self, mock_create):
+        self._test_arg_failure('cluster-template-create '
+                               'foo --name test', self._mandatory_arg_error)
+        mock_create.assert_not_called()
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.create')
     def test_cluster_template_create_failure_few_arg(self, mock_create):
         self._test_arg_failure('cluster-template-create '
                                '--name test', self._mandatory_arg_error)
@@ -595,6 +622,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args = \
             self._get_expected_args(image_id='test', coe='test',
                                     master_flavor_id='test',
+                                    external_network_id='public')
+        mock_create.assert_called_with(**expected_args)
+
+        self._test_arg_failure(required_args + '--name foo',
+                               self._deprecated_warning)
+        expected_args = \
+            self._get_expected_args(image_id='test', coe='test',
+                                    name='foo',
                                     external_network_id='public')
         mock_create.assert_called_with(**expected_args)
 

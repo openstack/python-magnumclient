@@ -52,8 +52,9 @@ class TestCommandLineArgument(utils.TestCase):
         ]
 
     _deprecated_warning = [
-        '.*(WARNING: The \-\-[a-z\-]*-id parameter is deprecated)+',
-        '.*(Use the \-\-[a-z\-]* parameter to avoid seeing this message)+'
+        '.*(WARNING: The \-\-[a-z\-]* parameter is deprecated)+',
+        ('.*(Use the [\<\-a-z\-\>]* (positional )*parameter to avoid seeing '
+         'this message)+')
     ]
 
     _few_argument_error = [
