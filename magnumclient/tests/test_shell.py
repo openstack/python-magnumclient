@@ -169,6 +169,17 @@ class ShellTest(utils.TestCase):
         else:
             self.fail('CommandError not raised')
 
+    def test_no_password(self):
+        required = ('You must provide a password via either --os-password, '
+                    'env[OS_PASSWORD], or prompted response')
+        self.make_env(exclude='OS_PASSWORD', fake_env=FAKE_ENV3)
+        try:
+            self.shell('bay-list')
+        except exceptions.CommandError as message:
+            self.assertEqual(required, message.args[0])
+        else:
+            self.fail('CommandError not raised')
+
     def test_no_auth_url(self):
         required = ("You must provide an auth url via either "
                     "--os-auth-url or via env[OS_AUTH_URL]")
