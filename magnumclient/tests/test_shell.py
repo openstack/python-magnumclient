@@ -15,6 +15,7 @@
 import re
 import sys
 
+import argparse
 import fixtures
 from keystoneauth1 import fixture
 import mock
@@ -81,6 +82,26 @@ class ShellTest(utils.TestCase):
         self.nc_util = mock.patch(
             'magnumclient.common.cliutils.isunauthenticated').start()
         self.nc_util.return_value = False
+
+    def test_positive_non_zero_float(self):
+        output = magnumclient.shell.positive_non_zero_float(None)
+        self.assertEqual(None, output)
+
+        output = magnumclient.shell.positive_non_zero_float(5)
+        self.assertEqual(5, output)
+
+        output = magnumclient.shell.positive_non_zero_float(5.0)
+        self.assertEqual(5.0, output)
+
+        self.assertRaises(argparse.ArgumentTypeError,
+                          magnumclient.shell.positive_non_zero_float,
+                          "Invalid")
+
+        self.assertRaises(argparse.ArgumentTypeError,
+                          magnumclient.shell.positive_non_zero_float, -1)
+
+        self.assertRaises(argparse.ArgumentTypeError,
+                          magnumclient.shell.positive_non_zero_float, 0)
 
     def test_help_unknown_command(self):
         self.assertRaises(exceptions.CommandError, self.shell, 'help foofoo')
