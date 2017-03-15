@@ -251,6 +251,37 @@ class CreateClusterTemplate(command.ShowOne):
         return _show_cluster_template(ct)
 
 
+class DeleteClusterTemplate(command.Command):
+    """Delete a Cluster Template."""
+    _description = _("Delete a Cluster Template.")
+
+    def get_parser(self, prog_name):
+        parser = super(DeleteClusterTemplate, self).get_parser(prog_name)
+        parser.add_argument(
+            'cluster-templates',
+            metavar='<cluster-templates>',
+            nargs='+',
+            help=_('ID or name of the (cluster template)s to delete.'))
+
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+
+        mag_client = self.app.client_manager.container_infra
+
+        for cluster_template in getattr(parsed_args, 'cluster-templates'):
+            try:
+                mag_client.cluster_templates.delete(cluster_template)
+                print(
+                    "Request to delete cluster template %s has been accepted."
+                    % cluster_template)
+            except Exception as e:
+                print("Delete for cluster template "
+                      "%(cluster_template)s failed: %(e)s" %
+                      {'cluster_template': cluster_template, 'e': e})
+
+
 class ListTemplateCluster(command.Lister):
     """List Cluster Templates."""
     _description = _("List Cluster Templates.")
@@ -297,3 +328,69 @@ class ListTemplateCluster(command.Lister):
             columns,
             (osc_utils.get_item_properties(ct, columns) for ct in cts)
         )
+
+
+class ShowClusterTemplate(command.ShowOne):
+    """Show a Cluster Template."""
+    _description = _("Show a Cluster Template.")
+
+    log = logging.getLogger(__name__ + ".ShowClusterTemplate")
+
+    def get_parser(self, prog_name):
+        parser = super(ShowClusterTemplate, self).get_parser(prog_name)
+        parser.add_argument(
+            'cluster-template',
+            metavar='<cluster-template>',
+            help=_('ID or name of the cluster template to show.'))
+
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+
+        mag_client = self.app.client_manager.container_infra
+        ct = getattr(parsed_args, 'cluster-template', None)
+        cluster_template = mag_client.cluster_templates.get(ct)
+
+        return _show_cluster_template(cluster_template)
+
+
+class UpdateClusterTemplate(command.ShowOne):
+    """Update a Cluster Template."""
+
+    log = logging.getLogger(__name__ + ".UpdateClusterTemplate")
+
+    def get_parser(self, prog_name):
+        parser = super(UpdateClusterTemplate, self).get_parser(prog_name)
+        parser.add_argument(
+            'cluster-template',
+            metavar='<cluster-template>',
+            help=_('The name or UUID of cluster template to update'))
+
+        parser.add_argument(
+            'op',
+            metavar='<op>',
+            choices=['add', 'replace', 'remove'],
+            help=_("Operations: one of 'add', 'replace' or 'remove'"))
+
+        parser.add_argument(
+            'attributes',
+            metavar='<path=value>',
+            nargs='+',
+            action='append',
+            default=[],
+            help=_(
+                "Attributes to add/replace or remove (only PATH is necessary "
+                "on remove)"))
+
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+
+        mag_client = self.app.client_manager.container_infra
+        patch = magnum_utils.args_array_to_patch(parsed_args.op,
+                                                 parsed_args.attributes[0])
+        name = getattr(parsed_args, 'cluster-template', None)
+        ct = mag_client.cluster_templates.update(name, patch)
+        return _show_cluster_template(ct)
