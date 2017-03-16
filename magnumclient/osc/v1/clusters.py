@@ -12,11 +12,34 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
+from magnumclient.common import utils as magnum_utils
 from magnumclient.i18n import _
 
 from osc_lib.command import command
 from osc_lib import utils
+
+
+CLUSTER_ATTRIBUTES = [
+    'status',
+    'cluster_template_id',
+    'node_addresses',
+    'uuid',
+    'stack_id',
+    'status_reason',
+    'created_at',
+    'updated_at',
+    'coe_version',
+    'faults',
+    'keypair',
+    'api_address',
+    'master_addresses',
+    'create_timeout',
+    'node_count',
+    'discovery_url',
+    'master_count',
+    'container_version',
+    'name'
+]
 
 
 class CreateCluster(command.Command):
@@ -89,6 +112,28 @@ class CreateCluster(command.Command):
               % cluster.uuid)
 
 
+class DeleteCluster(command.Command):
+    _description = _("Delete a cluster")
+
+    def get_parser(self, prog_name):
+        parser = super(DeleteCluster, self).get_parser(prog_name)
+        parser.add_argument(
+            'cluster',
+            nargs='+',
+            metavar='<cluster>',
+            help='ID or name of the cluster(s) to delete.')
+
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+
+        mag_client = self.app.client_manager.container_infra
+        for cluster in parsed_args.cluster:
+            mag_client.clusters.delete(cluster)
+            print("Request to delete cluster %s has been accepted." % cluster)
+
+
 class ListCluster(command.Lister):
     _description = _("List clusters")
 
@@ -125,3 +170,75 @@ class ListCluster(command.Lister):
             columns,
             (utils.get_item_properties(c, columns) for c in clusters)
         )
+
+
+class ShowCluster(command.ShowOne):
+    _description = _("Show a Cluster")
+
+    def get_parser(self, prog_name):
+        parser = super(ShowCluster, self).get_parser(prog_name)
+        parser.add_argument(
+            'cluster',
+            metavar='<cluster>',
+            help=_('ID or name of the cluster to show.')
+            )
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+
+        columns = CLUSTER_ATTRIBUTES
+
+        mag_client = self.app.client_manager.container_infra
+        cluster = mag_client.clusters.get(parsed_args.cluster)
+
+        return (columns, utils.get_item_properties(cluster, columns))
+
+
+class UpdateCluster(command.Command):
+    _description = _("Update a Cluster")
+
+    def get_parser(self, prog_name):
+        parser = super(UpdateCluster, self).get_parser(prog_name)
+        parser.add_argument(
+            'cluster',
+            metavar='<cluster>',
+            help=_('The name or UUID of cluster to update'))
+
+        parser.add_argument(
+            'op',
+            metavar='<op>',
+            choices=['add', 'replace', 'remove'],
+            help=_("Operations: one of 'add', 'replace' or 'remove'"))
+
+        parser.add_argument(
+            'attributes',
+            metavar='<path=value>',
+            nargs='+',
+            action='append',
+            default=[],
+            help=_(
+                "Attributes to add/replace or remove (only PATH is necessary "
+                "on remove)"))
+
+        parser.add_argument(
+            '--rollback',
+            action='store_true',
+            dest='rollback',
+            default=False,
+            help=_('Rollback cluster on update failure.'))
+
+        return parser
+
+    def take_action(self, parsed_args):
+        self.log.debug("take_action(%s)", parsed_args)
+
+        mag_client = self.app.client_manager.container_infra
+
+        patch = magnum_utils.args_array_to_patch(parsed_args.op,
+                                                 parsed_args.attributes[0])
+
+        mag_client.clusters.update(parsed_args.cluster,
+                                   patch)
+        print("Request to update cluster %s has been accepted." %
+              parsed_args.cluster)

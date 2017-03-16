@@ -15,6 +15,7 @@
 
 import copy
 import mock
+from mock import call
 
 from magnumclient.osc.v1 import clusters as osc_clusters
 from magnumclient.tests.osc.unit.v1 import fakes as magnum_fakes
@@ -60,26 +61,8 @@ class TestClusterCreate(TestCluster):
         # Get the command object to test
         self.cmd = osc_clusters.CreateCluster(self.app, None)
 
-        self.data = (
-            self._cluster.status,
-            self._cluster.cluster_template_id,
-            self._cluster.node_addresses,
-            self._cluster.uuid,
-            self._cluster.stack_id,
-            self._cluster.status_reason,
-            self._cluster.created_at,
-            self._cluster.updated_at,
-            self._cluster.coe_version,
-            self._cluster.keypair,
-            self._cluster.api_address,
-            self._cluster.master_addresses,
-            self._cluster.create_timeout,
-            self._cluster.node_count,
-            self._cluster.discovery_url,
-            self._cluster.master_count,
-            self._cluster.container_version,
-            self._cluster.name
-        )
+        self.data = tuple(map(lambda x: getattr(self._cluster, x),
+                              osc_clusters.CLUSTER_ATTRIBUTES))
 
     def test_cluster_create_required_args_pass(self):
         """Verifies required arguments."""
@@ -103,6 +86,52 @@ class TestClusterCreate(TestCluster):
         verifylist = [
             ('name', self._cluster.name)
         ]
+        self.assertRaises(magnum_fakes.MagnumParseException,
+                          self.check_parser, self.cmd, arglist, verifylist)
+
+
+class TestClusterDelete(TestCluster):
+
+    def setUp(self):
+        super(TestClusterDelete, self).setUp()
+
+        self.clusters_mock.delete = mock.Mock()
+        self.clusters_mock.delete.return_value = None
+
+        # Get the command object to test
+        self.cmd = osc_clusters.DeleteCluster(self.app, None)
+
+    def test_cluster_delete_one(self):
+        arglist = ['foo']
+        verifylist = [('cluster', ['foo'])]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.delete.assert_called_with('foo')
+
+    def test_cluster_delete_multiple(self):
+        arglist = ['foo', 'bar']
+        verifylist = [('cluster', ['foo', 'bar'])]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.delete.assert_has_calls([call('foo'), call('bar')])
+
+    def test_cluster_delete_bad_uuid(self):
+        arglist = ['foo']
+        verifylist = [('cluster', ['foo'])]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        returns = self.cmd.take_action(parsed_args)
+
+        self.assertEqual(returns, None)
+
+    def test_cluster_delete_no_uuid(self):
+        arglist = []
+        verifylist = [('cluster', [])]
+
         self.assertRaises(magnum_fakes.MagnumParseException,
                           self.check_parser, self.cmd, arglist, verifylist)
 
@@ -189,6 +218,85 @@ class TestClusterList(TestCluster):
             ('sort_dir', 'foo'),
             ('fields', None),
         ]
+
+        self.assertRaises(magnum_fakes.MagnumParseException,
+                          self.check_parser, self.cmd, arglist, verifylist)
+
+
+class TestClusterUpdate(TestCluster):
+
+    def setUp(self):
+        super(TestClusterUpdate, self).setUp()
+
+        self.clusters_mock.update = mock.Mock()
+        self.clusters_mock.update.return_value = None
+
+        # Get the command object to test
+        self.cmd = osc_clusters.UpdateCluster(self.app, None)
+
+    def test_cluster_update_pass(self):
+        arglist = ['foo', 'remove', 'bar']
+        verifylist = [
+            ('cluster', 'foo'),
+            ('op', 'remove'),
+            ('attributes', [['bar']]),
+            ('rollback', False)
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'remove', 'path': '/bar'}]
+        )
+
+    def test_cluster_update_bad_op(self):
+        arglist = ['foo', 'bar', 'snafu']
+        verifylist = [
+            ('cluster', 'foo'),
+            ('op', 'bar'),
+            ('attributes', ['snafu']),
+            ('rollback', False)
+        ]
+
+        self.assertRaises(magnum_fakes.MagnumParseException,
+                          self.check_parser, self.cmd, arglist, verifylist)
+
+
+class TestClusterShow(TestCluster):
+
+    def setUp(self):
+        super(TestClusterShow, self).setUp()
+
+        attr = dict()
+        attr['name'] = 'fake-cluster-1'
+        self._cluster = magnum_fakes.FakeCluster.create_one_cluster(attr)
+
+        self.clusters_mock.get = mock.Mock()
+        self.clusters_mock.get.return_value = self._cluster
+
+        # Get the command object to test
+        self.cmd = osc_clusters.ShowCluster(self.app, None)
+
+        self.data = tuple(map(lambda x: getattr(self._cluster, x),
+                              osc_clusters.CLUSTER_ATTRIBUTES))
+
+    def test_cluster_show_pass(self):
+        arglist = ['fake-cluster']
+        verifylist = [
+            ('cluster', 'fake-cluster')
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        columns, data = self.cmd.take_action(parsed_args)
+        self.clusters_mock.get.assert_called_with('fake-cluster')
+        self.assertEqual(osc_clusters.CLUSTER_ATTRIBUTES, columns)
+        self.assertEqual(self.data, data)
+
+    def test_cluster_show_no_cluster_fail(self):
+        arglist = []
+        verifylist = []
 
         self.assertRaises(magnum_fakes.MagnumParseException,
                           self.check_parser, self.cmd, arglist, verifylist)

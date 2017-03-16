@@ -190,6 +190,7 @@ class FakeCluster(object):
             'created_at': '2017-03-16T18:40:39+00:00',
             'updated_at': '2017-03-16T18:40:45+00:00',
             'coe_version': None,
+            'faults': None,
             'keypair': 'fakekey',
             'api_address': None,
             'master_addresses': [],
