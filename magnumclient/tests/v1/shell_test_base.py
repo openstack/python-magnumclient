@@ -51,6 +51,12 @@ class TestCommandLineArgument(utils.TestCase):
         ".*?^Try 'magnum help ",
         ]
 
+    _duplicate_name_arg_error = [
+        '.*?^usage: ',
+        '.*?^error: (Duplicate "<name>" arguments:)',
+        ".*?^Try 'magnum help ",
+        ]
+
     _deprecated_warning = [
         '.*(WARNING: The \-\-[a-z\-]* parameter is deprecated)+',
         ('.*(Use the [\<\-a-z\-\>]* (positional )*parameter to avoid seeing '
