@@ -432,8 +432,9 @@ class OpenStackMagnumShell(object):
                                 'data for performance profiling of operation. '
                                 'This key should be the value of the HMAC key '
                                 'configured for the OSprofiler middleware in '
-                                'nova; it is specified in the Nova '
-                                'configuration file at "/etc/nova/nova.conf". '
+                                'magnum; it is specified in the Magnum '
+                                'configuration file at '
+                                '"/etc/magnum/magnum.conf". '
                                 'Without the key, profiling will not be '
                                 'triggered even if OSprofiler is enabled on '
                                 'the server side.')
