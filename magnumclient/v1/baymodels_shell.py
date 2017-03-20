@@ -38,7 +38,7 @@ def _show_baymodel(baymodel):
 @utils.arg('--keypair-id',
            required=True,
            metavar='<keypair-id>',
-           help=_('The name or UUID of the SSH keypair to load into the'
+           help=_('The name of the SSH keypair to load into the'
                   ' Bay nodes.'))
 @utils.arg('--external-network-id',
            required=True,
