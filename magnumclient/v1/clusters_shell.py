@@ -101,13 +101,13 @@ def do_cluster_list(cs, args):
            metavar='<keypair>',
            default=None,
            help=utils.deprecation_message(
-                'UUID or name of the keypair to use for this cluster.',
+                'Name of the keypair to use for this cluster.',
                 'keypair'))
 @utils.arg('--keypair',
            dest='keypair',
            metavar='<keypair>',
            default=None,
-           help=_('UUID or name of the keypair to use for this cluster.'))
+           help=_('Name of the keypair to use for this cluster.'))
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,

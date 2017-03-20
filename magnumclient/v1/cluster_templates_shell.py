@@ -60,12 +60,12 @@ def _show_cluster_template(cluster_template):
            dest='keypair',
            metavar='<keypair>',
            help=utils.deprecation_message(
-               'The name or UUID of the SSH keypair to load into the '
+               'The name of the SSH keypair to load into the '
                'Cluster nodes.', 'keypair'))
 @utils.arg('--keypair',
            dest='keypair',
            metavar='<keypair>',
-           help=_('The name or UUID of the SSH keypair to load into the '
+           help=_('The name of the SSH keypair to load into the '
                   'Cluster nodes.'))
 @utils.arg('--external-network-id',
            dest='external_network',
