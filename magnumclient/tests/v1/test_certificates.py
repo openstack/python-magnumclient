@@ -52,6 +52,10 @@ fake_responses = {
         'GET': (
             {},
             CERT1
+        ),
+        'PATCH': (
+            {},
+            None,
         )
     }
 }
@@ -102,3 +106,10 @@ class CertificateManagerTest(testtools.TestCase):
                                  ','.join(certificates.CREATION_ATTRIBUTES)),
                                 self.mgr.create, **create_cert_fail)
         self.assertEqual([], self.api.calls)
+
+    def test_rotate_ca(self):
+        self.mgr.rotate_ca(cluster_uuid=CERT1['cluster_uuid'])
+        expect = [
+            ('PATCH', '/v1/certificates/%s' % CERT1['cluster_uuid'], {}, None)
+        ]
+        self.assertEqual(expect, self.api.calls)

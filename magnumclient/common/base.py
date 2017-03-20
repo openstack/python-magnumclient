@@ -126,11 +126,14 @@ class Manager(object):
         data = self._format_body_data(body, response_key)
         return [obj_class(self, res, loaded=True) for res in data if res]
 
-    def _update(self, url, body, method='PATCH', response_key=None):
-        resp, body = self.api.json_request(method, url, body=body)
-        # PATCH/PUT requests may not return a body
+    def _update(self, url, body=None, method='PATCH', response_key=None):
         if body:
-            return self.resource_class(self, body)
+            resp, resp_body = self.api.json_request(method, url, body=body)
+        else:
+            resp, resp_body = self.api.raw_request(method, url)
+        # PATCH/PUT requests may not return a body
+        if resp_body:
+            return self.resource_class(self, resp_body)
 
     def _delete(self, url):
         self.api.raw_request('DELETE', url)

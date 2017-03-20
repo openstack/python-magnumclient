@@ -84,3 +84,16 @@ def do_ca_sign(cs, args):
 
     cert = cs.certificates.create(**opts)
     _show_cert(cert)
+
+
+@utils.arg('--cluster',
+           required=False,
+           metavar='<cluster>',
+           help=_('ID or name of the cluster.'))
+def do_ca_rotate(cs, args):
+    """Rotate the CA certificate for a bay or cluster to revoke access."""
+    opts = {
+        'cluster_uuid': _get_target_uuid(cs, args)
+    }
+
+    cs.certificates.rotate_ca(**opts)

@@ -48,3 +48,6 @@ class CertificateManager(base.Manager):
                 raise exceptions.InvalidAttribute(
                     "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
         return self._create(self._path(), new)
+
+    def rotate_ca(self, **kwargs):
+        return self._update(self._path(id=kwargs['cluster_uuid']))
