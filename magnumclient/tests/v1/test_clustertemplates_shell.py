@@ -37,11 +37,12 @@ class FakeClusterTemplate(ClusterTemplate):
 class ShellTest(shell_test_base.TestCommandLineArgument):
 
     def _get_expected_args_list(self, limit=None, sort_dir=None,
-                                sort_key=None):
+                                sort_key=None, detail=False):
         expected_args = {}
         expected_args['limit'] = limit
         expected_args['sort_dir'] = sort_dir
         expected_args['sort_key'] = sort_key
+        expected_args['detail'] = detail
 
         return expected_args
 
@@ -726,6 +727,14 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--sort-dir asc '
                                '--sort-key uuid')
         expected_args = self._get_expected_args_list(1, 'asc', 'uuid')
+        mock_list.assert_called_once_with(**expected_args)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.list')
+    def test_cluster_template_list_success_detailed(self, mock_list):
+        self._test_arg_success('cluster-template-list '
+                               '--detail')
+        expected_args = self._get_expected_args_list(detail=True)
         mock_list.assert_called_once_with(**expected_args)
 
     @mock.patch(

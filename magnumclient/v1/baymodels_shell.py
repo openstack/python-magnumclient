@@ -15,6 +15,7 @@
 from magnumclient.common import cliutils as utils
 from magnumclient.common import utils as magnum_utils
 from magnumclient.i18n import _
+from magnumclient.v1 import basemodels
 
 
 DEPRECATION_MESSAGE = (
@@ -211,6 +212,10 @@ def do_baymodel_show(cs, args):
                   'apiserver_port, server_type, tls_disabled, registry_enabled'
                   )
            )
+@utils.arg('--detail',
+           action='store_true', default=False,
+           help=_('Show detailed information about the baymodels.')
+           )
 @utils.deprecated(DEPRECATION_MESSAGE)
 def do_baymodel_list(cs, args):
     """Print a list of baymodels.
@@ -219,8 +224,12 @@ def do_baymodel_list(cs, args):
     """
     nodes = cs.baymodels.list(limit=args.limit,
                               sort_key=args.sort_key,
-                              sort_dir=args.sort_dir)
-    columns = ['uuid', 'name']
+                              sort_dir=args.sort_dir,
+                              detail=args.detail)
+    if args.detail:
+        columns = basemodels.OUTPUT_ATTRIBUTES
+    else:
+        columns = ['uuid', 'name']
     columns += utils._get_list_table_columns_and_formatters(
         args.fields, nodes,
         exclude_fields=(c.lower() for c in columns))[0]
