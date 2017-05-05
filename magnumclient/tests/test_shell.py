@@ -85,7 +85,7 @@ class ShellTest(utils.TestCase):
 
     def test_positive_non_zero_float(self):
         output = magnumclient.shell.positive_non_zero_float(None)
-        self.assertEqual(None, output)
+        self.assertIsNone(output)
 
         output = magnumclient.shell.positive_non_zero_float(5)
         self.assertEqual(5, output)
