@@ -288,10 +288,10 @@ class ClusterManagerTest(testtools.TestCase):
     def test_cluster_create_fail(self):
         CREATE_CLUSTER_FAIL = copy.deepcopy(CREATE_CLUSTER)
         CREATE_CLUSTER_FAIL["wrong_key"] = "wrong"
-        self.assertRaisesRegexp(exceptions.InvalidAttribute,
-                                ("Key must be in %s" %
-                                 ','.join(clusters.CREATION_ATTRIBUTES)),
-                                self.mgr.create, **CREATE_CLUSTER_FAIL)
+        self.assertRaisesRegex(exceptions.InvalidAttribute,
+                               ("Key must be in %s" %
+                                ','.join(clusters.CREATION_ATTRIBUTES)),
+                               self.mgr.create, **CREATE_CLUSTER_FAIL)
         self.assertEqual([], self.api.calls)
 
     def test_cluster_delete_by_id(self):

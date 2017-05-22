@@ -101,10 +101,10 @@ class CertificateManagerTest(testtools.TestCase):
     def test_create_fail(self):
         create_cert_fail = copy.deepcopy(CREATE_CERT)
         create_cert_fail["wrong_key"] = "wrong"
-        self.assertRaisesRegexp(exceptions.InvalidAttribute,
-                                ("Key must be in %s" %
-                                 ','.join(certificates.CREATION_ATTRIBUTES)),
-                                self.mgr.create, **create_cert_fail)
+        self.assertRaisesRegex(exceptions.InvalidAttribute,
+                               ("Key must be in %s" %
+                                ','.join(certificates.CREATION_ATTRIBUTES)),
+                               self.mgr.create, **create_cert_fail)
         self.assertEqual([], self.api.calls)
 
     def test_rotate_ca(self):

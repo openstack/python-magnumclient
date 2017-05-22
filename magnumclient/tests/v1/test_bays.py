@@ -272,10 +272,10 @@ class BayManagerTest(testtools.TestCase):
     def test_bay_create_fail(self):
         CREATE_BAY_FAIL = copy.deepcopy(CREATE_BAY)
         CREATE_BAY_FAIL["wrong_key"] = "wrong"
-        self.assertRaisesRegexp(exceptions.InvalidAttribute,
-                                ("Key must be in %s" %
-                                 ','.join(bays.CREATION_ATTRIBUTES)),
-                                self.mgr.create, **CREATE_BAY_FAIL)
+        self.assertRaisesRegex(exceptions.InvalidAttribute,
+                               ("Key must be in %s" %
+                                ','.join(bays.CREATION_ATTRIBUTES)),
+                               self.mgr.create, **CREATE_BAY_FAIL)
         self.assertEqual([], self.api.calls)
 
     def test_bay_delete_by_id(self):

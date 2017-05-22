@@ -388,7 +388,7 @@ class ClusterTemplateManagerTest(testtools.TestCase):
     def test_clustertemplate_create_fail(self):
         CREATE_CLUSTERTEMPLATE_FAIL = copy.deepcopy(CREATE_CLUSTERTEMPLATE)
         CREATE_CLUSTERTEMPLATE_FAIL["wrong_key"] = "wrong"
-        self.assertRaisesRegexp(
+        self.assertRaisesRegex(
             exceptions.InvalidAttribute,
             ("Key must be in %s" %
              ','.join(cluster_templates.CREATION_ATTRIBUTES)),

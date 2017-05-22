@@ -328,10 +328,10 @@ class BayModelManagerTest(testtools.TestCase):
     def test_baymodel_create_fail(self):
         CREATE_BAYMODEL_FAIL = copy.deepcopy(CREATE_BAYMODEL)
         CREATE_BAYMODEL_FAIL["wrong_key"] = "wrong"
-        self.assertRaisesRegexp(exceptions.InvalidAttribute,
-                                ("Key must be in %s" %
-                                 ','.join(baymodels.CREATION_ATTRIBUTES)),
-                                self.mgr.create, **CREATE_BAYMODEL_FAIL)
+        self.assertRaisesRegex(exceptions.InvalidAttribute,
+                               ("Key must be in %s" %
+                                ','.join(baymodels.CREATION_ATTRIBUTES)),
+                               self.mgr.create, **CREATE_BAYMODEL_FAIL)
         self.assertEqual([], self.api.calls)
 
     def test_baymodel_delete_by_id(self):
