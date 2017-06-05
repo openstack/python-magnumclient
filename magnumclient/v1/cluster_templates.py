@@ -14,6 +14,7 @@ from magnumclient.v1 import basemodels
 
 
 CREATION_ATTRIBUTES = basemodels.CREATION_ATTRIBUTES
+CREATION_ATTRIBUTES.append('insecure_registry')
 
 
 class ClusterTemplate(basemodels.BaseModel):

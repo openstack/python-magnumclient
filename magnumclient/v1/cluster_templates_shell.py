@@ -174,6 +174,9 @@ def _show_cluster_template(cluster_template):
            action='store_true', default=True,
            help=_('Indicates whether created Clusters should have a '
                   'floating ip or not.'))
+@utils.arg('--insecure-registry',
+           metavar='<insecure-registry>',
+           help='url of docker registry')
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
     args.command = 'cluster-template-create'
@@ -205,6 +208,7 @@ def do_cluster_template_create(cs, args):
     opts['server_type'] = args.server_type
     opts['master_lb_enabled'] = args.master_lb_enabled
     opts['floating_ip_enabled'] = args.floating_ip_enabled
+    opts['insecure_registry'] = args.insecure_registry
 
     cluster_template = cs.cluster_templates.create(**opts)
     _show_cluster_template(cluster_template)

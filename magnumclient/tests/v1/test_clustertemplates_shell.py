@@ -57,7 +57,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                            tls_disabled=False, public=False,
                            master_lb_enabled=False, server_type='vm',
                            floating_ip_enabled=True,
-                           registry_enabled=False):
+                           registry_enabled=False,
+                           insecure_registry=None):
 
         expected_args = {}
         expected_args['image_id'] = image_id
@@ -84,6 +85,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args['server_type'] = server_type
         expected_args['floating_ip_enabled'] = floating_ip_enabled
         expected_args['registry_enabled'] = registry_enabled
+        expected_args['insecure_registry'] = insecure_registry
 
         return expected_args
 
