@@ -333,7 +333,7 @@ class HttpClientTest(utils.BaseTestCase):
         resp, body = client.json_request('GET', '/v1/resources')
 
         self.assertEqual(resp, fake_resp)
-        self.assertTrue(isinstance(body, list))
+        self.assertIsInstance(body, list)
 
     def test_server_success_body_json(self):
         err = _get_error_body()
