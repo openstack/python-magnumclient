@@ -24,6 +24,11 @@ CREATION_ATTRIBUTES = ['name', 'image_id', 'flavor_id', 'master_flavor_id',
                        'docker_storage_driver', 'master_lb_enabled',
                        'floating_ip_enabled']
 
+OUTPUT_ATTRIBUTES = CREATION_ATTRIBUTES + ['apiserver_port', 'created_at',
+                                           'insecure_registry', 'links',
+                                           'updated_at', 'cluster_distro',
+                                           'uuid']
+
 
 class BaseModel(base.Resource):
     # model_name needs to be overridden by any derived class.
