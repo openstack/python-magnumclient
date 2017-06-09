@@ -19,6 +19,7 @@ CREATION_ATTRIBUTES = baseunit.CREATION_ATTRIBUTES
 CREATION_ATTRIBUTES.append('cluster_template_id')
 CREATION_ATTRIBUTES.append('create_timeout')
 CREATION_ATTRIBUTES.append('keypair')
+CREATION_ATTRIBUTES.append('docker_volume_size')
 
 
 class Cluster(baseunit.BaseTemplate):

@@ -70,7 +70,8 @@ def do_cluster_list(cs, args):
                                 sort_key=args.sort_key,
                                 sort_dir=args.sort_dir)
     columns = [
-        'uuid', 'name', 'keypair', 'node_count', 'master_count', 'status'
+        'uuid', 'name', 'keypair', 'docker_volume_size', 'node_count',
+        'master_count', 'status'
     ]
     columns += utils._get_list_table_columns_and_formatters(
         args.fields, clusters,
@@ -108,6 +109,11 @@ def do_cluster_list(cs, args):
            metavar='<keypair>',
            default=None,
            help=_('Name of the keypair to use for this cluster.'))
+@utils.arg('--docker-volume-size',
+           metavar='<docker-volume-size>',
+           type=int,
+           default=None,
+           help=_('The size in GB for the docker volume to use'))
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,
@@ -138,6 +144,7 @@ def do_cluster_create(cs, args):
     opts['name'] = args.positional_name or args.name
     opts['cluster_template_id'] = cluster_template.uuid
     opts['keypair'] = args.keypair
+    opts['docker_volume_size'] = args.docker_volume_size
     opts['node_count'] = args.node_count
     opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url

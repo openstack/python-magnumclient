@@ -263,6 +263,17 @@ class ClusterManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(cluster)
 
+    def test_cluster_create_with_docker_volume_size(self):
+        cluster_with_volume_size = dict()
+        cluster_with_volume_size.update(CREATE_CLUSTER)
+        cluster_with_volume_size['docker_volume_size'] = 20
+        cluster = self.mgr.create(**cluster_with_volume_size)
+        expect = [
+            ('POST', '/v1/clusters', {}, cluster_with_volume_size),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(cluster)
+
     def test_cluster_create_with_discovery_url(self):
         cluster_with_discovery = dict()
         cluster_with_discovery.update(CREATE_CLUSTER)
