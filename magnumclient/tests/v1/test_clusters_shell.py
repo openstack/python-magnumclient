@@ -27,6 +27,7 @@ class FakeCluster(Cluster):
         self.uuid = kwargs.get('uuid', 'x')
         self.keypair = kwargs.get('keypair', 'x')
         self.docker_volume_size = kwargs.get('docker_volume_size', 3)
+        self.labels = kwargs.get('labels', 'key=val')
         self.name = kwargs.get('name', 'x')
         self.cluster_template_id = kwargs.get('cluster_template_id', 'x')
         self.stack_id = kwargs.get('stack_id', 'x')
@@ -58,6 +59,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                   master_count=1, node_count=1,
                                   create_timeout=60, keypair=None,
                                   docker_volume_size=None,
+                                  labels={},
                                   discovery_url=None):
         expected_args = {}
         expected_args['name'] = name
@@ -69,6 +71,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args['keypair'] = keypair
         if docker_volume_size is not None:
             expected_args['docker_volume_size'] = docker_volume_size
+        if labels is not None:
+            expected_args['labels'] = labels
 
         return expected_args
 
@@ -154,6 +158,11 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--docker-volume-size 20')
         expected_args = self._get_expected_args_create('xxx',
                                                        docker_volume_size=20)
+
+        self._test_arg_success('cluster-create --cluster-template xxx '
+                               '--labels key=val')
+        expected_args = self._get_expected_args_create('xxx',
+                                                       labels={'key': 'val'})
         mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('cluster-create test '
@@ -280,6 +289,11 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self._test_arg_failure('cluster-create --docker_volume_size 20',
                                self._mandatory_arg_error)
         mock_create.assert_not_called()
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
+    def test_cluster_create_failure_only_labels(self, mock_create):
+        self._test_arg_failure('cluster-create --labels key=val',
+                               self._mandatory_arg_error)
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_node_count(self, mock_create):

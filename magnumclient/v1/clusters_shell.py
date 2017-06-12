@@ -105,6 +105,11 @@ def do_cluster_list(cs, args):
            metavar='<docker-volume-size>',
            type=int,
            help=_('The size in GB for the docker volume to use'))
+@utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
+           action='append', default=[],
+           help=_('Arbitrary labels in the form of key=value pairs '
+                  'to associate with a cluster. '
+                  'May be used multiple times.'))
 @utils.arg('--node-count',
            metavar='<node-count>',
            type=int,
@@ -137,6 +142,8 @@ def do_cluster_create(cs, args):
     opts['keypair'] = args.keypair
     if args.docker_volume_size is not None:
         opts['docker_volume_size'] = args.docker_volume_size
+    if args.labels is not None:
+        opts['labels'] = magnum_utils.handle_labels(args.labels)
     opts['node_count'] = args.node_count
     opts['master_count'] = args.master_count
     opts['discovery_url'] = args.discovery_url

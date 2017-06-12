@@ -274,6 +274,17 @@ class ClusterManagerTest(testtools.TestCase):
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(cluster)
 
+    def test_cluster_create_with_labels(self):
+        cluster_with_labels = dict()
+        cluster_with_labels.update(CREATE_CLUSTER)
+        cluster_with_labels['labels'] = "key=val"
+        cluster = self.mgr.create(**cluster_with_labels)
+        expect = [
+            ('POST', '/v1/clusters', {}, cluster_with_labels),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(cluster)
+
     def test_cluster_create_with_discovery_url(self):
         cluster_with_discovery = dict()
         cluster_with_discovery.update(CREATE_CLUSTER)
