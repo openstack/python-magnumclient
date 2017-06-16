@@ -61,7 +61,7 @@ CLUSTERTEMPLATE2 = {
     'network_driver': 'flannel',
     'volume_driver': 'cinder',
     'dns_nameserver': '8.8.1.2',
-    'docker_volume_size': '50',
+    'docker_volume_size': '71',
     'docker_storage_driver': 'overlay',
     'coe': 'kubernetes',
     'labels': 'key2=val2,key22=val22',
@@ -377,6 +377,24 @@ class ClusterTemplateManagerTest(testtools.TestCase):
         expect = [
             ('POST', '/v1/clustertemplates', {},
              cluster_template_with_keypair),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(cluster_template)
+        self.assertEqual(CLUSTERTEMPLATE1['docker_volume_size'],
+                         cluster_template.docker_volume_size)
+        self.assertEqual(CLUSTERTEMPLATE1['docker_storage_driver'],
+                         cluster_template.docker_storage_driver)
+
+    def test_clustertemplate_create_with_docker_volume_size(self):
+        cluster_template_with_docker_volume_size = dict()
+        cluster_template_with_docker_volume_size.update(CREATE_CLUSTERTEMPLATE)
+        cluster_template_with_docker_volume_size['docker_volume_size'] = 11
+
+        cluster_template = self.mgr.create(
+            **cluster_template_with_docker_volume_size)
+        expect = [
+            ('POST', '/v1/clustertemplates', {},
+             cluster_template_with_docker_volume_size),
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertTrue(cluster_template)
