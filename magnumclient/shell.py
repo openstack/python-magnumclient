@@ -307,6 +307,8 @@ class OpenStackMagnumShell(object):
         if profiler:
             parser.add_argument('--profile',
                                 metavar='HMAC_KEY',
+                                default=cliutils.env('OS_PROFILE',
+                                                     default=None),
                                 help='HMAC key to use for encrypting context '
                                 'data for performance profiling of operation. '
                                 'This key should be the value of the HMAC key '
