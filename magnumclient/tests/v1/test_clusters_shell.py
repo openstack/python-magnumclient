@@ -67,7 +67,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args['create_timeout'] = create_timeout
         expected_args['discovery_url'] = discovery_url
         expected_args['keypair'] = keypair
-        expected_args['docker_volume_size'] = docker_volume_size
+        if docker_volume_size is not None:
+            expected_args['docker_volume_size'] = docker_volume_size
 
         return expected_args
 
