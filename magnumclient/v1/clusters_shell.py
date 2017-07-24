@@ -70,8 +70,7 @@ def do_cluster_list(cs, args):
                                 sort_key=args.sort_key,
                                 sort_dir=args.sort_dir)
     columns = [
-        'uuid', 'name', 'keypair', 'docker_volume_size', 'node_count',
-        'master_count', 'status'
+        'uuid', 'name', 'keypair', 'node_count', 'master_count', 'status'
     ]
     columns += utils._get_list_table_columns_and_formatters(
         args.fields, clusters,
