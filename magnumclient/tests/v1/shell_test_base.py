@@ -51,9 +51,9 @@ class TestCommandLineArgument(utils.TestCase):
         ".*?^Try 'magnum help ",
         ]
 
-    _duplicate_name_arg_error = [
+    _duplicate_arg_error = [
         '.*?^usage: ',
-        '.*?^error: (Duplicate "<name>" arguments:)',
+        '.*?^error: (Duplicate "<.*>" arguments:)',
         ".*?^Try 'magnum help ",
         ]
 

@@ -14,7 +14,7 @@
 
 import mock
 
-from magnumclient.common import cliutils as utils
+from magnumclient.common import cliutils
 from magnumclient.tests.v1 import shell_test_base
 from magnumclient.v1 import certificates_shell
 
@@ -28,8 +28,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         mockbay.status = "CREATE_COMPLETE"
         mockbay.uuid = "xxx"
         mock_bay_get.return_value = mockbay
-        self._test_arg_success('ca-show '
-                               '--bay xxx')
+        self._test_arg_success('ca-show --bay xxx')
         expected_args = {}
         expected_args['cluster_uuid'] = mockbay.uuid
         mock_cert_get.assert_called_once_with(**expected_args)
@@ -41,11 +40,47 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         mockcluster.status = "CREATE_COMPLETE"
         mockcluster.uuid = "xxx"
         mock_cluster_get.return_value = mockcluster
-        self._test_arg_success('ca-show '
-                               '--cluster xxx')
+        self._test_arg_success('ca-show xxx')
         expected_args = {}
         expected_args['cluster_uuid'] = mockcluster.uuid
         mock_cert_get.assert_called_once_with(**expected_args)
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
+    def test_positional_cluster_bay_ca_show_success(self, mock_cert_get,
+                                                    mock_cluster_get):
+        mockcluster = mock.MagicMock()
+        mockcluster.status = "CREATE_COMPLETE"
+        mockcluster.uuid = "xxx"
+        mock_cluster_get.return_value = mockcluster
+        self._test_arg_success('ca-show xxx --bay not-found')
+        expected_args = {}
+        expected_args['cluster_uuid'] = mockcluster.uuid
+        mock_cert_get.assert_called_once_with(**expected_args)
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
+    def test_cluster_bay_ca_show_success(self, mock_cert_get,
+                                         mock_cluster_get):
+        mockcluster = mock.MagicMock()
+        mockcluster.status = "CREATE_COMPLETE"
+        mockcluster.uuid = "xxx"
+        mock_cluster_get.return_value = mockcluster
+        self._test_arg_success('ca-show --cluster xxx --bay not-found')
+        expected_args = {}
+        expected_args['cluster_uuid'] = mockcluster.uuid
+        mock_cert_get.assert_called_once_with(**expected_args)
+
+    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
+    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
+    def test_ca_show_failure_duplicate_arg(self, mock_cert_get,
+                                           mock_cluster_get):
+        self.assertRaises(cliutils.DuplicateArgs,
+                          self._test_arg_failure,
+                          'ca-show foo --cluster foo',
+                          self._duplicate_arg_error)
+        mock_cert_get.assert_not_called()
+        mock_cluster_get.assert_not_called()
 
     @mock.patch('os.path.isfile')
     @mock.patch('magnumclient.v1.bays.BayManager.get')
@@ -135,11 +170,10 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
     def test_ca_show_failure_with_invalid_field(self, mock_cert_get,
                                                 mock_cluster_get):
-        _error_msg = [".*?^--cluster or --bay"]
-        self.assertRaises(utils.MissingArgs,
+        self.assertRaises(cliutils.MissingArgs,
                           self._test_arg_failure,
                           'ca-show',
-                          _error_msg)
+                          self._few_argument_error)
         mock_cert_get.assert_not_called()
         mock_cluster_get.assert_not_called()
 

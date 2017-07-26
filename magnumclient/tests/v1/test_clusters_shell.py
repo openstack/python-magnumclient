@@ -320,7 +320,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                           self._test_arg_failure,
                           'cluster-create foo --name bar '
                           '--cluster-template xxx',
-                          self._duplicate_name_arg_error)
+                          self._duplicate_arg_error)
         mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.delete')

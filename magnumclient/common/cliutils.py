@@ -35,14 +35,20 @@ from six import moves
 from magnumclient.i18n import _
 
 
-NAME_DEPRECATION_BASE = ('%sThe --name parameter is deprecated and '
-                         'will be removed in a future release. Use the '
-                         '<name> positional parameter %s.')
+DEPRECATION_BASE = ('%sThe --%s parameter is deprecated and '
+                    'will be removed in a future release. Use the '
+                    '<%s> positional parameter %s.')
 
-NAME_DEPRECATION_HELP = NAME_DEPRECATION_BASE % ('', 'instead')
+NAME_DEPRECATION_HELP = DEPRECATION_BASE % ('', 'name', 'name', 'instead')
 
-NAME_DEPRECATION_WARNING = NAME_DEPRECATION_BASE % (
-    'WARNING: ', 'to avoid seeing this message')
+NAME_DEPRECATION_WARNING = DEPRECATION_BASE % (
+    'WARNING: ', 'name', 'name', 'to avoid seeing this message')
+
+CLUSTER_DEPRECATION_HELP = DEPRECATION_BASE % ('', 'cluster', 'cluster',
+                                               'instead')
+
+CLUSTER_DEPRECATION_WARNING = DEPRECATION_BASE % (
+    'WARNING: ', 'cluster', 'cluster', 'to avoid seeing this message')
 
 
 def deprecation_message(preamble, new_name):
@@ -105,6 +111,14 @@ def validate_name_args(positional_name, optional_name):
         print(NAME_DEPRECATION_WARNING)
     if positional_name and optional_name:
         raise DuplicateArgs("<name>", (positional_name, optional_name))
+
+
+def validate_cluster_args(positional_cluster, optional_cluster):
+    if optional_cluster:
+        print(CLUSTER_DEPRECATION_WARNING)
+    if positional_cluster and optional_cluster:
+        raise DuplicateArgs("<cluster>", (positional_cluster,
+                                          optional_cluster))
 
 
 def deprecated(message):
