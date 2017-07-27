@@ -19,13 +19,6 @@ from magnumclient.common import utils as magnum_utils
 from magnumclient import exceptions
 from magnumclient.i18n import _
 
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
-from cryptography import x509
-from cryptography.x509.oid import NameOID
-
 
 # Maps old parameter names to their new names and whether they are required
 # e.g. keypair-id to keypair
@@ -265,7 +258,7 @@ def do_cluster_config(cs, args):
     }
 
     if not cluster_template.tls_disabled:
-        tls = _generate_csr_and_key()
+        tls = magnum_utils.generate_csr_and_key()
         tls['ca'] = cs.certificates.get(**opts).pem
         opts['csr'] = tls['csr']
         tls['cert'] = cs.certificates.create(**opts).pem
@@ -278,115 +271,5 @@ def do_cluster_config(cs, args):
                 f.write(tls[k])
                 f.close()
 
-    print(_config_cluster(cluster, cluster_template,
-                          cfg_dir=args.dir, force=args.force))
-
-
-def _config_cluster(cluster, cluster_template, cfg_dir, force=False):
-    """Return and write configuration for the given cluster."""
-    if cluster_template.coe == 'kubernetes':
-        return _config_cluster_kubernetes(cluster, cluster_template,
-                                          cfg_dir, force)
-    elif cluster_template.coe == 'swarm':
-        return _config_cluster_swarm(cluster, cluster_template, cfg_dir, force)
-
-
-def _config_cluster_kubernetes(cluster, cluster_template,
-                               cfg_dir, force=False):
-    """Return and write configuration for the given kubernetes cluster."""
-    cfg_file = "%s/config" % cfg_dir
-    if cluster_template.tls_disabled:
-        cfg = ("apiVersion: v1\n"
-               "clusters:\n"
-               "- cluster:\n"
-               "    server: %(api_address)s\n"
-               "  name: %(name)s\n"
-               "contexts:\n"
-               "- context:\n"
-               "    cluster: %(name)s\n"
-               "    user: %(name)s\n"
-               "  name: %(name)s\n"
-               "current-context: %(name)s\n"
-               "kind: Config\n"
-               "preferences: {}\n"
-               "users:\n"
-               "- name: %(name)s'\n"
-               % {'name': cluster.name, 'api_address': cluster.api_address})
-    else:
-        cfg = ("apiVersion: v1\n"
-               "clusters:\n"
-               "- cluster:\n"
-               "    certificate-authority: ca.pem\n"
-               "    server: %(api_address)s\n"
-               "  name: %(name)s\n"
-               "contexts:\n"
-               "- context:\n"
-               "    cluster: %(name)s\n"
-               "    user: %(name)s\n"
-               "  name: default/%(name)s\n"
-               "current-context: default/%(name)s\n"
-               "kind: Config\n"
-               "preferences: {}\n"
-               "users:\n"
-               "- name: %(name)s\n"
-               "  user:\n"
-               "    client-certificate: cert.pem\n"
-               "    client-key: key.pem\n"
-               % {'name': cluster.name, 'api_address': cluster.api_address})
-
-    if os.path.exists(cfg_file) and not force:
-        raise exceptions.CommandError("File %s exists, aborting." % cfg_file)
-    else:
-        f = open(cfg_file, "w")
-        f.write(cfg)
-        f.close()
-    if 'csh' in os.environ['SHELL']:
-        return "setenv KUBECONFIG %s\n" % cfg_file
-    else:
-        return "export KUBECONFIG=%s\n" % cfg_file
-
-
-def _config_cluster_swarm(cluster, cluster_template, cfg_dir, force=False):
-    """Return and write configuration for the given swarm cluster."""
-    tls = "" if cluster_template.tls_disabled else True
-    if 'csh' in os.environ['SHELL']:
-        result = ("setenv DOCKER_HOST %(docker_host)s\n"
-                  "setenv DOCKER_CERT_PATH %(cfg_dir)s\n"
-                  "setenv DOCKER_TLS_VERIFY %(tls)s\n"
-                  % {'docker_host': cluster.api_address,
-                     'cfg_dir': cfg_dir,
-                     'tls': tls}
-                  )
-    else:
-        result = ("export DOCKER_HOST=%(docker_host)s\n"
-                  "export DOCKER_CERT_PATH=%(cfg_dir)s\n"
-                  "export DOCKER_TLS_VERIFY=%(tls)s\n"
-                  % {'docker_host': cluster.api_address,
-                     'cfg_dir': cfg_dir,
-                     'tls': tls}
-                  )
-
-    return result
-
-
-def _generate_csr_and_key():
-    """Return a dict with a new csr and key."""
-    key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048,
-        backend=default_backend())
-
-    csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
-        x509.NameAttribute(NameOID.COMMON_NAME, u"Magnum User"),
-    ])).sign(key, hashes.SHA256(), default_backend())
-
-    result = {
-        'csr': csr.public_bytes(
-            encoding=serialization.Encoding.PEM).decode("utf-8"),
-        'key': key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption()).decode("utf-8"),
-    }
-
-    return result
+    print(magnum_utils.config_cluster(cluster, cluster_template,
+                                      cfg_dir=args.dir, force=args.force))

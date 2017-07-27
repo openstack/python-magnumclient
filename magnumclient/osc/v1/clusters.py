@@ -12,7 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import os
+
 from magnumclient.common import utils as magnum_utils
+from magnumclient import exceptions
 from magnumclient.i18n import _
 
 from osc_lib.command import command
@@ -242,3 +245,68 @@ class UpdateCluster(command.Command):
                                    patch)
         print("Request to update cluster %s has been accepted." %
               parsed_args.cluster)
+
+
+class ConfigCluster(command.Command):
+    _description = _("Get Configuration for a Cluster")
+
+    def get_parser(self, prog_name):
+        parser = super(ConfigCluster, self).get_parser(prog_name)
+        parser.add_argument(
+            'cluster',
+            metavar='<cluster>',
+            help=_('The name or UUID of cluster to update'))
+        parser.add_argument(
+            '--dir',
+            metavar='<dir>',
+            default='.',
+            help=_('Directory to save the certificate and config files.'))
+        parser.add_argument(
+            '--force',
+            metavar='<force>',
+            default=False,
+            help=_('Directory to save the certificate and config files.'))
+
+        return parser
+
+    def take_action(self, parsed_args):
+        """Configure native client to access cluster.
+
+        You can source the output of this command to get the native client of
+        the corresponding COE configured to access the cluster.
+
+        """
+        self.log.debug("take_action(%s)", parsed_args)
+
+        mag_client = self.app.client_manager.container_infra
+
+        parsed_args.dir = os.path.abspath(parsed_args.dir)
+        cluster = mag_client.clusters.get(parsed_args.cluster)
+        if cluster.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE',
+                                  'ROLLBACK_COMPLETE'):
+            raise exceptions.CommandError("cluster in status %s" %
+                                          cluster.status)
+        cluster_template = mag_client.cluster_templates.get(
+            cluster.cluster_template_id)
+        opts = {
+            'cluster_uuid': cluster.uuid,
+        }
+
+        if not cluster_template.tls_disabled:
+            tls = magnum_utils.generate_csr_and_key()
+            tls['ca'] = mag_client.certificates.get(**opts).pem
+            opts['csr'] = tls['csr']
+            tls['cert'] = mag_client.certificates.create(**opts).pem
+            for k in ('key', 'cert', 'ca'):
+                fname = "%s/%s.pem" % (parsed_args.dir, k)
+                if os.path.exists(fname) and not parsed_args.force:
+                    raise Exception("File %s exists, aborting." % fname)
+                else:
+                    f = open(fname, "w")
+                    f.write(tls[k])
+                    f.close()
+
+        print(magnum_utils.config_cluster(cluster,
+                                          cluster_template,
+                                          parsed_args.dir,
+                                          force=parsed_args.force))
