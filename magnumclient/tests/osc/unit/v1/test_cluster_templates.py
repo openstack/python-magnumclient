@@ -15,9 +15,12 @@
 
 import copy
 import mock
+from mock import call
 
 from magnumclient.osc.v1 import cluster_templates as osc_ct
 from magnumclient.tests.osc.unit.v1 import fakes as magnum_fakes
+
+from osc_lib import exceptions as osc_exceptions
 
 
 class TestClusterTemplate(magnum_fakes.TestMagnumClientOSCV1):
@@ -134,6 +137,55 @@ class TestClusterTemplateCreate(TestClusterTemplate):
                           self.check_parser, self.cmd, arglist, verifylist)
 
 
+class TestClusterTemplateDelete(TestClusterTemplate):
+
+    def setUp(self):
+        super(TestClusterTemplateDelete, self).setUp()
+
+        self.cluster_templates_mock.delete = mock.Mock()
+        self.cluster_templates_mock.delete.return_value = None
+
+        # Get the command object to test
+        self.cmd = osc_ct.DeleteClusterTemplate(self.app, None)
+
+    def test_cluster_template_delete_one(self):
+        arglist = ['foo']
+        verifylist = [('cluster-templates', ['foo'])]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.delete.assert_called_with('foo')
+
+    def test_cluster_template_delete_multiple(self):
+        arglist = ['foo', 'bar']
+        verifylist = [('cluster-templates', ['foo', 'bar'])]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.delete.assert_has_calls([call('foo'),
+                                                            call('bar')])
+
+    def test_cluster_template_delete_bad_uuid(self):
+        self.cluster_templates_mock.delete.side_effect = (
+            osc_exceptions.NotFound(404))
+        arglist = ['foo']
+        verifylist = [('cluster-templates', ['foo'])]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        returns = self.cmd.take_action(parsed_args)
+
+        self.assertEqual(returns, None)
+
+    def test_cluster_template_delete_no_uuid(self):
+        arglist = []
+        verifylist = [('cluster-templates', [])]
+
+        self.assertRaises(magnum_fakes.MagnumParseException,
+                          self.check_parser, self.cmd, arglist, verifylist)
+
+
 class TestClusterTemplateList(TestClusterTemplate):
     attr = dict()
     attr['name'] = 'fake-ct-1'
@@ -220,6 +272,91 @@ class TestClusterTemplateList(TestClusterTemplate):
             ('sort_key', None),
             ('sort_dir', 'foo'),
             ('fields', None),
+        ]
+
+        self.assertRaises(magnum_fakes.MagnumParseException,
+                          self.check_parser, self.cmd, arglist, verifylist)
+
+
+class TestClusterTemplateShow(TestClusterTemplate):
+    attr = dict()
+    attr['name'] = 'fake-ct-1'
+
+    _cluster_template = (
+        magnum_fakes.FakeClusterTemplate.create_one_cluster_template(attr))
+
+    columns = osc_ct.CLUSTER_TEMPLATE_ATTRIBUTES
+
+    def setUp(self):
+        super(TestClusterTemplateShow, self).setUp()
+
+        datalist = map(lambda x: getattr(self._cluster_template, x),
+                       self.columns)
+
+        self.show_data_list = tuple(map(lambda x: x if x is not None else '-',
+                                        datalist))
+
+        self.cluster_templates_mock.get = mock.Mock()
+        self.cluster_templates_mock.get.return_value = self._cluster_template
+
+        # Get the command object to test
+        self.cmd = osc_ct.ShowClusterTemplate(self.app, None)
+
+    def test_cluster_template_show(self):
+        arglist = ['fake-ct-1']
+        verifylist = [('cluster-template', 'fake-ct-1')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        columns, data = self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.get.assert_called_with('fake-ct-1')
+        self.assertEqual(self.columns, columns)
+        self.assertEqual(self.show_data_list, data)
+
+    def test_cluster_template_show_no_ct_fail(self):
+        arglist = []
+        verifylist = []
+
+        self.assertRaises(magnum_fakes.MagnumParseException,
+                          self.check_parser, self.cmd, arglist, verifylist)
+
+
+class TestClusterTemplateUpdate(TestClusterTemplate):
+
+    def setUp(self):
+        super(TestClusterTemplateUpdate, self).setUp()
+
+        attr = dict()
+        attr['name'] = 'fake-ct-1'
+        ct = magnum_fakes.FakeClusterTemplate.create_one_cluster_template(attr)
+
+        self.cluster_templates_mock.update = mock.Mock()
+        self.cluster_templates_mock.update.return_value = ct
+
+        # Get the command object to test
+        self.cmd = osc_ct.UpdateClusterTemplate(self.app, None)
+
+    def test_cluster_template_update_pass(self):
+        arglist = ['foo', 'remove', 'bar']
+        verifylist = [
+            ('cluster-template', 'foo'),
+            ('op', 'remove'),
+            ('attributes', [['bar']])
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'remove', 'path': '/bar'}]
+        )
+
+    def test_cluster_template_update_bad_op(self):
+        arglist = ['foo', 'bar', 'snafu']
+        verifylist = [
+            ('cluster-template', 'foo'),
+            ('op', 'bar'),
+            ('attributes', ['snafu'])
         ]
 
         self.assertRaises(magnum_fakes.MagnumParseException,
