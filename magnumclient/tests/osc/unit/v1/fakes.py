@@ -187,6 +187,7 @@ class FakeCluster(object):
             'uuid': '3a369884-b6ba-484f-a206-919b4b718aff',
             'stack_id': 'c4554582-77bd-4734-8f1a-72c3c40e5fb4',
             'status_reason': None,
+            'labels': {},
             'created_at': '2017-03-16T18:40:39+00:00',
             'updated_at': '2017-03-16T18:40:45+00:00',
             'coe_version': None,

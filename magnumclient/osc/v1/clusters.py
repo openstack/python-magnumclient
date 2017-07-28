@@ -32,6 +32,7 @@ CLUSTER_ATTRIBUTES = [
     'created_at',
     'updated_at',
     'coe_version',
+    'labels',
     'faults',
     'keypair',
     'api_address',
@@ -68,6 +69,13 @@ class CreateCluster(command.Command):
                             metavar='<docker-volume-size>',
                             help=('The size in GB for the docker volume to '
                                   'use.'))
+        parser.add_argument('--labels',
+                            metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
+                            action='append',
+                            default=[],
+                            help=_('Arbitrary labels in the form of key=value'
+                                   'pairs to associate with a cluster '
+                                   'template. May be used multiple times.'))
         parser.add_argument('--keypair',
                             default=None,
                             metavar='<keypair>',
@@ -110,6 +118,10 @@ class CreateCluster(command.Command):
             'name': parsed_args.name,
             'node_count': parsed_args.node_count,
         }
+
+        if parsed_args.labels is not None:
+            args['labels'] = magnum_utils.handle_labels(parsed_args.labels)
+
         cluster = mag_client.clusters.create(**args)
         print("Request to create cluster %s accepted"
               % cluster.uuid)

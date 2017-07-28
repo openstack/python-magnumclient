@@ -43,6 +43,7 @@ class TestClusterCreate(TestCluster):
             'create_timeout': 60,
             'discovery_url': None,
             'docker_volume_size': None,
+            'labels': {},
             'keypair': None,
             'master_count': 1,
             'name': None,
