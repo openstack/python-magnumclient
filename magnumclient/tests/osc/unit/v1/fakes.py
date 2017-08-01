@@ -200,7 +200,8 @@ class FakeCluster(object):
             'discovery_url': 'https://fake.cluster',
             'master_count': 1,
             'container_version': None,
-            'name': 'fake-cluster'
+            'name': 'fake-cluster',
+            'master_flavor_id': None,
         }
 
         # Overwrite default attributes.

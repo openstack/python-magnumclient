@@ -42,7 +42,8 @@ CLUSTER_ATTRIBUTES = [
     'discovery_url',
     'master_count',
     'container_version',
-    'name'
+    'name',
+    'master_flavor_id',
 ]
 
 
@@ -101,6 +102,12 @@ class CreateCluster(command.Command):
                             metavar='<timeout>',
                             help=('The timeout for cluster creation time. The '
                                   'default is 60 minutes.'))
+        parser.add_argument(
+            '--master-flavor',
+            dest='master_flavor',
+            metavar='<master-flavor>',
+            help=_('The nova flavor name or UUID to use when launching the '
+                   'master node of the Cluster.'))
 
         return parser
 
@@ -117,6 +124,7 @@ class CreateCluster(command.Command):
             'master_count': parsed_args.master_count,
             'name': parsed_args.name,
             'node_count': parsed_args.node_count,
+            'master_flavor_id': parsed_args.master_flavor,
         }
 
         if parsed_args.labels is not None:

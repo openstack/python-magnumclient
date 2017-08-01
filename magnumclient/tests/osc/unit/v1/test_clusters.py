@@ -47,7 +47,8 @@ class TestClusterCreate(TestCluster):
             'keypair': None,
             'master_count': 1,
             'name': 'fake-cluster-1',
-            'node_count': 1
+            'node_count': 1,
+            'master_flavor_id': None,
         }
 
         self.clusters_mock.create = mock.Mock()
