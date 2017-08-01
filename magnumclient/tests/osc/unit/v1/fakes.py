@@ -203,6 +203,7 @@ class FakeCluster(object):
             'container_version': None,
             'name': 'fake-cluster',
             'master_flavor_id': None,
+            'flavor_id': 'm1.medium',
         }
 
         # Overwrite default attributes.

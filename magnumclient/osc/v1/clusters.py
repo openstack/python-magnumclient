@@ -44,6 +44,7 @@ CLUSTER_ATTRIBUTES = [
     'container_version',
     'name',
     'master_flavor_id',
+    'flavor_id',
 ]
 
 
@@ -108,6 +109,11 @@ class CreateCluster(command.Command):
             metavar='<master-flavor>',
             help=_('The nova flavor name or UUID to use when launching the '
                    'master node of the Cluster.'))
+        parser.add_argument(
+            '--flavor',
+            metavar='<flavor>',
+            help=_('The nova flavor name or UUID to use when launching the '
+                   'Cluster.'))
 
         return parser
 
@@ -125,6 +131,7 @@ class CreateCluster(command.Command):
             'name': parsed_args.name,
             'node_count': parsed_args.node_count,
             'master_flavor_id': parsed_args.master_flavor,
+            'flavor_id': parsed_args.flavor,
         }
 
         if parsed_args.labels is not None:

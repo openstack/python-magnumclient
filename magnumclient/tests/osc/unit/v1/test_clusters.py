@@ -44,6 +44,7 @@ class TestClusterCreate(TestCluster):
             'discovery_url': None,
             'docker_volume_size': None,
             'labels': {},
+            'flavor_id': None,
             'keypair': None,
             'master_count': 1,
             'name': 'fake-cluster-1',

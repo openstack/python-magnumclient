@@ -22,6 +22,7 @@ CREATION_ATTRIBUTES.append('keypair')
 CREATION_ATTRIBUTES.append('docker_volume_size')
 CREATION_ATTRIBUTES.append('labels')
 CREATION_ATTRIBUTES.append('master_flavor_id')
+CREATION_ATTRIBUTES.append('flavor_id')
 
 
 class Cluster(baseunit.BaseTemplate):
