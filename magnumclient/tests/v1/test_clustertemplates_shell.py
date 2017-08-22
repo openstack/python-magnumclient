@@ -681,6 +681,15 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
 
     @mock.patch(
         'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
+    def test_cluster_template_update_label(self, mock_update):
+        self._test_arg_success('cluster-template-update test '
+                               'replace labels=key1=val1')
+        patch = [{'op': 'replace', 'path': '/labels',
+                 'value': "{'key1': 'val1'}"}]
+        mock_update.assert_called_once_with('test', patch)
+
+    @mock.patch(
+        'magnumclient.v1.cluster_templates.ClusterTemplateManager.update')
     def test_cluster_template_update_failure_wrong_op(self, mock_update):
         _error_msg = [
             '.*?^usage: magnum cluster-template-update ',
