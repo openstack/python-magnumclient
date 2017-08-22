@@ -78,7 +78,13 @@ def args_array_to_patch(op, attributes):
             attr = '/' + attr
         if op in ['add', 'replace']:
             path, value = split_and_deserialize(attr)
-            patch.append({'op': op, 'path': path, 'value': value})
+            if path == "/labels":
+                a = []
+                a.append(value)
+                value = str(handle_labels(a))
+                patch.append({'op': op, 'path': path, 'value': value})
+            else:
+                patch.append({'op': op, 'path': path, 'value': value})
 
         elif op == "remove":
             # For remove only the key is needed
