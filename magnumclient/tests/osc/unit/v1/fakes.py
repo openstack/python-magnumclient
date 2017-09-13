@@ -47,6 +47,7 @@ class MagnumFakeContainerInfra(object):
     def __init__(self):
         self.cluster_templates = FakeBaseModelManager()
         self.clusters = FakeBaseModelManager()
+        self.mservices = FakeBaseModelManager()
 
 
 class MagnumFakeClientManager(osc_fakes.FakeClientManager):
