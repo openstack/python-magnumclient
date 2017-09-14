@@ -42,12 +42,22 @@ class FakeBaseModelManager(object):
     def update(self, id, patch):
         pass
 
+    def rotate_ca(self, **kwargs):
+        pass
+
+
+class FakeStatsModelManager(object):
+    def list(self, **kwargs):
+        pass
+
 
 class MagnumFakeContainerInfra(object):
     def __init__(self):
         self.cluster_templates = FakeBaseModelManager()
         self.clusters = FakeBaseModelManager()
         self.mservices = FakeBaseModelManager()
+        self.certificates = FakeBaseModelManager()
+        self.stats = FakeStatsModelManager()
 
 
 class MagnumFakeClientManager(osc_fakes.FakeClientManager):
@@ -204,6 +214,7 @@ class FakeCluster(object):
             'name': 'fake-cluster',
             'master_flavor_id': None,
             'flavor_id': 'm1.medium',
+            'project_id': None,
         }
 
         # Overwrite default attributes.

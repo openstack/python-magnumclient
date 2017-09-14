@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Implemented Openstack command for ca-show, ca-sign,
+    ca-rotate and stats-list.
