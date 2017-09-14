@@ -71,7 +71,7 @@ class CreateClusterTemplate(command.ShowOne):
         parser = super(CreateClusterTemplate, self).get_parser(prog_name)
 
         parser.add_argument(
-            '--name',
+            'name',
             metavar='<name>',
             help=_('Name of the cluster template to create.'))
         parser.add_argument(
