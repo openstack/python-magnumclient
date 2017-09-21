@@ -39,6 +39,7 @@ def _show_quota(quota):
            action='store_true',
            default=False,
            help=_('Flag to indicate list all tenant quotas.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_quotas_list(cs, args):
     """Print a list of available quotas."""
     quotas = cs.quotas.list(marker=args.marker,
@@ -65,6 +66,7 @@ def do_quotas_list(cs, args):
            type=int,
            default=1,
            help=_('Max resource limit.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_quotas_create(cs, args):
     """Create a quota."""
 
@@ -91,6 +93,7 @@ def do_quotas_create(cs, args):
            required=True,
            metavar='<resource>',
            help=_('Resource name'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_quotas_delete(cs, args):
     """Delete specified resource quota."""
     try:
@@ -113,6 +116,7 @@ def do_quotas_delete(cs, args):
            required=True,
            metavar='<resource>',
            help=_('Resource name'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_quotas_show(cs, args):
     """Show details about the given project resource quota."""
     quota = cs.quotas.get(args.project_id, args.resource)
@@ -132,6 +136,7 @@ def do_quotas_show(cs, args):
            type=int,
            default=1,
            help=_('Max resource limit.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_quotas_update(cs, args):
     """Update information about the given project resource quota."""
     patch = dict()
