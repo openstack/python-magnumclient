@@ -30,6 +30,7 @@ class AmbiguousAuthSystem(ClientException):
     """Could not obtain token and endpoint using provided credentials."""
     pass
 
+
 # Alias for backwards compatibility
 AmbigiousAuthSystem = AmbiguousAuthSystem
 

@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Implemented Openstack command for quotas-create,
+    quotas-update, quotas-delete, quotas-show and
+    quotas-list
