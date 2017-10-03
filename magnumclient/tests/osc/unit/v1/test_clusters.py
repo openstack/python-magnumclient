@@ -46,7 +46,7 @@ class TestClusterCreate(TestCluster):
             'labels': {},
             'keypair': None,
             'master_count': 1,
-            'name': None,
+            'name': 'fake-cluster-1',
             'node_count': 1
         }
 
@@ -69,10 +69,12 @@ class TestClusterCreate(TestCluster):
         """Verifies required arguments."""
 
         arglist = [
-            '--cluster-template', self._cluster.cluster_template_id
+            '--cluster-template', self._cluster.cluster_template_id,
+            self._cluster.name
         ]
         verifylist = [
-            ('cluster_template', self._cluster.cluster_template_id)
+            ('cluster_template', self._cluster.cluster_template_id),
+            ('name', self._cluster.name)
         ]
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.cmd.take_action(parsed_args)
@@ -82,7 +84,7 @@ class TestClusterCreate(TestCluster):
         """Verifies missing required arguments."""
 
         arglist = [
-            '--name', self._cluster.name
+            self._cluster.name
         ]
         verifylist = [
             ('name', self._cluster.name)

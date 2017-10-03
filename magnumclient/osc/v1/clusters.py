@@ -86,7 +86,7 @@ class CreateCluster(command.Command):
                             default=1,
                             metavar='<master-count>',
                             help='The number of master nodes for the cluster.')
-        parser.add_argument('--name',
+        parser.add_argument('name',
                             metavar='<name>',
                             help='Name of the cluster to create.')
         parser.add_argument('--node-count',

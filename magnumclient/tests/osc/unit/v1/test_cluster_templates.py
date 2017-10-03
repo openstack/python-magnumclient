@@ -91,7 +91,7 @@ class TestClusterTemplateCreate(TestClusterTemplate):
             '--coe', self.new_ct.coe,
             '--external-network', self.new_ct.external_network_id,
             '--image', self.new_ct.image_id,
-            '--name', self.new_ct.name
+            self.new_ct.name
         ]
         verifylist = [
             ('coe', self.new_ct.coe),
@@ -109,13 +109,11 @@ class TestClusterTemplateCreate(TestClusterTemplate):
 
         arglist = [
             '--external-network', self.new_ct.external_network_id,
-            '--image', self.new_ct.image_id,
-            '--name', self.new_ct.name
+            '--image', self.new_ct.image_id
         ]
         verifylist = [
             ('external_network', self.new_ct.external_network_id),
-            ('image', self.new_ct.image_id),
-            ('name', self.new_ct.name)
+            ('image', self.new_ct.image_id)
         ]
         self.assertRaises(magnum_fakes.MagnumParseException,
                           self.check_parser, self.cmd, arglist, verifylist)
