@@ -263,9 +263,10 @@ class ConfigCluster(command.Command):
             help=_('Directory to save the certificate and config files.'))
         parser.add_argument(
             '--force',
-            metavar='<force>',
+            action='store_true',
+            dest='force',
             default=False,
-            help=_('Directory to save the certificate and config files.'))
+            help=_('Overwrite files if existing.'))
 
         return parser
 
