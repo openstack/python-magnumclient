@@ -43,7 +43,6 @@ class TestClusterCreate(TestCluster):
             'create_timeout': 60,
             'discovery_url': None,
             'docker_volume_size': None,
-            'labels': {},
             'flavor_id': None,
             'keypair': None,
             'master_count': 1,
@@ -93,6 +92,29 @@ class TestClusterCreate(TestCluster):
         ]
         self.assertRaises(magnum_fakes.MagnumParseException,
                           self.check_parser, self.cmd, arglist, verifylist)
+
+    def test_cluster_create_with_labels(self):
+        """Verifies labels are properly parsed when given as argument."""
+
+        expected_args = self._default_args
+        expected_args['labels'] = {
+            'arg1': 'value1', 'arg2': 'value2'
+        }
+
+        arglist = [
+            '--cluster-template', self._cluster.cluster_template_id,
+            '--labels', 'arg1=value1',
+            '--labels', 'arg2=value2',
+            self._cluster.name
+        ]
+        verifylist = [
+            ('cluster_template', self._cluster.cluster_template_id),
+            ('labels', ['arg1=value1', 'arg2=value2']),
+            ('name', self._cluster.name)
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.create.assert_called_with(**expected_args)
 
 
 class TestClusterDelete(TestCluster):

@@ -110,7 +110,7 @@ class FakeClusterTemplate(object):
         ct_info = {
             'links': [],
             'insecure_registry': None,
-            'labels': {},
+            'labels': None,
             'updated_at': None,
             'floating_ip_enabled': True,
             'fixed_subnet': None,

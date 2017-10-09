@@ -106,7 +106,7 @@ def do_cluster_list(cs, args):
            type=int,
            help=_('The size in GB for the docker volume to use'))
 @utils.arg('--labels', metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
-           action='append', default=[],
+           action='append',
            help=_('Arbitrary labels in the form of key=value pairs '
                   'to associate with a cluster. '
                   'May be used multiple times.'))

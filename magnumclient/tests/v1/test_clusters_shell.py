@@ -59,7 +59,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                   master_count=1, node_count=1,
                                   create_timeout=60, keypair=None,
                                   docker_volume_size=None,
-                                  labels={},
+                                  labels=None,
                                   discovery_url=None):
         expected_args = {}
         expected_args['name'] = name

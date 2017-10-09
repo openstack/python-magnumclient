@@ -74,7 +74,6 @@ class CreateCluster(command.Command):
         parser.add_argument('--labels',
                             metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
                             action='append',
-                            default=[],
                             help=_('Arbitrary labels in the form of key=value'
                                    'pairs to associate with a cluster '
                                    'template. May be used multiple times.'))
