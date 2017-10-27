@@ -57,7 +57,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                            https_proxy=None, no_proxy=None, labels={},
                            tls_disabled=False, public=False,
                            master_lb_enabled=False, server_type='vm',
-                           floating_ip_enabled=True,
                            registry_enabled=False,
                            insecure_registry=None):
 
@@ -84,7 +83,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args['public'] = public
         expected_args['master_lb_enabled'] = master_lb_enabled
         expected_args['server_type'] = server_type
-        expected_args['floating_ip_enabled'] = floating_ip_enabled
         expected_args['registry_enabled'] = registry_enabled
         expected_args['insecure_registry'] = insecure_registry
 
@@ -111,8 +109,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                '--docker-storage-driver devicemapper '
                                '--public '
                                '--server-type vm '
-                               '--master-lb-enabled '
-                               '--floating-ip-enabled ')
+                               '--master-lb-enabled ')
         expected_args = \
             self._get_expected_args(name='test', image_id='test_image',
                                     keypair_id='test_keypair', coe='swarm',
@@ -128,7 +125,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                     docker_storage_driver='devicemapper',
                                     docker_volume_size=10,
                                     master_lb_enabled=True,
-                                    floating_ip_enabled=True,
                                     labels={'key': 'val'})
         mock_create.assert_called_with(**expected_args)
 

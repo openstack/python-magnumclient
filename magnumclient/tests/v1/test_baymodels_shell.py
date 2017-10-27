@@ -57,8 +57,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                            https_proxy=None, no_proxy=None, labels={},
                            tls_disabled=False, public=False,
                            master_lb_enabled=False, server_type='vm',
-                           floating_ip_enabled=True,
-                           registry_enabled=False):
+                           registry_enabled=False, floating_ip_enabled=None):
 
         expected_args = {}
         expected_args['image_id'] = image_id
@@ -83,7 +82,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args['public'] = public
         expected_args['master_lb_enabled'] = master_lb_enabled
         expected_args['server_type'] = server_type
-        expected_args['floating_ip_enabled'] = floating_ip_enabled
         expected_args['registry_enabled'] = registry_enabled
 
         return expected_args
@@ -125,8 +123,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                     docker_storage_driver='devicemapper',
                                     docker_volume_size=10,
                                     master_lb_enabled=True,
-                                    floating_ip_enabled=True,
                                     labels={'key': 'val'})
+        expected_args['floating_ip_enabled'] = True
         mock_create.assert_called_with(**expected_args)
 
         self._test_arg_success('baymodel-create '
@@ -142,6 +140,23 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                                     coe='kubernetes',
                                     external_network_id='test_net',
                                     server_type='vm')
+        mock_create.assert_called_with(**expected_args)
+
+        self._test_arg_success('baymodel-create '
+                               '--keypair-id test_keypair '
+                               '--external-network-id test_net '
+                               '--image-id test_image '
+                               '--coe kubernetes '
+                               '--name test '
+                               '--server-type vm '
+                               '--floating-ip-disabled ')
+        expected_args = \
+            self._get_expected_args(name='test', image_id='test_image',
+                                    keypair_id='test_keypair',
+                                    coe='kubernetes',
+                                    external_network_id='test_net',
+                                    server_type='vm',
+                                    floating_ip_enabled=False)
         mock_create.assert_called_with(**expected_args)
 
     @mock.patch('magnumclient.v1.baymodels.BayModelManager.create')

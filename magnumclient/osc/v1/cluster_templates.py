@@ -13,6 +13,7 @@
 #    under the License.
 
 from magnumclient.common import utils as magnum_utils
+from magnumclient.exceptions import InvalidAttribute
 from magnumclient.i18n import _
 
 from osc_lib.command import command
@@ -209,10 +210,17 @@ class CreateClusterTemplate(command.ShowOne):
         parser.add_argument(
             '--floating-ip-enabled',
             dest='floating_ip_enabled',
-            action='store_true',
-            default=True,
+            default=[],
+            action='append_const',
+            const=True,
             help=_('Indicates whether created Clusters should have a '
-                   'floating ip or not.'))
+                   'floating ip.'))
+        parser.add_argument(
+            '--floating-ip-disabled',
+            dest='floating_ip_enabled',
+            action='append_const',
+            const=False,
+            help=_('Disables floating ip creation on the new Cluster'))
 
         return parser
 
@@ -243,8 +251,15 @@ class CreateClusterTemplate(command.ShowOne):
             'registry_enabled': parsed_args.registry_enabled,
             'server_type': parsed_args.server_type,
             'master_lb_enabled': parsed_args.master_lb_enabled,
-            'floating_ip_enabled': parsed_args.floating_ip_enabled,
         }
+        if len(parsed_args.floating_ip_enabled) > 1:
+            raise InvalidAttribute('--floating-ip-enabled and '
+                                   '--floating-ip-disabled are '
+                                   'mutually exclusive and '
+                                   'should be specified only once.')
+        elif len(parsed_args.floating_ip_enabled) == 1:
+            args['floating_ip_enabled'] = parsed_args.floating_ip_enabled[0]
+
         ct = mag_client.cluster_templates.create(**args)
         print("Request to create cluster template %s accepted"
               % parsed_args.name)
