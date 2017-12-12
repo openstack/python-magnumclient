@@ -143,10 +143,10 @@ class Client(object):
         # concept
         if not password:
             password = api_key
-        # Backwards compat for people assing in input_auth_token
+        # Backwards compat for people passing in input_auth_token
         if input_auth_token:
             auth_token = input_auth_token
-        # Backwards compat for people assing in endpoint_type
+        # Backwards compat for people passing in endpoint_type
         if endpoint_type:
             interface = endpoint_type
 
