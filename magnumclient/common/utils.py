@@ -193,13 +193,13 @@ def _config_cluster_kubernetes(cluster, cluster_template,
                "contexts:\n"
                "- context:\n"
                "    cluster: %(name)s\n"
-               "    user: %(name)s\n"
-               "  name: %(name)s\n"
-               "current-context: %(name)s\n"
+               "    user: admin\n"
+               "  name: default\n"
+               "current-context: default\n"
                "kind: Config\n"
                "preferences: {}\n"
                "users:\n"
-               "- name: %(name)s\n"
+               "- name: admin\n"
                "  user:\n"
                "    client-certificate: %(cfg_dir)s/cert.pem\n"
                "    client-key: %(cfg_dir)s/key.pem\n"
@@ -249,9 +249,11 @@ def generate_csr_and_key():
         key_size=2048,
         backend=default_backend())
 
-    csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
-        x509.NameAttribute(NameOID.COMMON_NAME, u"Magnum User"),
-    ])).sign(key, hashes.SHA256(), default_backend())
+    csr = x509.CertificateSigningRequestBuilder().subject_name(
+        x509.Name([
+            x509.NameAttribute(NameOID.COMMON_NAME, u"admin"),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"system:masters")
+        ])).sign(key, hashes.SHA256(), default_backend())
 
     result = {
         'csr': csr.public_bytes(
