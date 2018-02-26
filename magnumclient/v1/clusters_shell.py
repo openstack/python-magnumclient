@@ -57,6 +57,7 @@ def _show_cluster(cluster):
                   'create_timeout'
                   )
            )
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_list(cs, args):
     """Print a list of available clusters."""
     clusters = cs.clusters.list(marker=args.marker, limit=args.limit,
@@ -129,6 +130,7 @@ def do_cluster_list(cs, args):
            default=60,
            help=_('The timeout for cluster creation in minutes. The default '
                   'is 60 minutes.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_create(cs, args):
     """Create a cluster."""
     args.command = 'cluster-create'
@@ -166,6 +168,7 @@ def do_cluster_create(cs, args):
            metavar='<cluster>',
            nargs='+',
            help=_('ID or name of the (cluster)s to delete.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_delete(cs, args):
     """Delete specified cluster."""
     for id in args.cluster:
@@ -184,6 +187,7 @@ def do_cluster_delete(cs, args):
 @utils.arg('--long',
            action='store_true', default=False,
            help=_('Display extra associated cluster template info.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_show(cs, args):
     """Show details about the given cluster."""
     cluster = cs.clusters.get(args.cluster)
@@ -216,6 +220,7 @@ def do_cluster_show(cs, args):
     default=[],
     help=_("Attributes to add/replace or remove "
            "(only PATH is necessary on remove)"))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_update(cs, args):
     """Update information about the given cluster."""
     if args.rollback and args.magnum_api_version and \
@@ -246,6 +251,7 @@ def do_cluster_update(cs, args):
 @utils.arg('--force',
            action='store_true', default=False,
            help=_('Overwrite files if existing.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_config(cs, args):
     """Configure native client to access cluster.
 

@@ -50,6 +50,10 @@ CLUSTER_DEPRECATION_HELP = DEPRECATION_BASE % ('', 'cluster', 'cluster',
 CLUSTER_DEPRECATION_WARNING = DEPRECATION_BASE % (
     'WARNING: ', 'cluster', 'cluster', 'to avoid seeing this message')
 
+MAGNUM_CLIENT_DEPRECATION_WARNING = (
+    'WARNING: The magnum client is deprecated and will be removed in a future '
+    'release.\nUse the OpenStack client to avoid seeing this message.')
+
 
 def deprecation_message(preamble, new_name):
     msg = ('%s This parameter is deprecated and will be removed in a future '

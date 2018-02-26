@@ -53,6 +53,7 @@ def _get_target_uuid(cs, args):
            default=None,
            help=(_('ID or name of the cluster. %s') %
                  utils.CLUSTER_DEPRECATION_HELP))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_ca_show(cs, args):
     """Show details about the CA certificate for a bay or cluster."""
     utils.validate_cluster_args(args.postional_cluster, args.cluster)
@@ -77,6 +78,7 @@ def do_ca_show(cs, args):
            required=False,
            metavar='<cluster>',
            help=_('ID or name of the cluster.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_ca_sign(cs, args):
     """Generate the CA certificate for a bay or cluster."""
     opts = {
@@ -98,6 +100,7 @@ def do_ca_sign(cs, args):
            required=True,
            metavar='<cluster>',
            help=_('ID or name of the cluster.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_ca_rotate(cs, args):
     """Rotate the CA certificate for a bay or cluster to revoke access."""
     cluster = cs.clusters.get(args.cluster)

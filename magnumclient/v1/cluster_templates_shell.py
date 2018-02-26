@@ -187,6 +187,7 @@ def _show_cluster_template(cluster_template):
 @utils.arg('--insecure-registry',
            metavar='<insecure-registry>',
            help='url of docker registry')
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
     args.command = 'cluster-template-create'
@@ -235,6 +236,7 @@ def do_cluster_template_create(cs, args):
            metavar='<cluster_templates>',
            nargs='+',
            help=_('ID or name of the (cluster template)s to delete.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_template_delete(cs, args):
     """Delete specified cluster template."""
     for cluster_template in args.cluster_templates:
@@ -251,6 +253,7 @@ def do_cluster_template_delete(cs, args):
 @utils.arg('cluster_template',
            metavar='<cluster_template>',
            help=_('ID or name of the cluster template to show.'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_template_show(cs, args):
     """Show details about the given cluster template."""
     cluster_template = cs.cluster_templates.get(args.cluster_template)
@@ -280,6 +283,7 @@ def do_cluster_template_show(cs, args):
            action='store_true', default=False,
            help=_('Show detailed information about the cluster templates.')
            )
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_template_list(cs, args):
     """Print a list of cluster templates."""
     nodes = cs.cluster_templates.list(limit=args.limit,
@@ -314,6 +318,7 @@ def do_cluster_template_list(cs, args):
     default=[],
     help=_("Attributes to add/replace or remove "
            "(only PATH is necessary on remove)"))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_template_update(cs, args):
     """Updates one or more cluster template attributes."""
     patch = magnum_utils.args_array_to_patch(args.op, args.attributes[0])

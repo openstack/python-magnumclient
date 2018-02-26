@@ -18,6 +18,7 @@ from magnumclient.i18n import _
            required=False,
            metavar='<project-id>',
            help=_('Project ID'))
+@utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_stats_list(cs, args):
     """Show stats for the given project_id"""
     opts = {
