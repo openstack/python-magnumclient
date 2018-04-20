@@ -11,11 +11,11 @@ Python bindings to the Magnum API
 =================================
 
 .. image:: https://img.shields.io/pypi/v/python-magnumclient.svg
-    :target: https://pypi.python.org/pypi/python-magnumclient/
+    :target: https://pypi.org/project/python-magnumclient/
     :alt: Latest Version
 
 .. image:: https://img.shields.io/pypi/dm/python-magnumclient.svg
-    :target: https://pypi.python.org/pypi/python-magnumclient/
+    :target: https://pypi.org/project/python-magnumclient/
     :alt: Downloads
 
 This is a client library for Magnum built on the Magnum API. It
@@ -33,7 +33,7 @@ in the `developer guide
 * `Bugs`_ - issue tracking
 * `Source`_
 
-.. _PyPi: https://pypi.python.org/pypi/python-magnumclient
+.. _PyPi: https://pypi.org/project/python-magnumclient
 .. _Online Documentation: https://docs.openstack.org/python-magnumclient/latest/
 .. _Launchpad project: https://launchpad.net/python-magnumclient
 .. _Bugs: https://bugs.launchpad.net/python-magnumclient
