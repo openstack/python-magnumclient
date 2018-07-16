@@ -293,6 +293,12 @@ class ConfigCluster(command.Command):
             dest='force',
             default=False,
             help=_('Overwrite files if existing.'))
+        parser.add_argument(
+            '--output-certs',
+            action='store_true',
+            dest='output_certs',
+            default=False,
+            help=_('Output certificates in separate files.'))
 
         return parser
 
@@ -319,21 +325,23 @@ class ConfigCluster(command.Command):
             'cluster_uuid': cluster.uuid,
         }
 
+        tls = None
         if not cluster_template.tls_disabled:
             tls = magnum_utils.generate_csr_and_key()
             tls['ca'] = mag_client.certificates.get(**opts).pem
             opts['csr'] = tls['csr']
             tls['cert'] = mag_client.certificates.create(**opts).pem
-            for k in ('key', 'cert', 'ca'):
-                fname = "%s/%s.pem" % (parsed_args.dir, k)
-                if os.path.exists(fname) and not parsed_args.force:
-                    raise Exception("File %s exists, aborting." % fname)
-                else:
-                    f = open(fname, "w")
-                    f.write(tls[k])
-                    f.close()
+            if parsed_args.output_certs:
+                for k in ('key', 'cert', 'ca'):
+                    fname = "%s/%s.pem" % (parsed_args.dir, k)
+                    if os.path.exists(fname) and not parsed_args.force:
+                        raise Exception("File %s exists, aborting." % fname)
+                    else:
+                        with open(fname, "w") as f:
+                            f.write(tls[k])
 
         print(magnum_utils.config_cluster(cluster,
                                           cluster_template,
                                           parsed_args.dir,
-                                          force=parsed_args.force))
+                                          force=parsed_args.force,
+                                          certs=tls))

@@ -15,6 +15,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import base64
 import json
 import os
 
@@ -158,21 +159,23 @@ def handle_json_from_file(json_arg):
     return json_arg
 
 
-def config_cluster(cluster, cluster_template, cfg_dir, force=False):
+def config_cluster(cluster, cluster_template, cfg_dir, force=False,
+                   certs=None):
     """Return and write configuration for the given cluster."""
     if cluster_template.coe == 'kubernetes':
-        return _config_cluster_kubernetes(cluster, cluster_template,
-                                          cfg_dir, force)
+        return _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
+                                          force, certs)
     elif (cluster_template.coe == 'swarm'
           or cluster_template.coe == 'swarm-mode'):
-        return _config_cluster_swarm(cluster, cluster_template, cfg_dir, force)
+        return _config_cluster_swarm(cluster, cluster_template, cfg_dir,
+                                     force, certs)
 
 
-def _config_cluster_kubernetes(cluster, cluster_template,
-                               cfg_dir, force=False):
+def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
+                               force=False, certs=None):
     """Return and write configuration for the given kubernetes cluster."""
     cfg_file = "%s/config" % cfg_dir
-    if cluster_template.tls_disabled:
+    if cluster_template.tls_disabled or certs is None:
         cfg = ("apiVersion: v1\n"
                "clusters:\n"
                "- cluster:\n"
@@ -193,7 +196,7 @@ def _config_cluster_kubernetes(cluster, cluster_template,
         cfg = ("apiVersion: v1\n"
                "clusters:\n"
                "- cluster:\n"
-               "    certificate-authority: %(cfg_dir)s/ca.pem\n"
+               "    certificate-authority-data: %(ca)s\n"
                "    server: %(api_address)s\n"
                "  name: %(name)s\n"
                "contexts:\n"
@@ -207,11 +210,13 @@ def _config_cluster_kubernetes(cluster, cluster_template,
                "users:\n"
                "- name: admin\n"
                "  user:\n"
-               "    client-certificate: %(cfg_dir)s/cert.pem\n"
-               "    client-key: %(cfg_dir)s/key.pem\n"
+               "    client-certificate-data: %(cert)s\n"
+               "    client-key-data: %(key)s\n"
                % {'name': cluster.name,
                   'api_address': cluster.api_address,
-                  'cfg_dir': cfg_dir})
+                  'key': base64.b64encode(certs['key']),
+                  'cert': base64.b64encode(certs['cert']),
+                  'ca': base64.b64encode(certs['ca'])})
 
     if os.path.exists(cfg_file) and not force:
         raise exc.CommandError("File %s exists, aborting." % cfg_file)
@@ -225,7 +230,8 @@ def _config_cluster_kubernetes(cluster, cluster_template,
         return "export KUBECONFIG=%s\n" % cfg_file
 
 
-def _config_cluster_swarm(cluster, cluster_template, cfg_dir, force=False):
+def _config_cluster_swarm(cluster, cluster_template, cfg_dir,
+                          force=False, certs=None):
     """Return and write configuration for the given swarm cluster."""
     tls = "" if cluster_template.tls_disabled else True
     if 'csh' in os.environ['SHELL']:
