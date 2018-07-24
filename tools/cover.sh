@@ -30,7 +30,12 @@ fi
 git checkout HEAD^
 
 baseline_report=$(mktemp -t magnumclient_coverageXXXXXXX)
-find . -type f -name "*.pyc" -delete && python setup.py testr --coverage --testr-args="$*"
+find . -type f -name "*.pyc" -delete
+stestr run "$*"
+coverage combine
+coverage report --fail-under=80 --skip-covered
+coverage html -d cover
+coverage xml -o cover/coverage.xml
 coverage report > $baseline_report
 mv cover cover-master
 cat $baseline_report
@@ -40,7 +45,12 @@ baseline_missing=$(awk 'END { print $3 }' $baseline_report)
 git checkout -
 
 current_report=$(mktemp -t magnumclient_coverageXXXXXXX)
-find . -type f -name "*.pyc" -delete && python setup.py testr --coverage --testr-args="$*"
+find . -type f -name "*.pyc" -delete
+stestr run "$*"
+coverage combine
+coverage report --fail-under=80 --skip-covered
+coverage html -d cover
+coverage xml -o cover/coverage.xml
 coverage report > $current_report
 current_missing=$(awk 'END { print $3 }' $current_report)
 
