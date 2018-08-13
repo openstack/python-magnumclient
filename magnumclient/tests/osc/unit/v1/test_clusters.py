@@ -52,13 +52,10 @@ class TestClusterCreate(TestCluster):
             'cluster_template_id': 'fake-ct',
             'create_timeout': 60,
             'discovery_url': None,
-            'docker_volume_size': None,
-            'flavor_id': None,
             'keypair': None,
             'master_count': 1,
             'name': 'fake-cluster-1',
             'node_count': 1,
-            'master_flavor_id': None,
         }
 
         self.clusters_mock.create = mock.Mock()

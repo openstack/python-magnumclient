@@ -124,17 +124,23 @@ class CreateCluster(command.Command):
             'cluster_template_id': parsed_args.cluster_template,
             'create_timeout': parsed_args.timeout,
             'discovery_url': parsed_args.discovery_url,
-            'docker_volume_size': parsed_args.docker_volume_size,
             'keypair': parsed_args.keypair,
             'master_count': parsed_args.master_count,
             'name': parsed_args.name,
             'node_count': parsed_args.node_count,
-            'master_flavor_id': parsed_args.master_flavor,
-            'flavor_id': parsed_args.flavor,
         }
 
         if parsed_args.labels is not None:
             args['labels'] = magnum_utils.handle_labels(parsed_args.labels)
+
+        if parsed_args.docker_volume_size is not None:
+            args['docker_volume_size'] = parsed_args.docker_volume_size
+
+        if parsed_args.master_flavor is not None:
+            args['master_flavor_id'] = parsed_args.master_flavor
+
+        if parsed_args.flavor is not None:
+            args['flavor_id'] = parsed_args.flavor
 
         cluster = mag_client.clusters.create(**args)
         print("Request to create cluster %s accepted"
