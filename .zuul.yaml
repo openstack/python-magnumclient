@@ -2,6 +2,8 @@
     check:
       jobs:
         - openstack-tox-lower-constraints
+        - build-openstack-releasenotes
     gate:
       jobs:
         - openstack-tox-lower-constraints
+        - build-openstack-releasenotes
