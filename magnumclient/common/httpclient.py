@@ -39,30 +39,40 @@ API_VERSION = '/v1'
 DEFAULT_API_VERSION = 'latest'
 
 
-def _extract_error_json(body):
-    """Return error_message from the HTTP response body."""
+def _extract_error_json_text(body_json):
     error_json = {}
-    try:
-        body_json = json.loads(body)
-        if 'error_message' in body_json:
-            raw_msg = body_json['error_message']
-            error_json = json.loads(raw_msg)
-        elif 'error' in body_json:
-            error_body = body_json['error']
-            error_json = {'faultstring': error_body['title'],
-                          'debuginfo': error_body['message']}
-        else:
-            error_body = body_json['errors'][0]
-            error_json = {'faultstring': error_body['title']}
-            if 'detail' in error_body:
-                error_json['debuginfo'] = error_body['detail']
-            elif 'description' in error_body:
-                error_json['debuginfo'] = error_body['description']
-
-    except ValueError:
-        return {}
-
+    if 'error_message' in body_json:
+        raw_msg = body_json['error_message']
+        error_json = json.loads(raw_msg)
+    elif 'error' in body_json:
+        error_body = body_json['error']
+        error_json = {'faultstring': error_body['title'],
+                      'debuginfo': error_body['message']}
+    else:
+        error_body = body_json['errors'][0]
+        error_json = {'faultstring': error_body['title']}
+        if 'detail' in error_body:
+            error_json['debuginfo'] = error_body['detail']
+        elif 'description' in error_body:
+            error_json['debuginfo'] = error_body['description']
     return error_json
+
+
+def _extract_error_json(body, resp):
+    """Return error_message from the HTTP response body."""
+    content_type = resp.headers.get("Content-Type", "")
+    if content_type.startswith("application/json"):
+        try:
+            body_json = resp.json()
+            return _extract_error_json_text(body_json)
+        except ValueError:
+            return {}
+    else:
+        try:
+            body_json = json.loads(body)
+            return _extract_error_json_text(body_json)
+        except ValueError:
+            return {}
 
 
 class HTTPClient(object):
@@ -200,7 +210,7 @@ class HTTPClient(object):
 
         if 400 <= resp.status < 600:
             LOG.warning("Request returned failure status.")
-            error_json = _extract_error_json(body_str)
+            error_json = _extract_error_json(body_str, resp)
             raise exceptions.from_response(
                 resp, error_json.get('faultstring'),
                 error_json.get('debuginfo'), method, url)
@@ -346,7 +356,7 @@ class SessionClient(adapter.LegacyJsonAdapter):
                                     raise_exc=False, **kwargs)
 
         if 400 <= resp.status_code < 600:
-            error_json = _extract_error_json(resp.content)
+            error_json = _extract_error_json(resp.content, resp)
             raise exceptions.from_response(
                 resp, error_json.get('faultstring'),
                 error_json.get('debuginfo'), method, url)

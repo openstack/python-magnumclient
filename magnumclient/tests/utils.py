@@ -15,6 +15,7 @@
 
 import copy
 import datetime
+import json as jsonlib
 import os
 import sys
 
@@ -178,6 +179,12 @@ class FakeSessionResponse(object):
         self.headers = headers
         self.content = content
         self.status_code = status_code
+
+    def json(self):
+        if self.content is not None:
+            return jsonlib.loads(self.content)
+        else:
+            return {}
 
 
 class FakeSession(object):
