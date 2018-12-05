@@ -160,11 +160,11 @@ def handle_json_from_file(json_arg):
 
 
 def config_cluster(cluster, cluster_template, cfg_dir, force=False,
-                   certs=None):
+                   certs=None, use_keystone=False):
     """Return and write configuration for the given cluster."""
     if cluster_template.coe == 'kubernetes':
         return _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
-                                          force, certs)
+                                          force, certs, use_keystone)
     elif (cluster_template.coe == 'swarm'
           or cluster_template.coe == 'swarm-mode'):
         return _config_cluster_swarm(cluster, cluster_template, cfg_dir,
@@ -172,7 +172,7 @@ def config_cluster(cluster, cluster_template, cfg_dir, force=False,
 
 
 def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
-                               force=False, certs=None):
+                               force=False, certs=None, use_keystone=False):
     """Return and write configuration for the given kubernetes cluster."""
     cfg_file = "%s/config" % cfg_dir
     if cluster_template.tls_disabled or certs is None:
@@ -193,30 +193,64 @@ def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
                "- name: %(name)s'\n"
                % {'name': cluster.name, 'api_address': cluster.api_address})
     else:
-        cfg = ("apiVersion: v1\n"
-               "clusters:\n"
-               "- cluster:\n"
-               "    certificate-authority-data: %(ca)s\n"
-               "    server: %(api_address)s\n"
-               "  name: %(name)s\n"
-               "contexts:\n"
-               "- context:\n"
-               "    cluster: %(name)s\n"
-               "    user: admin\n"
-               "  name: default\n"
-               "current-context: default\n"
-               "kind: Config\n"
-               "preferences: {}\n"
-               "users:\n"
-               "- name: admin\n"
-               "  user:\n"
-               "    client-certificate-data: %(cert)s\n"
-               "    client-key-data: %(key)s\n"
-               % {'name': cluster.name,
-                  'api_address': cluster.api_address,
-                  'key': base64.b64encode(certs['key']),
-                  'cert': base64.b64encode(certs['cert']),
-                  'ca': base64.b64encode(certs['ca'])})
+        if not use_keystone:
+            cfg = ("apiVersion: v1\n"
+                   "clusters:\n"
+                   "- cluster:\n"
+                   "    certificate-authority-data: %(ca)s\n"
+                   "    server: %(api_address)s\n"
+                   "  name: %(name)s\n"
+                   "contexts:\n"
+                   "- context:\n"
+                   "    cluster: %(name)s\n"
+                   "    user: admin\n"
+                   "  name: default\n"
+                   "current-context: default\n"
+                   "kind: Config\n"
+                   "preferences: {}\n"
+                   "users:\n"
+                   "- name: admin\n"
+                   "  user:\n"
+                   "    client-certificate-data: %(cert)s\n"
+                   "    client-key-data: %(key)s\n"
+                   % {'name': cluster.name,
+                      'api_address': cluster.api_address,
+                      'key': base64.b64encode(certs['key']),
+                      'cert': base64.b64encode(certs['cert']),
+                      'ca': base64.b64encode(certs['ca'])})
+        else:
+            cfg = ("apiVersion: v1\n"
+                   "clusters:\n"
+                   "- cluster:\n"
+                   "    certificate-authority-data: %(ca)s\n"
+                   "    server: %(api_address)s\n"
+                   "  name: %(name)s\n"
+                   "contexts:\n"
+                   "- context:\n"
+                   "    cluster: %(name)s\n"
+                   "    user: openstackuser\n"
+                   "  name: openstackuser@kubernetes\n"
+                   "current-context: openstackuser@kubernetes\n"
+                   "kind: Config\n"
+                   "preferences: {}\n"
+                   "users:\n"
+                   "- name: openstackuser\n"
+                   "  user:\n"
+                   "    exec:\n"
+                   "      command: /bin/bash\n"
+                   "      apiVersion: client.authentication.k8s.io/v1alpha1\n"
+                   "      args:\n"
+                   "      - -c\n"
+                   "      - >\n"
+                   "        if [ -z ${OS_TOKEN} ]; then\n"
+                   "            echo 'Error: Missing OpenStack credential from environment variable $OS_TOKEN' > /dev/stderr\n"  # noqa
+                   "            exit 1\n"
+                   "        else\n"
+                   "            echo '{ \"apiVersion\": \"client.authentication.k8s.io/v1alpha1\", \"kind\": \"ExecCredential\", \"status\": { \"token\": \"'\"${OS_TOKEN}\"'\"}}'\n"  # noqa
+                   "        fi\n"
+                   % {'name': cluster.name,
+                      'api_address': cluster.api_address,
+                      'ca': base64.b64encode(certs['ca'])})
 
     if os.path.exists(cfg_file) and not force:
         raise exc.CommandError("File %s exists, aborting." % cfg_file)
