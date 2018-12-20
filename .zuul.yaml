@@ -1,18 +1,16 @@
 - project:
     templates:
+      - check-requirements
+      - openstack-lower-constraints-jobs
       - openstack-python-jobs
       - openstack-python35-jobs
       - openstack-python36-jobs
-      - check-requirements
       - publish-openstack-docs-pti
     check:
       jobs:
-        - openstack-tox-lower-constraints
         - build-openstack-releasenotes
         - openstack-tox-cover:
             voting: false
-
     gate:
       jobs:
-        - openstack-tox-lower-constraints
         - build-openstack-releasenotes
