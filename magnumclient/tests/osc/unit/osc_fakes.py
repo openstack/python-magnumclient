@@ -13,13 +13,12 @@
 #   under the License.
 #
 
-import json
 import mock
+from oslo_serialization import jsonutils
 import sys
 
 from keystoneauth1 import fixture
 import requests
-import six
 
 AUTH_TOKEN = "foobar"
 AUTH_URL = "http://0.0.0.0"
@@ -239,9 +238,7 @@ class FakeResponse(requests.Response):
         self.status_code = status_code
 
         self.headers.update(headers)
-        self._content = json.dumps(data)
-        if not isinstance(self._content, six.binary_type):
-            self._content = self._content.encode()
+        self._content = jsonutils.dump_as_bytes(data)
 
 
 class FakeModel(dict):

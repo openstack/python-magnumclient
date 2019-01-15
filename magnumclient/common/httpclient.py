@@ -16,13 +16,13 @@
 #    under the License.
 
 import copy
-import json
 import logging
 import os
 import socket
 import ssl
 
 from keystoneauth1 import adapter
+from oslo_serialization import jsonutils
 from oslo_utils import importutils
 import six
 import six.moves.urllib.parse as urlparse
@@ -43,7 +43,7 @@ def _extract_error_json_text(body_json):
     error_json = {}
     if 'error_message' in body_json:
         raw_msg = body_json['error_message']
-        error_json = json.loads(raw_msg)
+        error_json = jsonutils.loads(raw_msg)
     elif 'error' in body_json:
         error_body = body_json['error']
         error_json = {'faultstring': error_body['title'],
@@ -69,7 +69,7 @@ def _extract_error_json(body, resp):
             return {}
     else:
         try:
-            body_json = json.loads(body)
+            body_json = jsonutils.loads(body)
             return _extract_error_json_text(body_json)
         except ValueError:
             return {}
@@ -228,7 +228,7 @@ class HTTPClient(object):
         kwargs['headers'].setdefault('Accept', 'application/json')
 
         if 'body' in kwargs:
-            kwargs['body'] = json.dumps(kwargs['body'])
+            kwargs['body'] = jsonutils.dumps(kwargs['body'])
 
         resp, body_iter = self._http_request(url, method, **kwargs)
         content_type = resp.getheader('content-type', None)
@@ -239,7 +239,7 @@ class HTTPClient(object):
         if 'application/json' in content_type:
             body = ''.join([chunk for chunk in body_iter])
             try:
-                body = json.loads(body)
+                body = jsonutils.loads(body)
             except ValueError:
                 LOG.error('Could not decode response body as JSON')
         else:
@@ -373,7 +373,7 @@ class SessionClient(adapter.LegacyJsonAdapter):
         kwargs['headers'].setdefault('Content-Type', 'application/json')
         kwargs['headers'].setdefault('Accept', 'application/json')
         if 'body' in kwargs:
-            kwargs['data'] = json.dumps(kwargs.pop('body'))
+            kwargs['data'] = jsonutils.dumps(kwargs.pop('body'))
 
         resp = self._http_request(url, method, **kwargs)
         body = resp.content

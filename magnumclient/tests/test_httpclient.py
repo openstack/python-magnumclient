@@ -13,9 +13,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-
 import mock
+from oslo_serialization import jsonutils
 import six
 import socket
 
@@ -37,7 +36,7 @@ def _get_error_body(faultstring=None, debuginfo=None, err_type=NORMAL_ERROR):
             'faultstring': faultstring,
             'debuginfo': debuginfo
         }
-        raw_error_body = json.dumps(error_body)
+        raw_error_body = jsonutils.dumps(error_body)
         body = {'error_message': raw_error_body}
     elif err_type == ERROR_DICT:
         body = {'error': {'title': faultstring, 'message': debuginfo}}
@@ -47,7 +46,7 @@ def _get_error_body(faultstring=None, debuginfo=None, err_type=NORMAL_ERROR):
     elif err_type == ERROR_LIST_WITH_DESC:
         main_body = {'title': faultstring, 'description': debuginfo}
         body = {'errors': [main_body]}
-    raw_body = json.dumps(body)
+    raw_body = jsonutils.dumps(body)
     return raw_body
 
 
@@ -347,7 +346,7 @@ class HttpClientTest(utils.BaseTestCase):
         resp, body = client.json_request('GET', '/v1/resources')
 
         self.assertEqual(resp, fake_resp)
-        self.assertEqual(json.dumps(body), err)
+        self.assertEqual(jsonutils.dumps(body), err)
 
     def test_raw_request(self):
         fake_resp = utils.FakeResponse(

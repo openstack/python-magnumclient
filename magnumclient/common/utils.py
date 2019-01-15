@@ -16,7 +16,6 @@
 #    under the License.
 
 import base64
-import json
 import os
 
 from cryptography.hazmat.backends import default_backend
@@ -25,6 +24,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography import x509
 from cryptography.x509.oid import NameOID
+from oslo_serialization import jsonutils
 
 from magnumclient import exceptions as exc
 from magnumclient.i18n import _
@@ -64,7 +64,7 @@ def split_and_deserialize(string):
         raise exc.CommandError(_('Attributes must be a list of '
                                  'PATH=VALUE not "%s"') % string)
     try:
-        value = json.loads(value)
+        value = jsonutils.loads(value)
     except ValueError:
         pass
 
@@ -100,7 +100,7 @@ def handle_labels(labels):
     if 'mesos_slave_executor_env_file' in labels:
         environment_variables_data = handle_json_from_file(
             labels['mesos_slave_executor_env_file'])
-        labels['mesos_slave_executor_env_variables'] = json.dumps(
+        labels['mesos_slave_executor_env_variables'] = jsonutils.dumps(
             environment_variables_data)
     return labels
 
@@ -146,7 +146,7 @@ def handle_json_from_file(json_arg):
     try:
         with open(json_arg, 'r') as f:
             json_arg = f.read().strip()
-            json_arg = json.loads(json_arg)
+            json_arg = jsonutils.loads(json_arg)
     except IOError as e:
         err = _("Cannot get JSON from file '%(file)s'. "
                 "Error: %(err)s") % {'err': e, 'file': json_arg}

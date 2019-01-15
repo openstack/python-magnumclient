@@ -17,7 +17,7 @@
 
 import collections
 import mock
-from oslo_serialization import jsonutils as json
+from oslo_serialization import jsonutils
 import six
 import six.moves.builtins as __builtin__
 import tempfile
@@ -261,7 +261,7 @@ class HandleJsonFromFileTest(test_utils.BaseTestCase):
             f.flush()
             steps = utils.handle_json_from_file(f.name)
 
-        self.assertEqual(json.loads(contents), steps)
+        self.assertEqual(jsonutils.loads(contents), steps)
 
     @mock.patch.object(__builtin__, 'open', autospec=True)
     def test_handle_json_from_file_open_fail(self, mock_open):

@@ -15,8 +15,8 @@
 
 import copy
 import datetime
-import json as jsonlib
 import os
+from oslo_serialization import jsonutils
 import sys
 
 import fixtures
@@ -182,7 +182,7 @@ class FakeSessionResponse(object):
 
     def json(self):
         if self.content is not None:
-            return jsonlib.loads(self.content)
+            return jsonutils.loads(self.content)
         else:
             return {}
 
