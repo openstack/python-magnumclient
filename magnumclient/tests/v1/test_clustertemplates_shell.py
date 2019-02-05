@@ -32,6 +32,7 @@ class FakeClusterTemplate(ClusterTemplate):
         self.coe = kwargs.get('coe', 'x')
         self.public = kwargs.get('public', False)
         self.name = kwargs.get('name', 'x')
+        self.hidden = kwargs.get('hidden', False)
 
 
 class ShellTest(shell_test_base.TestCommandLineArgument):
@@ -58,7 +59,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                            tls_disabled=False, public=False,
                            master_lb_enabled=False, server_type='vm',
                            registry_enabled=False,
-                           insecure_registry=None):
+                           insecure_registry=None, hidden=False):
 
         expected_args = {}
         expected_args['image_id'] = image_id
@@ -85,6 +86,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args['server_type'] = server_type
         expected_args['registry_enabled'] = registry_enabled
         expected_args['insecure_registry'] = insecure_registry
+        expected_args['hidden'] = hidden
 
         return expected_args
 

@@ -187,6 +187,13 @@ def _show_cluster_template(cluster_template):
 @utils.arg('--insecure-registry',
            metavar='<insecure-registry>',
            help='url of docker registry')
+@utils.arg('--hidden',
+           action='store_true', default=False,
+           help=_('Make cluster template hidden.'))
+@utils.arg('--visible',
+           dest='hidden',
+           action='store_false',
+           help=_('Make cluster template visible.'))
 @utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_cluster_template_create(cs, args):
     """Create a cluster template."""
@@ -219,6 +226,7 @@ def do_cluster_template_create(cs, args):
     opts['server_type'] = args.server_type
     opts['master_lb_enabled'] = args.master_lb_enabled
     opts['insecure_registry'] = args.insecure_registry
+    opts['hidden'] = args.hidden
 
     if len(args.floating_ip_enabled) > 1:
         raise InvalidAttribute('--floating-ip-enabled and '
