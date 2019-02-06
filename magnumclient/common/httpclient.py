@@ -406,7 +406,10 @@ class ResponseBodyIterator(object):
 
     def __iter__(self):
         while True:
-            yield self.next()
+            try:
+                yield self.next()
+            except StopIteration:
+                return
 
     def __bool__(self):
         return hasattr(self, 'items')
@@ -418,7 +421,7 @@ class ResponseBodyIterator(object):
         if chunk:
             return chunk
         else:
-            raise StopIteration()
+            raise StopIteration
 
 
 def _construct_http_client(*args, **kwargs):
