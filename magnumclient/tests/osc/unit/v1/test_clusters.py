@@ -37,6 +37,8 @@ class TestCluster(magnum_fakes.TestMagnumClientOSCV1):
         super(TestCluster, self).setUp()
 
         self.clusters_mock = self.app.client_manager.container_infra.clusters
+        self.certificates_mock = \
+            self.app.client_manager.container_infra.certificates
 
 
 class TestClusterCreate(TestCluster):
@@ -360,10 +362,15 @@ class TestClusterConfig(TestCluster):
         self.clusters_mock.get = mock.Mock()
         self.clusters_mock.get.return_value = self._cluster
 
+        cert = magnum_fakes.FakeCert(pem='foo bar')
+        self.certificates_mock.create = mock.Mock()
+        self.certificates_mock.create.return_value = cert
+        self.certificates_mock.get = mock.Mock()
+        self.certificates_mock.get.return_value = cert
+
         # Fake the cluster_template
         attr = dict()
         attr['name'] = 'fake-ct'
-        attr['tls_disabled'] = True
         self._cluster_template = \
             magnum_fakes.FakeClusterTemplate.create_one_cluster_template(attr)
 

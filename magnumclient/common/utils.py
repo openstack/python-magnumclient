@@ -15,7 +15,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import base64
 import os
 
 from cryptography.hazmat.backends import default_backend
@@ -24,6 +23,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography import x509
 from cryptography.x509.oid import NameOID
+from oslo_serialization import base64
 from oslo_serialization import jsonutils
 
 from magnumclient import exceptions as exc
@@ -215,9 +215,9 @@ def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
                    "    client-key-data: %(key)s\n"
                    % {'name': cluster.name,
                       'api_address': cluster.api_address,
-                      'key': base64.b64encode(certs['key']),
-                      'cert': base64.b64encode(certs['cert']),
-                      'ca': base64.b64encode(certs['ca'])})
+                      'key': base64.encode_as_text(certs['key']),
+                      'cert': base64.encode_as_text(certs['cert']),
+                      'ca': base64.encode_as_text(certs['ca'])})
         else:
             cfg = ("apiVersion: v1\n"
                    "clusters:\n"
@@ -250,7 +250,7 @@ def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
                    "        fi\n"
                    % {'name': cluster.name,
                       'api_address': cluster.api_address,
-                      'ca': base64.b64encode(certs['ca'])})
+                      'ca': base64.encode_as_text(certs['ca'])})
 
     if os.path.exists(cfg_file) and not force:
         raise exc.CommandError("File %s exists, aborting." % cfg_file)
