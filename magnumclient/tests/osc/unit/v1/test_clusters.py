@@ -181,7 +181,8 @@ class TestClusterList(TestCluster):
         'keypair',
         'node_count',
         'master_count',
-        'status'
+        'status',
+        'health_status'
     ]
 
     datalist = (
@@ -191,7 +192,8 @@ class TestClusterList(TestCluster):
             _cluster.keypair,
             _cluster.node_count,
             _cluster.master_count,
-            _cluster.status
+            _cluster.status,
+            _cluster.health_status,
         ),
     )
 
