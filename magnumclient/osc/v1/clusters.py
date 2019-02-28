@@ -24,6 +24,7 @@ from osc_lib import utils
 
 CLUSTER_ATTRIBUTES = [
     'status',
+    'health_status',
     'cluster_template_id',
     'node_addresses',
     'uuid',
@@ -45,6 +46,7 @@ CLUSTER_ATTRIBUTES = [
     'name',
     'master_flavor_id',
     'flavor_id',
+    'health_status_reason',
 ]
 
 
@@ -197,7 +199,8 @@ class ListCluster(command.Lister):
 
         mag_client = self.app.client_manager.container_infra
         columns = [
-            'uuid', 'name', 'keypair', 'node_count', 'master_count', 'status']
+            'uuid', 'name', 'keypair', 'node_count', 'master_count', 'status',
+            'health_status']
         clusters = mag_client.clusters.list(limit=parsed_args.limit,
                                             sort_key=parsed_args.sort_key,
                                             sort_dir=parsed_args.sort_dir)

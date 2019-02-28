@@ -205,6 +205,7 @@ class FakeCluster(object):
         # set default attributes.
         cluster_info = {
             'status': 'CREATE_IN_PROGRESS',
+            'health_status': 'HEALTHY',
             'cluster_template_id': 'fake-ct',
             'node_addresses': [],
             'uuid': '3a369884-b6ba-484f-a206-919b4b718aff',
@@ -227,6 +228,7 @@ class FakeCluster(object):
             'master_flavor_id': None,
             'flavor_id': 'm1.medium',
             'project_id': None,
+            'health_status_reason': {'api': 'ok'}
         }
 
         # Overwrite default attributes.
