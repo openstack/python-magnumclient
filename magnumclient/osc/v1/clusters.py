@@ -305,6 +305,18 @@ class ConfigCluster(command.Command):
             dest='output_certs',
             default=False,
             help=_('Output certificates in separate files.'))
+        parser.add_argument(
+            '--use-certificate',
+            action='store_true',
+            dest='use_certificate',
+            default=True,
+            help=_('Use certificate in config files.'))
+        parser.add_argument(
+            '--use-keystone',
+            action='store_true',
+            dest='use_keystone',
+            default=False,
+            help=_('Use Keystone token in config files.'))
 
         return parser
 
@@ -315,6 +327,11 @@ class ConfigCluster(command.Command):
         the corresponding COE configured to access the cluster.
 
         """
+        if parsed_args.use_keystone:
+            parsed_args.use_certificate = False
+        if not parsed_args.use_certificate:
+            parsed_args.use_keystone = True
+
         self.log.debug("take_action(%s)", parsed_args)
 
         mag_client = self.app.client_manager.container_infra
@@ -346,8 +363,7 @@ class ConfigCluster(command.Command):
                         with open(fname, "w") as f:
                             f.write(tls[k])
 
-        print(magnum_utils.config_cluster(cluster,
-                                          cluster_template,
-                                          parsed_args.dir,
-                                          force=parsed_args.force,
-                                          certs=tls))
+        print(magnum_utils.config_cluster(
+            cluster, cluster_template, parsed_args.dir,
+            force=parsed_args.force, certs=tls,
+            use_keystone=parsed_args.use_keystone))
