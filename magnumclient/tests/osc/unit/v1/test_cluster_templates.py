@@ -48,7 +48,8 @@ class TestClusterTemplate(magnum_fakes.TestMagnumClientOSCV1):
         'registry_enabled': False,
         'server_type': 'vm',
         'tls_disabled': False,
-        'volume_driver': None
+        'volume_driver': None,
+        'hidden': False
     }
 
     def setUp(self):

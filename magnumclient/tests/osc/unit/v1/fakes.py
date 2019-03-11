@@ -165,7 +165,8 @@ class FakeClusterTemplate(object):
             'coe': 'kubernetes',
             'flavor_id': 'm1.medium',
             'master_lb_enabled': False,
-            'dns_nameserver': '8.8.8.8'
+            'dns_nameserver': '8.8.8.8',
+            'hidden': False
         }
 
         # Overwrite default attributes.
