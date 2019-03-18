@@ -62,12 +62,17 @@ class FakeQuotasModelManager(object):
         pass
 
 
+class FakeCertificatesModelManager(FakeBaseModelManager):
+    def get(self, cluster_uuid):
+        pass
+
+
 class MagnumFakeContainerInfra(object):
     def __init__(self):
         self.cluster_templates = FakeBaseModelManager()
         self.clusters = FakeBaseModelManager()
         self.mservices = FakeBaseModelManager()
-        self.certificates = FakeBaseModelManager()
+        self.certificates = FakeCertificatesModelManager()
         self.stats = FakeStatsModelManager()
         self.quotas = FakeQuotasModelManager()
 
@@ -237,6 +242,11 @@ class FakeCluster(object):
         cluster = osc_fakes.FakeResource(info=copy.deepcopy(cluster_info),
                                          loaded=True)
         return cluster
+
+
+class FakeCert(object):
+    def __init__(self, pem):
+        self.pem = pem
 
 
 class FakeQuota(object):
