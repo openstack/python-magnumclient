@@ -54,6 +54,10 @@ UPDATED_CLUSTER = copy.deepcopy(CLUSTER1)
 NEW_NAME = 'newcluster'
 UPDATED_CLUSTER['name'] = NEW_NAME
 
+RESIZED_CLUSTER = copy.deepcopy(CLUSTER1)
+RESIZED_NODE_COUNT = 5
+UPDATED_CLUSTER['node_count'] = RESIZED_NODE_COUNT
+
 fake_responses = {
     '/v1/clusters':
     {
@@ -145,6 +149,13 @@ fake_responses = {
             {'clusters': [CLUSTER2, CLUSTER1]},
         ),
     },
+    '/v1/clusters/%s/actions/resize' % CLUSTER1['uuid']:
+    {
+        'POST': (
+            {},
+            UPDATED_CLUSTER
+        ),
+    }
 }
 
 
@@ -355,3 +366,13 @@ class ClusterManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(NEW_NAME, cluster.name)
+
+    def test_cluster_resize(self):
+        body = {'node_count': RESIZED_NODE_COUNT}
+        cluster = self.mgr.resize(CLUSTER1["uuid"], **body)
+        expect = [
+            ('POST', '/v1/clusters/%s/actions/resize' % CLUSTER1['uuid'],
+             {}, body),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(RESIZED_NODE_COUNT, cluster.node_count)
