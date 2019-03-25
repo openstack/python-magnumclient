@@ -17,7 +17,8 @@ from osc_lib import utils
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_API_VERSION = '1'
+DEFAULT_MAJOR_API_VERSION = '1'
+DEFAULT_MAGNUM_API_VERSION = 'latest'
 API_VERSION_OPTION = 'os_container_infra_api_version'
 API_NAME = 'container_infra'
 API_VERSIONS = {
@@ -37,7 +38,8 @@ def make_client(instance):
                            region_name=instance._region_name,
                            interface=instance._interface,
                            insecure=instance._insecure,
-                           ca_cert=instance._cacert)
+                           ca_cert=instance._cacert,
+                           api_version=DEFAULT_MAGNUM_API_VERSION)
     return client
 
 
@@ -49,8 +51,8 @@ def build_option_parser(parser):
         metavar='<container-infra-api-version>',
         default=utils.env(
             'OS_CONTAINER_INFRA_API_VERSION',
-            default=DEFAULT_API_VERSION),
+            default=DEFAULT_MAJOR_API_VERSION),
         help='Container-Infra API version, default=' +
-             DEFAULT_API_VERSION +
+             DEFAULT_MAJOR_API_VERSION +
              ' (Env: OS_CONTAINER_INFRA_API_VERSION)')
     return parser
