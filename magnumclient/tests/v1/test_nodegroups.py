@@ -13,9 +13,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import copy
+
 import testtools
 from testtools import matchers
 
+from magnumclient import exceptions
 from magnumclient.tests import utils
 from magnumclient.v1 import nodegroups
 
@@ -53,6 +56,17 @@ NODEGROUP2 = {
     'min_node_count': 1
 }
 
+CREATE_NODEGROUP = copy.deepcopy(NODEGROUP1)
+del CREATE_NODEGROUP['id']
+del CREATE_NODEGROUP['uuid']
+del CREATE_NODEGROUP['node_addresses']
+del CREATE_NODEGROUP['is_default']
+del CREATE_NODEGROUP['cluster_id']
+
+UPDATED_NODEGROUP = copy.deepcopy(NODEGROUP1)
+NEW_NODE_COUNT = 9
+UPDATED_NODEGROUP['node_count'] = NEW_NODE_COUNT
+
 
 fake_responses = {
     '/v1/clusters/test/nodegroups/':
@@ -61,6 +75,10 @@ fake_responses = {
             {},
             {'nodegroups': [NODEGROUP1, NODEGROUP2]},
         ),
+        'POST': (
+            {},
+            CREATE_NODEGROUP,
+        ),
     },
     '/v1/clusters/test/nodegroups/%s' % NODEGROUP1['id']:
     {
@@ -68,12 +86,35 @@ fake_responses = {
             {},
             NODEGROUP1
         ),
+        'DELETE': (
+            {},
+            None,
+        ),
+        'PATCH': (
+            {},
+            UPDATED_NODEGROUP,
+        ),
     },
+    '/v1/clusters/test/nodegroups/%s/?rollback=True' % NODEGROUP1['id']:
+        {
+            'PATCH': (
+                {},
+                UPDATED_NODEGROUP,
+            ),
+        },
     '/v1/clusters/test/nodegroups/%s' % NODEGROUP1['name']:
     {
         'GET': (
             {},
             NODEGROUP1
+        ),
+        'DELETE': (
+            {},
+            None,
+        ),
+        'PATCH': (
+            {},
+            UPDATED_NODEGROUP,
         ),
     },
     '/v1/clusters/test/nodegroups/?limit=2':
@@ -222,3 +263,71 @@ class NodeGroupManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(NODEGROUP1['name'], nodegroup.name)
+
+    def test_nodegroup_delete_by_id(self):
+        nodegroup = self.mgr.delete(self.cluster_id, NODEGROUP1['id'])
+        expect = [
+            ('DELETE', self.base_path + '%s' % NODEGROUP1['id'], {}, None),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertIsNone(nodegroup)
+
+    def test_nodegroup_delete_by_name(self):
+        nodegroup = self.mgr.delete(self.cluster_id, NODEGROUP1['name'])
+        expect = [
+            ('DELETE', self.base_path + '%s' % NODEGROUP1['name'], {}, None),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertIsNone(nodegroup)
+
+    def test_nodegroup_update(self):
+        patch = {'op': 'replace',
+                 'value': NEW_NODE_COUNT,
+                 'path': '/node_count'}
+        nodegroup = self.mgr.update(self.cluster_id, id=NODEGROUP1['id'],
+                                    patch=patch)
+        expect = [
+            ('PATCH', self.base_path + '%s' % NODEGROUP1['id'], {}, patch),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(NEW_NODE_COUNT, nodegroup.node_count)
+
+    def test_nodegroup_create(self):
+        nodegroup = self.mgr.create(self.cluster_id, **CREATE_NODEGROUP)
+        expect = [
+            ('POST', self.base_path, {}, CREATE_NODEGROUP),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(nodegroup)
+
+    def test_nodegroup_create_with_docker_volume_size(self):
+        ng_with_volume_size = dict()
+        ng_with_volume_size.update(CREATE_NODEGROUP)
+        ng_with_volume_size['docker_volume_size'] = 20
+        nodegroup = self.mgr.create(self.cluster_id, **ng_with_volume_size)
+        expect = [
+            ('POST', self.base_path, {}, ng_with_volume_size),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(nodegroup)
+
+    def test_nodegroup_create_with_labels(self):
+        ng_with_labels = dict()
+        ng_with_labels.update(CREATE_NODEGROUP)
+        ng_with_labels['labels'] = "key=val"
+        nodegroup = self.mgr.create(self.cluster_id, **ng_with_labels)
+        expect = [
+            ('POST', self.base_path, {}, ng_with_labels),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertTrue(nodegroup)
+
+    def test_nodegroup_create_fail(self):
+        CREATE_NODEGROUP_FAIL = copy.deepcopy(CREATE_NODEGROUP)
+        CREATE_NODEGROUP_FAIL["wrong_key"] = "wrong"
+        self.assertRaisesRegex(exceptions.InvalidAttribute,
+                               ("Key must be in %s" %
+                                ','.join(nodegroups.CREATION_ATTRIBUTES)),
+                               self.mgr.create, self.cluster_id,
+                               **CREATE_NODEGROUP_FAIL)
+        self.assertEqual([], self.api.calls)

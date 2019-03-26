@@ -14,6 +14,7 @@
 #    under the License.
 
 from magnumclient.common import utils
+from magnumclient import exceptions
 from magnumclient.v1 import baseunit
 
 
@@ -65,3 +66,19 @@ class NodeGroupManager(baseunit.BaseTemplateManager):
             return self._list(self._path(cluster_id, id=id))[0]
         except IndexError:
             return None
+
+    def create(self, cluster_id, **kwargs):
+        new = {}
+        for (key, value) in kwargs.items():
+            if key in CREATION_ATTRIBUTES:
+                new[key] = value
+            else:
+                raise exceptions.InvalidAttribute(
+                    "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))
+        return self._create(self._path(cluster_id), new)
+
+    def delete(self, cluster_id, id):
+        return self._delete(self._path(cluster_id, id=id))
+
+    def update(self, cluster_id, id, patch):
+        return self._update(self._path(cluster_id, id=id), patch)
