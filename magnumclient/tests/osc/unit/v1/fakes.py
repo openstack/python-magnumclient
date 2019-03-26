@@ -332,7 +332,10 @@ class FakeNodeGroup(object):
             'role': 'worker',
             'max_node_count': 10,
             'min_node_count': 1,
-            'is_default': False
+            'is_default': False,
+            'stack_id': '3a369884-b6ba-484f-fake-stackb718aff',
+            'status': 'CREATE_COMPLETE',
+            'status_reason': 'None'
         }
 
         # Overwrite default attributes.
