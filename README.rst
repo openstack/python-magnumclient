@@ -37,4 +37,4 @@ in the `developer guide
 .. _Online Documentation: https://docs.openstack.org/python-magnumclient/latest/
 .. _Launchpad project: https://launchpad.net/python-magnumclient
 .. _Bugs: https://bugs.launchpad.net/python-magnumclient
-.. _Source: https://git.openstack.org/cgit/openstack/python-magnumclient
+.. _Source: https://opendev.org/openstack/python-magnumclient
