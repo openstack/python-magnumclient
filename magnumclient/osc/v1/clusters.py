@@ -47,6 +47,7 @@ CLUSTER_ATTRIBUTES = [
     'master_flavor_id',
     'flavor_id',
     'health_status_reason',
+    'project_id'
 ]
 
 
