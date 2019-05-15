@@ -263,8 +263,13 @@ class CreateClusterTemplate(command.ShowOne):
             'registry_enabled': parsed_args.registry_enabled,
             'server_type': parsed_args.server_type,
             'master_lb_enabled': parsed_args.master_lb_enabled,
-            'hidden': parsed_args.hidden
         }
+
+        # NOTE (brtknr): Only supply hidden arg if it is True
+        # for backward compatibility
+        if parsed_args.hidden:
+            args['hidden'] = parsed_args.hidden
+
         if len(parsed_args.floating_ip_enabled) > 1:
             raise InvalidAttribute('--floating-ip-enabled and '
                                    '--floating-ip-disabled are '
