@@ -58,6 +58,10 @@ RESIZED_CLUSTER = copy.deepcopy(CLUSTER1)
 RESIZED_NODE_COUNT = 5
 UPDATED_CLUSTER['node_count'] = RESIZED_NODE_COUNT
 
+UPGRADED_CLUSTER = copy.deepcopy(CLUSTER1)
+UPGRADED_TO_TEMPLATE = "eabbc463-0d3f-49dc-8519-cb6b59507bd6"
+UPGRADED_CLUSTER['cluster_template_id'] = UPGRADED_TO_TEMPLATE
+
 fake_responses = {
     '/v1/clusters':
     {
@@ -154,6 +158,13 @@ fake_responses = {
         'POST': (
             {},
             UPDATED_CLUSTER
+        ),
+    },
+    '/v1/clusters/%s/actions/upgrade' % CLUSTER1['uuid']:
+    {
+        'POST': (
+            {},
+            UPGRADED_CLUSTER
         ),
     }
 }
@@ -376,3 +387,14 @@ class ClusterManagerTest(testtools.TestCase):
         ]
         self.assertEqual(expect, self.api.calls)
         self.assertEqual(RESIZED_NODE_COUNT, cluster.node_count)
+
+    def test_cluster_upgrade(self):
+        body = {'cluster_template': UPGRADED_TO_TEMPLATE,
+                'max_batch_size': 1}
+        cluster = self.mgr.upgrade(CLUSTER1["uuid"], **body)
+        expect = [
+            ('POST', '/v1/clusters/%s/actions/upgrade' % CLUSTER1['uuid'],
+             {}, body),
+        ]
+        self.assertEqual(expect, self.api.calls)
+        self.assertEqual(UPGRADED_TO_TEMPLATE, cluster.cluster_template_id)

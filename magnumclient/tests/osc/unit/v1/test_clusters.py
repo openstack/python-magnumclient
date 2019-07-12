@@ -479,3 +479,66 @@ export KUBECONFIG={}/config
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
         self.assertRaises(exceptions.CommandError,
                           self.cmd.take_action, parsed_args)
+
+
+class TestClusterResize(TestCluster):
+
+    def setUp(self):
+        super(TestClusterResize, self).setUp()
+        self.cluster = mock.Mock()
+        self.cluster.uuid = "UUID1"
+        self.clusters_mock.resize = mock.Mock()
+        self.clusters_mock.resize.return_value = None
+
+        self.clusters_mock.get = mock.Mock()
+        self.clusters_mock.get.return_value = self.cluster
+
+        # Get the command object to test
+        self.cmd = osc_clusters.ResizeCluster(self.app, None)
+
+    def test_cluster_resize_pass(self):
+        arglist = ['foo', '2']
+        verifylist = [
+            ('cluster', 'foo'),
+            ('node_count', 2),
+            ('nodes_to_remove', None),
+            ('nodegroup', None)
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.resize.assert_called_with(
+            "UUID1", 2, None, None
+        )
+
+
+class TestClusterUpgrade(TestCluster):
+
+    def setUp(self):
+        super(TestClusterUpgrade, self).setUp()
+        self.cluster = mock.Mock()
+        self.cluster.uuid = "UUID1"
+        self.clusters_mock.upgrade = mock.Mock()
+        self.clusters_mock.upgrade.return_value = None
+
+        self.clusters_mock.get = mock.Mock()
+        self.clusters_mock.get.return_value = self.cluster
+
+        # Get the command object to test
+        self.cmd = osc_clusters.UpgradeCluster(self.app, None)
+
+    def test_cluster_upgrade_pass(self):
+        cluster_template_id = 'TEMPLATE_ID'
+        arglist = ['foo', cluster_template_id]
+        verifylist = [
+            ('cluster', 'foo'),
+            ('cluster_template', cluster_template_id),
+            ('max_batch_size', 1),
+            ('nodegroup', None)
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.upgrade.assert_called_with(
+            "UUID1", cluster_template_id, 1, None
+        )
