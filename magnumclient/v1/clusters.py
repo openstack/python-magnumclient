@@ -23,6 +23,9 @@ CREATION_ATTRIBUTES.append('docker_volume_size')
 CREATION_ATTRIBUTES.append('labels')
 CREATION_ATTRIBUTES.append('master_flavor_id')
 CREATION_ATTRIBUTES.append('flavor_id')
+CREATION_ATTRIBUTES.append('fixed_network')
+CREATION_ATTRIBUTES.append('fixed_subnet')
+CREATION_ATTRIBUTES.append('floating_ip_enabled')
 
 
 class Cluster(baseunit.BaseTemplate):

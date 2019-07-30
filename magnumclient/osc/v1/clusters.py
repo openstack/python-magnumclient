@@ -116,6 +116,31 @@ class CreateCluster(command.Command):
             metavar='<flavor>',
             help=_('The nova flavor name or UUID to use when launching the '
                    'Cluster.'))
+        parser.add_argument(
+            '--fixed-network',
+            dest='fixed_network',
+            metavar='<fixed-network>',
+            help=_('The private Neutron network name to connect to this '
+                   'Cluster template.'))
+        parser.add_argument(
+            '--fixed-subnet',
+            dest='fixed_subnet',
+            metavar='<fixed-subnet>',
+            help=_('The private Neutron subnet name to connect to Cluster.'))
+        parser.add_argument(
+            '--floating-ip-enabled',
+            dest='floating_ip_enabled',
+            default=[],
+            action='append_const',
+            const=True,
+            help=_('Indicates whether created Clusters should have a '
+                   'floating ip.'))
+        parser.add_argument(
+            '--floating-ip-disabled',
+            dest='floating_ip_enabled',
+            action='append_const',
+            const=False,
+            help=_('Disables floating ip creation on the new Cluster'))
 
         return parser
 
@@ -133,6 +158,15 @@ class CreateCluster(command.Command):
             'node_count': parsed_args.node_count,
         }
 
+        if len(parsed_args.floating_ip_enabled) > 1:
+            raise exceptions.InvalidAttribute(
+                '--floating-ip-enabled and '
+                '--floating-ip-disabled are '
+                'mutually exclusive and '
+                'should be specified only once.')
+        elif len(parsed_args.floating_ip_enabled) == 1:
+            args['floating_ip_enabled'] = parsed_args.floating_ip_enabled[0]
+
         if parsed_args.labels is not None:
             args['labels'] = magnum_utils.handle_labels(parsed_args.labels)
 
@@ -144,6 +178,12 @@ class CreateCluster(command.Command):
 
         if parsed_args.flavor is not None:
             args['flavor_id'] = parsed_args.flavor
+
+        if parsed_args.fixed_network is not None:
+            args["fixed_network"] = parsed_args.fixed_network
+
+        if parsed_args.fixed_subnet is not None:
+            args["fixed_subnet"] = parsed_args.fixed_subnet
 
         cluster = mag_client.clusters.create(**args)
         print("Request to create cluster %s accepted"
