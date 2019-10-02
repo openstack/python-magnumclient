@@ -382,10 +382,10 @@ class ConfigCluster(command.Command):
 
         parsed_args.dir = os.path.abspath(parsed_args.dir)
         cluster = mag_client.clusters.get(parsed_args.cluster)
-        if cluster.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE',
-                                  'ROLLBACK_COMPLETE'):
-            raise exceptions.CommandError("cluster in status %s" %
-                                          cluster.status)
+        if cluster.api_address is None:
+            self.log.warning("WARNING: The cluster's api_address is"
+                             " not known yet.")
+
         cluster_template = mag_client.cluster_templates.get(
             cluster.cluster_template_id)
         opts = {

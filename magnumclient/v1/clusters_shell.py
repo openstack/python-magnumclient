@@ -262,9 +262,8 @@ def do_cluster_config(cs, args):
     """
     args.dir = os.path.abspath(args.dir)
     cluster = cs.clusters.get(args.cluster)
-    if cluster.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE',
-                              'ROLLBACK_COMPLETE'):
-        raise exceptions.CommandError("cluster in status %s" % cluster.status)
+    if (hasattr(cluster, 'api_address') and cluster.api_address is None):
+        print("WARNING: The cluster's api_address is not known yet.")
     cluster_template = cs.cluster_templates.get(cluster.cluster_template_id)
     opts = {
         'cluster_uuid': cluster.uuid,

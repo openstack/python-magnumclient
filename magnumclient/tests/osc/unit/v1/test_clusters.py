@@ -468,18 +468,6 @@ export KUBECONFIG={}/config
 
         self.clusters_mock.get.assert_called_with('fake-cluster')
 
-    def test_cluster_config_with_in_progress_status(self):
-        self._cluster.status = 'CREATE_IN_PROGRESS'
-
-        arglist = ['fake-cluster-1']
-        verifylist = [
-            ('cluster', 'fake-cluster-1')
-        ]
-
-        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
-        self.assertRaises(exceptions.CommandError,
-                          self.cmd.take_action, parsed_args)
-
 
 class TestClusterResize(TestCluster):
 

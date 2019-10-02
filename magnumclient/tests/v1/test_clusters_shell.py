@@ -447,17 +447,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self._test_arg_success('cluster-config --dir /tmp --force xxx')
         mock_cluster.assert_called_with('xxx')
 
-    @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
-    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
-    def test_cluster_config_failure_wrong_status(self,
-                                                 mock_cluster,
-                                                 mock_clustertemplate):
-        mock_cluster.return_value = FakeCluster(status='CREATE_IN_PROGRESS')
-        self.assertRaises(exceptions.CommandError,
-                          self._test_arg_failure,
-                          'cluster-config xxx',
-                          ['.*?^Cluster in status: '])
-
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
     def test_cluster_config_failure_no_arg(self, mock_cluster):
         self._test_arg_failure('cluster-config', self._few_argument_error)
