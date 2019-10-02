@@ -228,8 +228,8 @@ def do_bay_config(cs, args):
     """
     args.dir = os.path.abspath(args.dir)
     bay = cs.bays.get(args.bay)
-    if bay.status not in ('CREATE_COMPLETE', 'UPDATE_COMPLETE'):
-        raise exceptions.CommandError("Bay in status %s" % bay.status)
+    if (hasattr(bay, 'api_address') and bay.api_address is None):
+        print("WARNING: The bay's api_address is not known yet.")
     baymodel = cs.baymodels.get(bay.baymodel_id)
     opts = {
         'cluster_uuid': bay.uuid,
