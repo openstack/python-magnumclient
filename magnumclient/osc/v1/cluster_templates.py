@@ -354,6 +354,8 @@ class ListTemplateCluster(command.Lister):
 
         mag_client = self.app.client_manager.container_infra
         columns = ['uuid', 'name']
+        if parsed_args.fields:
+            columns += parsed_args.fields.split(',')
         cts = mag_client.cluster_templates.list(limit=parsed_args.limit,
                                                 sort_key=parsed_args.sort_key,
                                                 sort_dir=parsed_args.sort_dir)
