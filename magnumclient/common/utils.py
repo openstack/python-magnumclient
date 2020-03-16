@@ -79,7 +79,7 @@ def args_array_to_patch(op, attributes):
             attr = '/' + attr
         if op in ['add', 'replace']:
             path, value = split_and_deserialize(attr)
-            if path == "/labels":
+            if path == "/labels" or path == "/health_status_reason":
                 a = []
                 a.append(value)
                 value = str(handle_labels(a))
