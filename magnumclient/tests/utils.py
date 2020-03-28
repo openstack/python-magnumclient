@@ -95,7 +95,7 @@ class FakeResponse(object):
         self.reason = reason
 
     def __getitem__(self, key):
-        if key is 'location':
+        if key == 'location':
             return 'fake_url'
         else:
             return None

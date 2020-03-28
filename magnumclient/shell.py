@@ -33,6 +33,13 @@ from oslo_utils import importutils
 from oslo_utils import strutils
 import six
 
+from magnumclient.common import cliutils
+from magnumclient import exceptions as exc
+from magnumclient.i18n import _
+from magnumclient.v1 import client as client_v1
+from magnumclient.v1 import shell as shell_v1
+from magnumclient import version
+
 profiler = importutils.try_import("osprofiler.profiler")
 
 HAS_KEYRING = False
@@ -51,12 +58,6 @@ try:
 except ImportError:
     pass
 
-from magnumclient.common import cliutils
-from magnumclient import exceptions as exc
-from magnumclient.i18n import _
-from magnumclient.v1 import client as client_v1
-from magnumclient.v1 import shell as shell_v1
-from magnumclient import version
 
 LATEST_API_VERSION = ('1', 'latest')
 DEFAULT_INTERFACE = 'public'

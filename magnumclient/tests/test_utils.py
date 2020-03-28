@@ -123,7 +123,7 @@ class FormatLabelsTest(test_utils.BaseTestCase):
         self.assertEqual({}, utils.format_labels(None))
 
     def test_format_labels(self):
-        l = utils.format_labels([
+        la = utils.format_labels([
             'K1=V1,K2=V2,'
             'K3=V3,K4=V4,'
             'K5=V5'])
@@ -132,10 +132,10 @@ class FormatLabelsTest(test_utils.BaseTestCase):
                           'K3': 'V3',
                           'K4': 'V4',
                           'K5': 'V5'
-                          }, l)
+                          }, la)
 
     def test_format_labels_semicolon(self):
-        l = utils.format_labels([
+        la = utils.format_labels([
             'K1=V1;K2=V2;'
             'K3=V3;K4=V4;'
             'K5=V5'])
@@ -144,10 +144,10 @@ class FormatLabelsTest(test_utils.BaseTestCase):
                           'K3': 'V3',
                           'K4': 'V4',
                           'K5': 'V5'
-                          }, l)
+                          }, la)
 
     def test_format_labels_mix_commas_semicolon(self):
-        l = utils.format_labels([
+        la = utils.format_labels([
             'K1=V1,K2=V2,'
             'K3=V3;K4=V4,'
             'K5=V5'])
@@ -156,10 +156,10 @@ class FormatLabelsTest(test_utils.BaseTestCase):
                           'K3': 'V3',
                           'K4': 'V4',
                           'K5': 'V5'
-                          }, l)
+                          }, la)
 
     def test_format_labels_split(self):
-        l = utils.format_labels([
+        la = utils.format_labels([
             'K1=V1,'
             'K2=V22222222222222222222222222222'
             '222222222222222222222222222,'
@@ -167,10 +167,10 @@ class FormatLabelsTest(test_utils.BaseTestCase):
         self.assertEqual({'K1': 'V1',
                           'K2': 'V22222222222222222222222222222'
                           '222222222222222222222222222',
-                          'K3': '3.3.3.3'}, l)
+                          'K3': '3.3.3.3'}, la)
 
     def test_format_labels_multiple(self):
-        l = utils.format_labels([
+        la = utils.format_labels([
             'K1=V1',
             'K2=V22222222222222222222222222222'
             '222222222222222222222222222',
@@ -178,35 +178,35 @@ class FormatLabelsTest(test_utils.BaseTestCase):
         self.assertEqual({'K1': 'V1',
                           'K2': 'V22222222222222222222222222222'
                           '222222222222222222222222222',
-                          'K3': '3.3.3.3'}, l)
+                          'K3': '3.3.3.3'}, la)
 
     def test_format_labels_multiple_colon_values(self):
-        l = utils.format_labels([
+        la = utils.format_labels([
             'K1=V1',
             'K2=V2,V22,V222,V2222',
             'K3=3.3.3.3'])
         self.assertEqual({'K1': 'V1',
                           'K2': 'V2,V22,V222,V2222',
-                          'K3': '3.3.3.3'}, l)
+                          'K3': '3.3.3.3'}, la)
 
     def test_format_labels_parse_comma_false(self):
-        l = utils.format_labels(
+        la = utils.format_labels(
             ['K1=V1,K2=2.2.2.2,K=V'],
             parse_comma=False)
-        self.assertEqual({'K1': 'V1,K2=2.2.2.2,K=V'}, l)
+        self.assertEqual({'K1': 'V1,K2=2.2.2.2,K=V'}, la)
 
     def test_format_labels_multiple_values_per_labels(self):
-        l = utils.format_labels([
+        la = utils.format_labels([
             'K1=V1',
             'K1=V2'])
-        self.assertEqual({'K1': 'V1,V2'}, l)
+        self.assertEqual({'K1': 'V1,V2'}, la)
 
     def test_format_label_special_label(self):
         labels = ['K1=V1,K22.2.2.2']
-        l = utils.format_labels(
+        la = utils.format_labels(
             labels,
             parse_comma=True)
-        self.assertEqual({'K1': 'V1,K22.2.2.2'}, l)
+        self.assertEqual({'K1': 'V1,K22.2.2.2'}, la)
 
     def test_format_multiple_bad_label(self):
         labels = ['K1=V1', 'K22.2.2.2']

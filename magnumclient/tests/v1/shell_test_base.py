@@ -28,56 +28,56 @@ FAKE_ENV = {'OS_USERNAME': 'username',
 
 class TestCommandLineArgument(utils.TestCase):
     _unrecognized_arg_error = [
-        '.*?^usage: ',
-        '.*?^error: unrecognized arguments:',
-        ".*?^Try 'magnum help ' for more information.",
+        r'.*?^usage: ',
+        r'.*?^error: unrecognized arguments:',
+        r".*?^Try 'magnum help ' for more information.",
         ]
 
     _mandatory_group_arg_error = [
-        '.*?^usage: ',
-        '.*?^error: one of the arguments',
-        ".*?^Try 'magnum help ",
+        r'.*?^usage: ',
+        r'.*?^error: one of the arguments',
+        r".*?^Try 'magnum help ",
     ]
 
     _too_many_group_arg_error = [
-        '.*?^usage: ',
-        '.*?^error: (argument \-\-[a-z\-]*: not allowed with argument )',
-        ".*?^Try 'magnum help ",
+        r'.*?^usage: ',
+        r'.*?^error: (argument \-\-[a-z\-]*: not allowed with argument )',
+        r".*?^Try 'magnum help ",
     ]
 
     _mandatory_arg_error = [
-        '.*?^usage: ',
-        '.*?^error: (the following arguments|argument)',
-        ".*?^Try 'magnum help ",
-        ]
+        r'.*?^usage: ',
+        r'.*?^error: (the following arguments|argument)',
+        r".*?^Try 'magnum help ",
+    ]
 
     _duplicate_arg_error = [
-        '.*?^usage: ',
-        '.*?^error: (Duplicate "<.*>" arguments:)',
-        ".*?^Try 'magnum help ",
-        ]
+        r'.*?^usage: ',
+        r'.*?^error: (Duplicate "<.*>" arguments:)',
+        r".*?^Try 'magnum help ",
+    ]
 
     _deprecated_warning = [
-        '.*(WARNING: The \-\-[a-z\-]* parameter is deprecated)+',
-        ('.*(Use the [\<\-a-z\-\>]* (positional )*parameter to avoid seeing '
+        r'.*(WARNING: The \-\-[a-z\-]* parameter is deprecated)+',
+        (r'.*(Use the [\<\-a-z\-\>]* (positional )*parameter to avoid seeing '
          'this message)+')
     ]
 
     _few_argument_error = [
-        '.*?^usage: magnum ',
-        '.*?^error: (the following arguments|too few arguments)',
-        ".*?^Try 'magnum help ",
-        ]
+        r'.*?^usage: magnum ',
+        r'.*?^error: (the following arguments|too few arguments)',
+        r".*?^Try 'magnum help ",
+    ]
 
     _invalid_value_error = [
-        '.*?^usage: ',
-        '.*?^error: argument .*: invalid .* value:',
-        ".*?^Try 'magnum help ",
-        ]
+        r'.*?^usage: ',
+        r'.*?^error: argument .*: invalid .* value:',
+        r".*?^Try 'magnum help ",
+    ]
 
     _bay_status_error = [
-        '.*?^Bay status for',
-        ]
+        r'.*?^Bay status for',
+    ]
 
     def setUp(self):
         super(TestCommandLineArgument, self).setUp()
