@@ -271,22 +271,24 @@ class TestClusterTemplateList(TestClusterTemplate):
             '--limit', '1',
             '--sort-key', 'key',
             '--sort-dir', 'asc',
-            '--fields', 'fields'
+            '--fields', 'field1,field2'
         ]
         verifylist = [
             ('limit', 1),
             ('sort_key', 'key'),
             ('sort_dir', 'asc'),
-            ('fields', 'fields'),
+            ('fields', 'field1,field2'),
         ]
+        verifycolumns = self.columns + ['field1', 'field2']
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
-        self.cmd.take_action(parsed_args)
+        columns, data = self.cmd.take_action(parsed_args)
         self.cluster_templates_mock.list.assert_called_with(
             limit=1,
             sort_dir='asc',
             sort_key='key',
         )
+        self.assertEqual(verifycolumns, columns)
 
     def test_cluster_template_list_bad_sort_dir_fail(self):
         arglist = [
