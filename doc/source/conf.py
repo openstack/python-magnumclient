@@ -65,7 +65,6 @@ html_theme = 'openstackdocs'
 repository_name = 'openstack/python-magnumclient'
 bug_project = 'python-magnumclient'
 bug_tag = ''
-html_last_updated_fmt = '%Y-%m-%d %H:%M'
 
 
 # Output file base name for HTML help builder.
