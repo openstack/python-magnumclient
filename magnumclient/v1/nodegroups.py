@@ -20,7 +20,7 @@ from magnumclient.v1 import baseunit
 
 CREATION_ATTRIBUTES = ['docker_volume_size', 'labels', 'flavor_id', 'image_id',
                        'project_id', 'node_count', 'name', 'role',
-                       'min_node_count', 'max_node_count']
+                       'min_node_count', 'max_node_count', 'merge_labels']
 
 
 class NodeGroup(baseunit.BaseTemplate):
