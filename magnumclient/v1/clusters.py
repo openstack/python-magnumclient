@@ -26,6 +26,7 @@ CREATION_ATTRIBUTES.append('flavor_id')
 CREATION_ATTRIBUTES.append('fixed_network')
 CREATION_ATTRIBUTES.append('fixed_subnet')
 CREATION_ATTRIBUTES.append('floating_ip_enabled')
+CREATION_ATTRIBUTES.append('merge_labels')
 
 
 class Cluster(baseunit.BaseTemplate):

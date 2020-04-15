@@ -27,6 +27,9 @@ NODEGROUP_ATTRIBUTES = [
     'project_id',
     'docker_volume_size',
     'labels',
+    'labels_overridden',
+    'labels_skipped',
+    'labels_added',
     'flavor_id',
     'image_id',
     'node_addresses',
@@ -37,7 +40,7 @@ NODEGROUP_ATTRIBUTES = [
     'is_default',
     'stack_id',
     'status',
-    'status_reason'
+    'status_reason',
 ]
 
 
@@ -100,6 +103,13 @@ class CreateNodeGroup(command.Command):
             metavar='<flavor>',
             help=_('The nova flavor name or UUID to use when launching the '
                    'nodes in this NodeGroup.'))
+        parser.add_argument(
+            '--merge-labels',
+            dest='merge_labels',
+            action='store_true',
+            default=False,
+            help=_('The labels provided will be merged with the labels '
+                   'configured in the specified cluster.'))
 
         return parser
 
@@ -126,6 +136,11 @@ class CreateNodeGroup(command.Command):
 
         if parsed_args.image is not None:
             args['image_id'] = parsed_args.image
+
+        if parsed_args.merge_labels:
+            # We are only sending this if it's True. This
+            # way we avoid breaking older APIs.
+            args["merge_labels"] = parsed_args.merge_labels
 
         cluster_id = parsed_args.cluster
         nodegroup = mag_client.nodegroups.create(cluster_id, **args)

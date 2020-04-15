@@ -34,6 +34,9 @@ CLUSTER_ATTRIBUTES = [
     'updated_at',
     'coe_version',
     'labels',
+    'labels_overridden',
+    'labels_skipped',
+    'labels_added',
     'faults',
     'keypair',
     'api_address',
@@ -47,7 +50,7 @@ CLUSTER_ATTRIBUTES = [
     'master_flavor_id',
     'flavor_id',
     'health_status_reason',
-    'project_id'
+    'project_id',
 ]
 
 
@@ -141,6 +144,13 @@ class CreateCluster(command.Command):
             action='append_const',
             const=False,
             help=_('Disables floating ip creation on the new Cluster'))
+        parser.add_argument(
+            '--merge-labels',
+            dest='merge_labels',
+            action='store_true',
+            default=False,
+            help=_('The labels provided will be merged with the labels '
+                   'configured in the specified cluster template.'))
 
         return parser
 
@@ -184,6 +194,11 @@ class CreateCluster(command.Command):
 
         if parsed_args.fixed_subnet is not None:
             args["fixed_subnet"] = parsed_args.fixed_subnet
+
+        if parsed_args.merge_labels:
+            # We are only sending this if it's True. This
+            # way we avoid breaking older APIs.
+            args["merge_labels"] = parsed_args.merge_labels
 
         cluster = mag_client.clusters.create(**args)
         print("Request to create cluster %s accepted"
