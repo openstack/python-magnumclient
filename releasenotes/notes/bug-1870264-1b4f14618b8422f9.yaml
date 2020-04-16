@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    [`bug 1870264 <https://bugs.launchpad.net/python-magnumclient/+bug/1870264>`_]
+    Fixed bug where the error message from the response could not be parsed.

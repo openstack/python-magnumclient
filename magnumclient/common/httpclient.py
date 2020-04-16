@@ -60,7 +60,10 @@ def _extract_error_json_text(body_json):
 
 def _extract_error_json(body, resp):
     """Return error_message from the HTTP response body."""
-    content_type = resp.headers.get("Content-Type", "")
+    try:
+        content_type = resp.headers.get("Content-Type", "")
+    except AttributeError:
+        content_type = ""
     if content_type.startswith("application/json"):
         try:
             body_json = resp.json()
