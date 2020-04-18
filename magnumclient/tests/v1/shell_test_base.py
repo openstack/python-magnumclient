@@ -13,8 +13,8 @@
 #    under the License.
 
 import re
+from unittest import mock
 
-import mock
 from testtools import matchers
 
 from magnumclient.tests import utils

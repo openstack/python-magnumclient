@@ -14,11 +14,11 @@
 
 import re
 import sys
+from unittest import mock
 
 import argparse
 import fixtures
 from keystoneauth1 import fixture
-import mock
 import six
 from testtools import matchers
 

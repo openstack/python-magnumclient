@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
+from unittest import mock
 
 from magnumclient.osc.v1 import certificates as osc_certificates
 from magnumclient.tests.osc.unit.v1 import fakes as magnum_fakes

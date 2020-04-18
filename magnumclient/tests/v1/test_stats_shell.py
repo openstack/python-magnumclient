@@ -10,7 +10,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
+from unittest import mock
 
 from magnumclient.tests.v1 import shell_test_base
 from magnumclient.v1.stats import Stats

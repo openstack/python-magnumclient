@@ -16,7 +16,8 @@
 #    under the License.
 
 import collections
-import mock
+from unittest import mock
+
 from oslo_serialization import jsonutils
 import six
 import six.moves.builtins as __builtin__
