@@ -14,10 +14,10 @@
 #
 
 import copy
-import mock
 import os
 import sys
 import tempfile
+from unittest import mock
 
 from contextlib import contextmanager
 try:

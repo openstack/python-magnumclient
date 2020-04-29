@@ -14,8 +14,8 @@
 #    under the License.
 
 import copy
-import mock
 from mock import call
+from unittest import mock
 
 from magnumclient.osc.v1 import nodegroups as osc_nodegroups
 from magnumclient.tests.osc.unit.v1 import fakes as magnum_fakes
