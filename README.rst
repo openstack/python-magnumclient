@@ -29,12 +29,12 @@ in the `developer guide
 * License: Apache License, Version 2.0
 * `PyPi`_ - package installation
 * `Online Documentation`_
-* `Launchpad project`_ - release management
+* `Storyboard project`_ - story and task management
 * `Bugs`_ - issue tracking
 * `Source`_
 
 .. _PyPi: https://pypi.org/project/python-magnumclient
 .. _Online Documentation: https://docs.openstack.org/python-magnumclient/latest/
-.. _Launchpad project: https://launchpad.net/python-magnumclient
-.. _Bugs: https://bugs.launchpad.net/python-magnumclient
+.. _Storyboard project: https://storyboard.openstack.org/#!/project/openstack/python-magnumclient
+.. _Bugs: https://storyboard.openstack.org/#!/project/openstack/python-magnumclient
 .. _Source: https://opendev.org/openstack/python-magnumclient
