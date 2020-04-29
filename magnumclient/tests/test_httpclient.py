@@ -448,10 +448,11 @@ class SessionClientTest(utils.BaseTestCase):
         client = http.SessionClient(
             session=fake_session, endpoint_override='http://magnum')
 
-        resp = client.raw_request('GET', '/v1/bays')
+        resp, resp_body = client.raw_request('GET', '/v1/bays')
 
         self.assertEqual(
             fake_session.request.call_args[1]['headers']['Content-Type'],
             'application/octet-stream'
         )
+        self.assertEqual(None, resp_body)
         self.assertEqual(fake_response, resp)
