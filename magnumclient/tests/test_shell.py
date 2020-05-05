@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import io
 import re
 import sys
 from unittest import mock
@@ -19,7 +20,6 @@ from unittest import mock
 import argparse
 import fixtures
 from keystoneauth1 import fixture
-import six
 from testtools import matchers
 
 from magnumclient import exceptions
@@ -231,8 +231,8 @@ class ShellTest(utils.TestCase):
         self.assertEqual(False, session_kwargs['verify'])
 
     @mock.patch('sys.argv', ['magnum'])
-    @mock.patch('sys.stdout', six.StringIO())
-    @mock.patch('sys.stderr', six.StringIO())
+    @mock.patch('sys.stdout', io.StringIO())
+    @mock.patch('sys.stderr', io.StringIO())
     def test_main_noargs(self):
         # Ensure that main works with no command-line arguments
         try:
