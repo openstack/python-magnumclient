@@ -118,12 +118,12 @@ def format_labels(lbls, parse_comma=True):
             lbls = lbls[0].replace(';', ',').split(',')
 
     labels = {}
-    for l in lbls:
+    for lbl in lbls:
         try:
-            (k, v) = l.split(('='), 1)
+            (k, v) = lbl.split(('='), 1)
         except ValueError:
             raise exc.CommandError(_('labels must be a list of KEY=VALUE '
-                                     'not %s') % l)
+                                     'not %s') % lbl)
         if k not in labels:
             labels[k] = v
         else:
