@@ -13,10 +13,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from http import client as http_client
+import io
 from unittest import mock
 
 from oslo_serialization import jsonutils
-import six
 import socket
 
 from magnumclient.common.apiclient.exceptions import GatewayTimeout
@@ -51,7 +52,7 @@ def _get_error_body(faultstring=None, debuginfo=None, err_type=NORMAL_ERROR):
     return raw_body
 
 
-HTTP_CLASS = six.moves.http_client.HTTPConnection
+HTTP_CLASS = http_client.HTTPConnection
 HTTPS_CLASS = http.VerifiedHTTPSConnection
 DEFAULT_TIMEOUT = 600
 
@@ -81,7 +82,7 @@ class HttpClientTest(utils.BaseTestCase):
     def test_server_exception_empty_body(self):
         error_body = _get_error_body()
         fake_resp = utils.FakeResponse({'content-type': 'application/json'},
-                                       six.StringIO(error_body),
+                                       io.StringIO(error_body),
                                        version=1,
                                        status=500)
         client = http.HTTPClient('http://localhost/')
@@ -97,7 +98,7 @@ class HttpClientTest(utils.BaseTestCase):
         error_msg = 'test error msg'
         error_body = _get_error_body(error_msg, err_type=ERROR_DICT)
         fake_resp = utils.FakeResponse({'content-type': 'application/json'},
-                                       six.StringIO(error_body),
+                                       io.StringIO(error_body),
                                        version=1,
                                        status=500)
         client = http.HTTPClient('http://localhost/')
@@ -116,7 +117,7 @@ class HttpClientTest(utils.BaseTestCase):
         error_body = _get_error_body(error_msg, error_trace,
                                      ERROR_LIST_WITH_DESC)
         fake_resp = utils.FakeResponse({'content-type': 'application/json'},
-                                       six.StringIO(error_body),
+                                       io.StringIO(error_body),
                                        version=1,
                                        status=500)
         client = http.HTTPClient('http://localhost/')
@@ -270,7 +271,7 @@ class HttpClientTest(utils.BaseTestCase):
     def test_401_unauthorized_exception(self):
         error_body = _get_error_body(err_type=ERROR_LIST_WITH_DETAIL)
         fake_resp = utils.FakeResponse({'content-type': 'text/plain'},
-                                       six.StringIO(error_body),
+                                       io.StringIO(error_body),
                                        version=1,
                                        status=401)
         client = http.HTTPClient('http://localhost/')
@@ -299,7 +300,7 @@ class HttpClientTest(utils.BaseTestCase):
         err = "foo"
         fake_resp = utils.FakeResponse(
             {'content-type': 'application/json'},
-            six.StringIO(err), version=1, status=200)
+            io.StringIO(err), version=1, status=200)
         client = http.HTTPClient('http://localhost/')
         conn = utils.FakeConnection(fake_resp)
         client.get_connection = (lambda *a, **kw: conn)
@@ -325,7 +326,7 @@ class HttpClientTest(utils.BaseTestCase):
     def test_server_success_body_none(self):
         fake_resp = utils.FakeResponse(
             {'content-type': None},
-            six.StringIO('bar'), version=1, status=200)
+            io.StringIO('bar'), version=1, status=200)
         client = http.HTTPClient('http://localhost/')
         conn = utils.FakeConnection(fake_resp)
         client.get_connection = (lambda *a, **kw: conn)
@@ -339,7 +340,7 @@ class HttpClientTest(utils.BaseTestCase):
         err = _get_error_body()
         fake_resp = utils.FakeResponse(
             {'content-type': 'application/json'},
-            six.StringIO(err), version=1, status=200)
+            io.StringIO(err), version=1, status=200)
         client = http.HTTPClient('http://localhost/')
         conn = utils.FakeConnection(fake_resp)
         client.get_connection = (lambda *a, **kw: conn)

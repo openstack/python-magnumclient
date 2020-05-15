@@ -20,8 +20,7 @@ Base utilities to build API operation managers and objects on top of.
 """
 
 import copy
-
-import six.moves.urllib.parse as urlparse
+from urllib import parse as urlparse
 
 from magnumclient.common.apiclient import base
 

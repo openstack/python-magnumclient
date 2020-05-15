@@ -31,7 +31,6 @@ import sys
 from oslo_utils import encodeutils
 from oslo_utils import importutils
 from oslo_utils import strutils
-import six
 
 from magnumclient.common import cliutils
 from magnumclient import exceptions as exc
@@ -642,7 +641,7 @@ def main():
 
     except Exception as e:
         logger.debug(e, exc_info=1)
-        print("ERROR: %s" % encodeutils.safe_encode(six.text_type(e)),
+        print("ERROR: %s" % encodeutils.safe_encode(str(e)),
               file=sys.stderr)
         sys.exit(1)
 

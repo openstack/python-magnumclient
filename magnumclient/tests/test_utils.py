@@ -15,12 +15,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import builtins
 import collections
 from unittest import mock
 
 from oslo_serialization import jsonutils
-import six
-import six.moves.builtins as __builtin__
 import tempfile
 
 from magnumclient.common import cliutils
@@ -220,10 +219,10 @@ class FormatLabelsTest(test_utils.BaseTestCase):
 class CliUtilsTest(test_utils.BaseTestCase):
 
     def test_keys_and_vals_to_strs(self):
-        dict_in = {six.u('a'): six.u('1'),
-                   six.u('b'): {six.u('x'): 1,
-                                'y': six.u('2'),
-                                six.u('z'): six.u('3')},
+        dict_in = {'a': '1',
+                   'b': {'x': 1,
+                         'y': '2',
+                         'z': '3'},
                    'c': 7}
 
         dict_exp = collections.OrderedDict([
@@ -240,7 +239,7 @@ class CliUtilsTest(test_utils.BaseTestCase):
             ('b', collections.OrderedDict(sorted(dict_out['b'].items()))),
             ('c', dict_out['c'])])
 
-        self.assertEqual(six.text_type(dict_exp), six.text_type(dict_act))
+        self.assertEqual(str(dict_exp), str(dict_act))
 
 
 class HandleJsonFromFileTest(test_utils.BaseTestCase):
@@ -264,7 +263,7 @@ class HandleJsonFromFileTest(test_utils.BaseTestCase):
 
         self.assertEqual(jsonutils.loads(contents), steps)
 
-    @mock.patch.object(__builtin__, 'open', autospec=True)
+    @mock.patch.object(builtins, 'open', autospec=True)
     def test_handle_json_from_file_open_fail(self, mock_open):
         mock_file_object = mock.MagicMock()
         mock_file_handle = mock.MagicMock()
