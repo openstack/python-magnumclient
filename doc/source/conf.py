@@ -62,9 +62,9 @@ html_theme = 'openstackdocs'
 # html_static_path = ['static']
 
 # openstackdocstheme options
-repository_name = 'openstack/python-magnumclient'
-bug_project = 'python-magnumclient'
-bug_tag = ''
+openstackdocs_repo_name = 'openstack/python-magnumclient'
+openstackdocs_bug_project = 'python-magnumclient'
+openstackdocs_bug_tag = ''
 
 
 # Output file base name for HTML help builder.

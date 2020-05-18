@@ -271,6 +271,7 @@ texinfo_documents = [
 locale_dirs = ['locale/']
 
 # -- Options for openstackdocstheme -------------------------------------------
-repository_name = 'openstack/python-magnumclient'
-bug_project = 'python-magnumclient'
-bug_tag = ''
+openstackdocs_repo_name = 'openstack/python-magnumclient'
+openstackdocs_bug_project = 'python-magnumclient'
+openstackdocs_bug_tag = ''
+openstackdocs_auto_name = False
