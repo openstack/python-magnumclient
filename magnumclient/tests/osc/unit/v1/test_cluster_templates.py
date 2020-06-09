@@ -14,8 +14,8 @@
 #
 
 import copy
-from mock import call
 from unittest import mock
+from unittest.mock import call
 
 from magnumclient.exceptions import InvalidAttribute
 from magnumclient.osc.v1 import cluster_templates as osc_ct

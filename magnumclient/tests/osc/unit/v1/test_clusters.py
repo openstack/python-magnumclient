@@ -24,7 +24,7 @@ try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
-from mock import call
+from unittest.mock import call
 
 from magnumclient import exceptions
 from magnumclient.osc.v1 import clusters as osc_clusters
