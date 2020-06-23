@@ -499,6 +499,21 @@ class TestClusterResize(TestCluster):
             "UUID1", 2, None, None
         )
 
+    def test_cluster_resize_to_zero_pass(self):
+        arglist = ['foo', '0']
+        verifylist = [
+            ('cluster', 'foo'),
+            ('node_count', 0),
+            ('nodes_to_remove', None),
+            ('nodegroup', None)
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.resize.assert_called_with(
+            "UUID1", 0, None, None
+        )
+
 
 class TestClusterUpgrade(TestCluster):
 

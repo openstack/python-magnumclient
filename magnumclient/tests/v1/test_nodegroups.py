@@ -37,7 +37,7 @@ NODEGROUP1 = {
     'is_default': True,
     'role': 'worker',
     'max_node_count': 10,
-    'min_node_count': 1
+    'min_node_count': 0
 }
 NODEGROUP2 = {
     'id': 124,
@@ -53,7 +53,7 @@ NODEGROUP2 = {
     'is_default': True,
     'role': 'master',
     'max_node_count': 10,
-    'min_node_count': 1
+    'min_node_count': 0
 }
 
 CREATE_NODEGROUP = copy.deepcopy(NODEGROUP1)

@@ -78,7 +78,7 @@ class CreateNodeGroup(command.Command):
         parser.add_argument('--min-nodes',
                             dest='min_node_count',
                             type=int,
-                            default=1,
+                            default=0,
                             metavar='<min-nodes>',
                             help='The nodegroup minimum node count.')
         parser.add_argument('--max-nodes',

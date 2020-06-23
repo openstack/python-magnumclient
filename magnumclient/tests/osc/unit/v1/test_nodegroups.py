@@ -47,7 +47,7 @@ class TestNodeGroupCreate(TestNodeGroup):
             'name': 'fake-nodegroup',
             'node_count': 1,
             'role': 'worker',
-            'min_node_count': 1,
+            'min_node_count': 0,
             'max_node_count': None,
         }
 
