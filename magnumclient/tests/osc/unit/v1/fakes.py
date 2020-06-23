@@ -185,7 +185,8 @@ class FakeClusterTemplate(object):
             'flavor_id': 'm1.medium',
             'master_lb_enabled': False,
             'dns_nameserver': '8.8.8.8',
-            'hidden': False
+            'hidden': False,
+            'tags': "",
         }
 
         # Overwrite default attributes.

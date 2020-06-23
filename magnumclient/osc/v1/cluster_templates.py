@@ -52,7 +52,8 @@ CLUSTER_TEMPLATE_ATTRIBUTES = [
     'flavor_id',
     'master_lb_enabled',
     'dns_nameserver',
-    'hidden'
+    'hidden',
+    'tags',
 ]
 
 
@@ -233,6 +234,12 @@ class CreateClusterTemplate(command.ShowOne):
             dest='hidden',
             action='store_false',
             help=_('Indicates the cluster template should be visible.'))
+        parser.add_argument(
+            '--tags',
+            action='append',
+            default=[],
+            metavar='<--tags tag1 --tags tag2,tag3>',
+            help=_('Tags to be added to the cluster template.'))
 
         return parser
 
@@ -265,10 +272,12 @@ class CreateClusterTemplate(command.ShowOne):
             'master_lb_enabled': parsed_args.master_lb_enabled,
         }
 
-        # NOTE (brtknr): Only supply hidden arg if it is True
-        # for backward compatibility
+        # NOTE: Make new arguments backward compatible
         if parsed_args.hidden:
             args['hidden'] = parsed_args.hidden
+        if parsed_args.tags:
+            args['tags'] = ','.join(set(
+                (','.join(parsed_args.tags)).split(',')))
 
         if len(parsed_args.floating_ip_enabled) > 1:
             raise InvalidAttribute('--floating-ip-enabled and '
@@ -359,7 +368,7 @@ class ListTemplateCluster(command.Lister):
         self.log.debug("take_action(%s)", parsed_args)
 
         mag_client = self.app.client_manager.container_infra
-        columns = ['uuid', 'name']
+        columns = ['uuid', 'name', 'tags']
         if parsed_args.fields:
             columns += parsed_args.fields.split(',')
         cts = mag_client.cluster_templates.list(limit=parsed_args.limit,

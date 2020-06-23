@@ -225,12 +225,15 @@ class TestClusterTemplateList(TestClusterTemplate):
 
     columns = [
         'uuid',
-        'name'
+        'name',
+        'tags',
     ]
 
     datalist = (
-        (_cluster_template.uuid, _cluster_template.name),
-        (_cluster_template2.uuid, _cluster_template2.name)
+        (_cluster_template.uuid, _cluster_template.name,
+         _cluster_template.tags),
+        (_cluster_template2.uuid, _cluster_template2.name,
+         _cluster_template.tags)
     )
 
     def setUp(self):
