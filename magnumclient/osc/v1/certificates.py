@@ -51,6 +51,8 @@ class RotateCa(command.Command):
         }
 
         mag_client.certificates.rotate_ca(**opts)
+        print("Request to rotate the CA certificate for cluster %s "
+              "has been accepted." % cluster.uuid)
 
 
 class ShowCa(command.Command):
