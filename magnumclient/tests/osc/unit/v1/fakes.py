@@ -256,7 +256,8 @@ class FakeCluster(object):
             'master_flavor_id': None,
             'flavor_id': 'm1.medium',
             'project_id': None,
-            'health_status_reason': {'api': 'ok'}
+            'health_status_reason': {'api': 'ok'},
+            'master_lb_enabled': False,
         }
 
         # Overwrite default attributes.
@@ -341,7 +342,8 @@ class FakeNodeGroup(object):
             'is_default': False,
             'stack_id': '3a369884-b6ba-484f-fake-stackb718aff',
             'status': 'CREATE_COMPLETE',
-            'status_reason': 'None'
+            'status_reason': 'None',
+            'master_lb_enabled': False,
         }
 
         # Overwrite default attributes.

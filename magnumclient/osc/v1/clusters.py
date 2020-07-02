@@ -41,6 +41,7 @@ CLUSTER_ATTRIBUTES = [
     'keypair',
     'api_address',
     'master_addresses',
+    'master_lb_enabled',
     'create_timeout',
     'node_count',
     'discovery_url',
@@ -151,6 +152,13 @@ class CreateCluster(command.Command):
             default=False,
             help=_('The labels provided will be merged with the labels '
                    'configured in the specified cluster template.'))
+        parser.add_argument(
+            '--master-lb-enabled',
+            dest='master_lb_enabled',
+            action='store_true',
+            default=False,
+            help=_('Indicates whether created clusters should have '
+                   'a loadbalancer for API.'))
 
         return parser
 
@@ -199,6 +207,9 @@ class CreateCluster(command.Command):
             # We are only sending this if it's True. This
             # way we avoid breaking older APIs.
             args["merge_labels"] = parsed_args.merge_labels
+
+        if parsed_args.master_lb_enabled:
+            args["master_lb_enabled"] = parsed_args.master_lb_enabled
 
         cluster = mag_client.clusters.create(**args)
         print("Request to create cluster %s accepted"

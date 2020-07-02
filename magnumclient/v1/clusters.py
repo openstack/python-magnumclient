@@ -27,6 +27,7 @@ CREATION_ATTRIBUTES.append('fixed_network')
 CREATION_ATTRIBUTES.append('fixed_subnet')
 CREATION_ATTRIBUTES.append('floating_ip_enabled')
 CREATION_ATTRIBUTES.append('merge_labels')
+CREATION_ATTRIBUTES.append('master_lb_enabled')
 
 
 class Cluster(baseunit.BaseTemplate):
