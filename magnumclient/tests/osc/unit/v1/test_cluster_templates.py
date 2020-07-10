@@ -28,7 +28,7 @@ class TestClusterTemplate(magnum_fakes.TestMagnumClientOSCV1):
     default_create_args = {
         'coe': 'kubernetes',
         'dns_nameserver': '8.8.8.8',
-        'docker_storage_driver': 'devicemapper',
+        'docker_storage_driver': 'overlay2',
         'docker_volume_size': None,
         'external_network_id': 'public',
         'fixed_network': None,

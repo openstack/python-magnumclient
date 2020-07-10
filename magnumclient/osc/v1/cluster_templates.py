@@ -151,9 +151,9 @@ class CreateClusterTemplate(command.ShowOne):
             '--docker-storage-driver',
             dest='docker_storage_driver',
             metavar='<docker-storage-driver>',
-            default='devicemapper',
+            default='overlay2',
             help=_('Select a docker storage driver. Supported: devicemapper, '
-                   'overlay. Default: devicemapper'))
+                   'overlay, overlay2. Default: overlay2'))
         parser.add_argument(
             '--http-proxy',
             dest='http_proxy',
@@ -277,6 +277,12 @@ class CreateClusterTemplate(command.ShowOne):
                                    'should be specified only once.')
         elif len(parsed_args.floating_ip_enabled) == 1:
             args['floating_ip_enabled'] = parsed_args.floating_ip_enabled[0]
+
+        deprecated = ['devicemapper', 'overlay']
+        if args['docker_storage_driver'] in deprecated:
+            print("WARNING: Docker storage drivers %s are deprecated and will "
+                  "be removed in a future release. Use overlay2 instead." %
+                  deprecated)
 
         ct = mag_client.cluster_templates.create(**args)
         print("Request to create cluster template %s accepted"
