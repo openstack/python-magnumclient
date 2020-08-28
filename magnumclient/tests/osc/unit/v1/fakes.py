@@ -185,6 +185,7 @@ class FakeClusterTemplate(object):
             'flavor_id': 'm1.medium',
             'master_lb_enabled': False,
             'dns_nameserver': '8.8.8.8',
+            'project_id': uuid.uuid4().hex,
             'hidden': False,
             'tags': "",
         }

@@ -52,6 +52,7 @@ CLUSTER_TEMPLATE_ATTRIBUTES = [
     'flavor_id',
     'master_lb_enabled',
     'dns_nameserver',
+    'project_id',
     'hidden',
     'tags',
 ]
