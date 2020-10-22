@@ -253,6 +253,7 @@ class FakeCluster(object):
             'create_timeout': 60,
             'node_count': 1,
             'discovery_url': 'https://fake.cluster',
+            'docker_volume_size': 1,
             'master_count': 1,
             'container_version': None,
             'name': 'fake-cluster',

@@ -48,6 +48,7 @@ CLUSTER_ATTRIBUTES = [
     'create_timeout',
     'node_count',
     'discovery_url',
+    'docker_volume_size',
     'master_count',
     'container_version',
     'name',
