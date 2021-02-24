@@ -159,10 +159,16 @@ class CreateCluster(command.Command):
         parser.add_argument(
             '--master-lb-enabled',
             dest='master_lb_enabled',
-            action='store_true',
-            default=False,
-            help=_('Indicates whether created clusters should have '
-                   'a loadbalancer for API.'))
+            action='append_const',
+            default=[],
+            const=False,
+            help=_('Enable master LB creation on the new cluster'))
+        parser.add_argument(
+            '--master-lb-disabled',
+            dest='master_lb_enabled',
+            action='append_const',
+            const=False,
+            help=_('Disable master LB creation on the new cluster'))
 
         return parser
 
@@ -214,6 +220,20 @@ class CreateCluster(command.Command):
 
         if parsed_args.master_lb_enabled:
             args["master_lb_enabled"] = parsed_args.master_lb_enabled
+
+        if len(parsed_args.master_lb_enabled) > 1:
+            raise exceptions.InvalidAttribute(
+                '--master-lb-enabled and '
+                '--master-lb-disabled are '
+                'mutually exclusive and '
+                'should be specified only once.')
+        elif len(parsed_args.master_lb_enabled) == 1:
+            args['master_lb_enabled'] = parsed_args.master_lb_enabled[0]
+            if (not args['master_lb_enabled'] and
+                    parsed_args.master_count > 1):
+                raise exceptions.InvalidAttribute(
+                    'Master node count can only be one if master '
+                    'loadbalancer is disabled.')
 
         cluster = mag_client.clusters.create(**args)
         print("Request to create cluster %s accepted"
