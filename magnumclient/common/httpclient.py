@@ -69,6 +69,9 @@ def _extract_error_json(body, resp):
         try:
             body_json = resp.json()
             return _extract_error_json_text(body_json)
+        except AttributeError:
+            body_json = jsonutils.loads(body)
+            return _extract_error_json_text(body_json)
         except ValueError:
             return {}
     else:
