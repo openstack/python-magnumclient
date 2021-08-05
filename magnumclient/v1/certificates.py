@@ -42,8 +42,6 @@ class CertificateManager(base.Manager):
         for (key, value) in kwargs.items():
             if key in CREATION_ATTRIBUTES:
                 new[key] = value
-            elif key == 'bay_uuid':
-                new['cluster_uuid'] = value
             else:
                 raise exceptions.InvalidAttribute(
                     "Key must be in %s" % ",".join(CREATION_ATTRIBUTES))

@@ -18,11 +18,6 @@ from magnumclient.common import cliutils as utils
 from magnumclient.i18n import _
 
 
-DEPRECATION_MESSAGE = (
-    'WARNING: The bay parameter is deprecated and will be removed in a future '
-    'release.\nUse the cluster parameter to avoid seeing this message.')
-
-
 def _show_cert(certificate):
     print(certificate.pem)
 
@@ -31,18 +26,11 @@ def _get_target_uuid(cs, args):
     target = None
     if args.cluster:
         target = cs.clusters.get(args.cluster)
-    elif args.bay:
-        print(DEPRECATION_MESSAGE)
-        target = cs.bays.get(args.bay)
     else:
-        raise utils.MissingArgs(['--cluster or --bay'])
+        raise utils.MissingArgs(['--cluster'])
     return target.uuid
 
 
-@utils.arg('--bay',
-           required=False,
-           metavar='<bay>',
-           help=_('ID or name of the bay.'))
 @utils.arg('postional_cluster',
            metavar='<cluster>',
            nargs='?',
@@ -55,7 +43,7 @@ def _get_target_uuid(cs, args):
                  utils.CLUSTER_DEPRECATION_HELP))
 @utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_ca_show(cs, args):
-    """Show details about the CA certificate for a bay or cluster."""
+    """Show details about the CA certificate for a cluster."""
     utils.validate_cluster_args(args.postional_cluster, args.cluster)
     args.cluster = args.postional_cluster or args.cluster
     opts = {
@@ -70,17 +58,13 @@ def do_ca_show(cs, args):
            metavar='<csr>',
            help=_('File path of the csr file to send to Magnum'
                   ' to get signed.'))
-@utils.arg('--bay',
-           required=False,
-           metavar='<bay>',
-           help=_('ID or name of the bay.'))
 @utils.arg('--cluster',
            required=False,
            metavar='<cluster>',
            help=_('ID or name of the cluster.'))
 @utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_ca_sign(cs, args):
-    """Generate the CA certificate for a bay or cluster."""
+    """Generate the CA certificate for a cluster."""
     opts = {
         'cluster_uuid': _get_target_uuid(cs, args)
     }
@@ -102,7 +86,7 @@ def do_ca_sign(cs, args):
            help=_('ID or name of the cluster.'))
 @utils.deprecated(utils.MAGNUM_CLIENT_DEPRECATION_WARNING)
 def do_ca_rotate(cs, args):
-    """Rotate the CA certificate for a bay or cluster to revoke access."""
+    """Rotate the CA certificate for a cluster to revoke access."""
     cluster = cs.clusters.get(args.cluster)
     opts = {
         'cluster_uuid': cluster.uuid
