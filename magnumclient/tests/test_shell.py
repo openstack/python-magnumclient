@@ -119,9 +119,13 @@ class ShellTest(utils.TestCase):
     def test_help_on_subcommand(self):
         required = [
             '.*?^usage: magnum bay-create',
-            '.*?^Create a bay.',
-            '.*?^Optional arguments:',
+            '.*?^Create a bay.'
         ]
+        # https://bugs.python.org/issue9694
+        if sys.version_info[:2] >= (3, 10):
+            required.append('.*?^Options:')
+        else:
+            required.append('.*?^Optional arguments:')
         stdout, stderr = self.shell('help bay-create')
         for r in required:
             self.assertThat((stdout + stderr),
