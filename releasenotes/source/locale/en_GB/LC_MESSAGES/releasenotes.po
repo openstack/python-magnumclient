@@ -1,0 +1,130 @@
+# Andi Chandler <andi@gowling.com>, 2022. #zanata
+msgid ""
+msgstr ""
+"Project-Id-Version: MagnumClientReleaseNotes\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-11 09:57+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2022-06-13 07:37+0000\n"
+"Last-Translator: Andi Chandler <andi@gowling.com>\n"
+"Language-Team: English (United Kingdom)\n"
+"Language: en_GB\n"
+"X-Generator: Zanata 4.3.3\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+msgid "2.10.0"
+msgstr "2.10.0"
+
+msgid "3.1.0"
+msgstr "3.1.0"
+
+msgid "3.4.0"
+msgstr "3.4.0"
+
+msgid ":ref:`genindex`"
+msgstr ":ref:`genindex`"
+
+msgid ":ref:`modindex`"
+msgstr ":ref:`modindex`"
+
+msgid ":ref:`search`"
+msgstr ":ref:`search`"
+
+msgid "Bug Fixes"
+msgstr "Bug Fixes"
+
+msgid "Current Release Notes"
+msgstr "Current Release Notes"
+
+msgid ""
+"Further details for historical OpenStack releases are found at the "
+"`OpenStack Releases`_ page."
+msgstr ""
+"Further details for historical OpenStack releases are found at the "
+"`OpenStack Releases`_ page."
+
+msgid ""
+"Implemented Openstack command for ca-show, ca-sign, ca-rotate and stats-list."
+msgstr ""
+"Implemented Openstack command for ca-show, ca-sign, ca-rotate and stats-list."
+
+msgid ""
+"Implemented Openstack command for quotas-create, quotas-update, quotas-"
+"delete, quotas-show and quotas-list"
+msgstr ""
+"Implemented Openstack command for quotas-create, quotas-update, quotas-"
+"delete, quotas-show and quotas-list"
+
+msgid "Indices and tables"
+msgstr "Indices and tables"
+
+msgid "Magnum Client Release Notes"
+msgstr "Magnum Client Release Notes"
+
+msgid "MagnumClient Release"
+msgstr "MagnumClient Release"
+
+msgid "New Features"
+msgstr "New Features"
+
+msgid "OpenStack Release"
+msgstr "OpenStack Release"
+
+msgid "OpenStack Releases"
+msgstr "OpenStack Releases"
+
+msgid "Rocky"
+msgstr "Rocky"
+
+msgid "Rocky Series Release Notes"
+msgstr "Rocky Series Release Notes"
+
+msgid "Stein Series Release Notes"
+msgstr "Stein Series Release Notes"
+
+msgid ""
+"The MagnumClient release that was current when the corresponding OpenStack "
+"release was made is shown below:"
+msgstr ""
+"The MagnumClient release that was current when the corresponding OpenStack "
+"release was made is shown below:"
+
+msgid "Train Series Release Notes"
+msgstr "Train Series Release Notes"
+
+msgid "Ussuri Series Release Notes"
+msgstr "Ussuri Series Release Notes"
+
+msgid "Victoria Series Release Notes"
+msgstr "Victoria Series Release Notes"
+
+msgid "Wallaby Series Release Notes"
+msgstr "Wallaby Series Release Notes"
+
+msgid ""
+"When creating a cluster template the administrator can use --tags <text> "
+"argument to add any information that he considers important. The received "
+"text is a comma separated list with the pretended tags. This information is "
+"also shown when the user lists all the available cluster templates."
+msgstr ""
+"When creating a cluster template the administrator can use --tags <text> "
+"argument to add any information that he considers important. The received "
+"text is a comma-separated list with the pretended tags. This information is "
+"also shown when the user lists all the available cluster templates."
+
+msgid "Xena Series Release Notes"
+msgstr "Xena Series Release Notes"
+
+msgid "Yoga Series Release Notes"
+msgstr "Yoga Series Release Notes"
+
+msgid ""
+"[`bug 1870264 <https://bugs.launchpad.net/python-magnumclient/"
+"+bug/1870264>`_] Fixed bug where the error message from the response could "
+"not be parsed."
+msgstr ""
+"[`bug 1870264 <https://bugs.launchpad.net/python-magnumclient/"
+"+bug/1870264>`_] Fixed bug where the error message from the response could "
+"not be parsed."
