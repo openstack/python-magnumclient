@@ -54,8 +54,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MagnumClientReleaseNotes'
-copyright = u'2016, OpenStack Foundation'
+project = 'MagnumClientReleaseNotes'
+copyright = '2016, OpenStack Foundation'
 
 # Release notes are version independent.
 # The short X.Y version.
@@ -203,8 +203,8 @@ latex_elements = {}
 # author, documentclass [howto, manual, or own class]).
 latex_documents = [
     ('index', 'MagnumClientReleaseNotes.tex',
-     u'MagnumClient ReleaseNotes Documentation',
-     u'OpenStack Foundation', 'manual'),
+     'MagnumClient ReleaseNotes Documentation',
+     'OpenStack Foundation', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -234,8 +234,8 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'MagnumClientReleaseNotes',
-     u'MagnumClient ReleaseNotes Documentation',
-     [u'OpenStack Foundation'], 1)
+     'MagnumClient ReleaseNotes Documentation',
+     ['OpenStack Foundation'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -249,8 +249,8 @@ man_pages = [
 # dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'MagnumClientReleaseNotes',
-     u'MagnumClient ReleaseNotes Documentation',
-     u'OpenStack Foundation', 'MagnumClientReleaseNotes',
+     'MagnumClient ReleaseNotes Documentation',
+     'OpenStack Foundation', 'MagnumClientReleaseNotes',
      'One line description of project.',
      'Miscellaneous'),
 ]
