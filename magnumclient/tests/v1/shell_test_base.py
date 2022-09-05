@@ -75,10 +75,6 @@ class TestCommandLineArgument(utils.TestCase):
         r".*?^Try 'magnum help ",
     ]
 
-    _bay_status_error = [
-        r'.*?^Bay status for',
-    ]
-
     def setUp(self):
         super(TestCommandLineArgument, self).setUp()
         self.make_env(fake_env=FAKE_ENV)

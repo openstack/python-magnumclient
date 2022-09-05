@@ -52,16 +52,16 @@ class BaseModelManager(base.Manager):
 
     def list(self, limit=None, marker=None, sort_key=None,
              sort_dir=None, detail=False):
-        """Retrieve a list of baymodels.
+        """Retrieve a list of cluster templates.
 
-        :param marker: Optional, the UUID of a baymodel, eg the last
-                       baymodel from a previous result set. Return
+        :param marker: Optional, the UUID of a template, eg the last
+                       template from a previous result set. Return
                        the next result set.
         :param limit: The maximum number of results to return per
                       request, if:
 
-            1) limit > 0, the maximum number of baymodels to return.
-            2) limit == 0, return the entire list of baymodels.
+            1) limit > 0, the maximum number of cluster templates to return.
+            2) limit == 0, return the entire list of cluster templates.
             3) limit param is NOT specified (None), the number of items
                returned respect the maximum imposed by the Magnum API
                (see Magnum's api.max_limit option).
@@ -72,9 +72,9 @@ class BaseModelManager(base.Manager):
                          default) or 'desc'.
 
         :param detail: Optional, boolean whether to return detailed information
-                       about baymodels.
+                       about cluster templates.
 
-        :returns: A list of baymodels.
+        :returns: A list of cluster templates.
 
         """
         if limit is not None:

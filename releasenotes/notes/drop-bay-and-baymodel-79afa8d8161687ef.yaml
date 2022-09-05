@@ -1,0 +1,4 @@
+---
+deprecations:
+  - |
+    Remove support for bays and baymodels.      

@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from magnumclient.v1 import baymodels_shell
-from magnumclient.v1 import bays_shell
 from magnumclient.v1 import certificates_shell
 from magnumclient.v1 import cluster_templates_shell
 from magnumclient.v1 import clusters_shell
@@ -23,8 +21,6 @@ from magnumclient.v1 import quotas_shell
 from magnumclient.v1 import stats_shell
 
 COMMAND_MODULES = [
-    baymodels_shell,
-    bays_shell,
     certificates_shell,
     clusters_shell,
     cluster_templates_shell,

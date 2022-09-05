@@ -412,7 +412,7 @@ class SessionClientTest(utils.BaseTestCase):
         client = http.SessionClient(
             session=fake_session, endpoint_override='http://magnum')
 
-        client.json_request('GET', '/v1/bays')
+        client.json_request('GET', '/v1/clusters')
         self.assertEqual(
             fake_session.request.call_args[1]['endpoint_override'],
             'http://magnum'
@@ -450,7 +450,7 @@ class SessionClientTest(utils.BaseTestCase):
         client = http.SessionClient(
             session=fake_session, endpoint_override='http://magnum')
 
-        resp, resp_body = client.raw_request('GET', '/v1/bays')
+        resp, resp_body = client.raw_request('GET', '/v1/clusters')
 
         self.assertEqual(
             fake_session.request.call_args[1]['headers']['Content-Type'],

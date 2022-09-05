@@ -19,8 +19,6 @@ import os_client_config
 from oslo_utils import importutils
 
 from magnumclient.common import httpclient
-from magnumclient.v1 import baymodels
-from magnumclient.v1 import bays
 from magnumclient.v1 import certificates
 from magnumclient.v1 import cluster_templates
 from magnumclient.v1 import clusters
@@ -197,10 +195,8 @@ class Client(object):
                 **kwargs
             )
 
-        self.bays = bays.BayManager(self.http_client)
         self.clusters = clusters.ClusterManager(self.http_client)
         self.certificates = certificates.CertificateManager(self.http_client)
-        self.baymodels = baymodels.BayModelManager(self.http_client)
         self.cluster_templates = \
             cluster_templates.ClusterTemplateManager(self.http_client)
         self.mservices = mservices.MServiceManager(self.http_client)
