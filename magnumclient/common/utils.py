@@ -238,7 +238,7 @@ def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
                    "  user:\n"
                    "    exec:\n"
                    "      command: /bin/bash\n"
-                   "      apiVersion: client.authentication.k8s.io/v1alpha1\n"
+                   "      apiVersion: client.authentication.k8s.io/v1beta1\n"
                    "      args:\n"
                    "      - -c\n"
                    "      - >\n"
@@ -246,7 +246,7 @@ def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
                    "            echo 'Error: Missing OpenStack credential from environment variable $OS_TOKEN' > /dev/stderr\n"  # noqa
                    "            exit 1\n"
                    "        else\n"
-                   "            echo '{ \"apiVersion\": \"client.authentication.k8s.io/v1alpha1\", \"kind\": \"ExecCredential\", \"status\": { \"token\": \"'\"${OS_TOKEN}\"'\"}}'\n"  # noqa
+                   "            echo '{ \"apiVersion\": \"client.authentication.k8s.io/v1beta1\", \"kind\": \"ExecCredential\", \"status\": { \"token\": \"'\"${OS_TOKEN}\"'\"}}'\n"  # noqa
                    "        fi\n"
                    % {'name': cluster.name,
                       'api_address': cluster.api_address,
