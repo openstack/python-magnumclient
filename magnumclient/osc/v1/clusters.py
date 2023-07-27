@@ -85,7 +85,7 @@ class CreateCluster(command.Command):
         parser.add_argument('--labels',
                             metavar='<KEY1=VALUE1,KEY2=VALUE2;KEY3=VALUE3...>',
                             action='append',
-                            help=_('Arbitrary labels in the form of key=value'
+                            help=_('Arbitrary labels in the form of key=value '
                                    'pairs to associate with a cluster '
                                    'template. May be used multiple times.'))
         parser.add_argument('--keypair',
@@ -482,8 +482,8 @@ class ResizeCluster(command.Command):
             '--nodes-to-remove',
             metavar='<Server UUID>',
             action='append',
-            help=_("Server ID of the nodes to be removed. Repeat to add"
-                   "more server ID"))
+            help=_('Server ID of the nodes to be removed. Repeat to add '
+                   'more server ID'))
 
         parser.add_argument(
             '--nodegroup',
