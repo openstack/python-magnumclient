@@ -160,11 +160,12 @@ def handle_json_from_file(json_arg):
 
 
 def config_cluster(cluster, cluster_template, cfg_dir, force=False,
-                   certs=None, use_keystone=False):
+                   certs=None, use_keystone=False, direct_output=False):
     """Return and write configuration for the given cluster."""
     if cluster_template.coe == 'kubernetes':
         return _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
-                                          force, certs, use_keystone)
+                                          force, certs, use_keystone,
+                                          direct_output)
     elif (cluster_template.coe == 'swarm'
           or cluster_template.coe == 'swarm-mode'):
         return _config_cluster_swarm(cluster, cluster_template, cfg_dir,
@@ -172,7 +173,8 @@ def config_cluster(cluster, cluster_template, cfg_dir, force=False,
 
 
 def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
-                               force=False, certs=None, use_keystone=False):
+                               force=False, certs=None, use_keystone=False,
+                               direct_output=False):
     """Return and write configuration for the given kubernetes cluster."""
     cfg_file = "%s/config" % cfg_dir
     if cluster_template.tls_disabled or certs is None:
@@ -252,6 +254,8 @@ def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
                       'api_address': cluster.api_address,
                       'ca': base64.encode_as_text(certs['ca'])})
 
+    if direct_output:
+        return cfg
     if os.path.exists(cfg_file) and not force:
         raise exc.CommandError("File %s exists, aborting." % cfg_file)
     else:
