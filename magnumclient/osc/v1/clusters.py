@@ -161,7 +161,7 @@ class CreateCluster(command.Command):
             dest='master_lb_enabled',
             action='append_const',
             default=[],
-            const=False,
+            const=True,
             help=_('Enable master LB creation on the new cluster'))
         parser.add_argument(
             '--master-lb-disabled',
