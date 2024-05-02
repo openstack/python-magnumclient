@@ -196,6 +196,11 @@ class CreateClusterTemplate(command.ShowOne):
             default=False,
             help=_('Enable docker registry in the Cluster'))
         parser.add_argument(
+            '--insecure-registry',
+            dest='insecure_registry',
+            help=_('The URL pointing to users own private insecure docker'
+                   'registry to deploy and run docker containers.'))
+        parser.add_argument(
             '--server-type',
             dest='server_type',
             metavar='<server-type>',
@@ -268,6 +273,7 @@ class CreateClusterTemplate(command.ShowOne):
             'tls_disabled': parsed_args.tls_disabled,
             'public': parsed_args.public,
             'registry_enabled': parsed_args.registry_enabled,
+            'insecure_registry': parsed_args.insecure_registry,
             'server_type': parsed_args.server_type,
             'master_lb_enabled': parsed_args.master_lb_enabled,
         }

@@ -46,6 +46,7 @@ class TestClusterTemplate(magnum_fakes.TestMagnumClientOSCV1):
         'no_proxy': None,
         'public': False,
         'registry_enabled': False,
+        'insecure_registry': None,
         'server_type': 'vm',
         'tls_disabled': False,
         'volume_driver': None,
