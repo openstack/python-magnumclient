@@ -14,16 +14,13 @@
 #
 
 import copy
+from io import StringIO
 import os
 import sys
 import tempfile
 from unittest import mock
 
 from contextlib import contextmanager
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
 from unittest.mock import call
 
 from magnumclient import exceptions
