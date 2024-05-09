@@ -192,7 +192,7 @@ def _config_cluster_kubernetes(cluster, cluster_template, cfg_dir,
                "kind: Config\n"
                "preferences: {}\n"
                "users:\n"
-               "- name: %(name)s'\n"
+               "- name: %(name)s\n"
                % {'name': cluster.name, 'api_address': cluster.api_address})
     else:
         if not use_keystone:
