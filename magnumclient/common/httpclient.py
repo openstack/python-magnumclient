@@ -270,9 +270,7 @@ class VerifiedHTTPSConnection(http_client.HTTPSConnection):
 
     def __init__(self, host, port, key_file=None, cert_file=None,
                  ca_file=None, timeout=None, insecure=False):
-        http_client.HTTPSConnection.__init__(self, host, port,
-                                             key_file=key_file,
-                                             cert_file=cert_file)
+        http_client.HTTPSConnection.__init__(self, host, port)
         self.key_file = key_file
         self.cert_file = cert_file
         if ca_file is not None:
@@ -293,22 +291,23 @@ class VerifiedHTTPSConnection(http_client.HTTPSConnection):
         our client certificate.
         """
         sock = socket.create_connection((self.host, self.port), self.timeout)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 
         if self._tunnel_host:
             self.sock = sock
             self._tunnel()
 
         if self.insecure is True:
-            kwargs = {'cert_reqs': ssl.CERT_NONE}
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
         else:
-            kwargs = {'cert_reqs': ssl.CERT_REQUIRED, 'ca_certs': self.ca_file}
+            context.verify_mode = ssl.CERT_REQUIRED
+            context.load_verify_locations(self.ca_file)
 
         if self.cert_file:
-            kwargs['certfile'] = self.cert_file
-            if self.key_file:
-                kwargs['keyfile'] = self.key_file
+            context.load_cert_chain(self.cert_file, self.key_file)
 
-        self.sock = ssl.wrap_socket(sock, **kwargs)
+        self.sock = context.wrap_socket(sock)
 
     @staticmethod
     def get_system_ca_file():
