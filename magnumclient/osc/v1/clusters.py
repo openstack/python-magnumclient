@@ -438,29 +438,62 @@ class ConfigCluster(command.Command):
 
         cluster_template = mag_client.cluster_templates.get(
             cluster.cluster_template_id)
-        opts = {
-            'cluster_uuid': cluster.uuid,
-        }
 
-        tls = None
-        if not cluster_template.tls_disabled:
-            tls = magnum_utils.generate_csr_and_key()
-            tls['ca'] = mag_client.certificates.get(**opts).pem
-            opts['csr'] = tls['csr']
-            tls['cert'] = mag_client.certificates.create(**opts).pem
-            if parsed_args.output_certs:
-                for k in ('key', 'cert', 'ca'):
-                    fname = "%s/%s.pem" % (parsed_args.dir, k)
-                    if os.path.exists(fname) and not parsed_args.force:
-                        raise Exception("File %s exists, aborting." % fname)
-                    else:
-                        with open(fname, "w") as f:
-                            f.write(tls[k])
+        tls = self._fetch_tls(
+            mag_client=mag_client,
+            cluster_uuid=cluster.uuid,
+            tls_required=(not cluster_template.tls_disabled),
+            certkey_required=(not parsed_args.use_keystone)
+        )
+
+        if parsed_args.output_certs:
+            self._write_certs(
+                certs=tls,
+                path=parsed_args.dir,
+                force=parsed_args.force
+            )
 
         print(magnum_utils.config_cluster(
             cluster, cluster_template, parsed_args.dir,
             force=parsed_args.force, certs=tls,
             use_keystone=parsed_args.use_keystone))
+
+    def _fetch_tls(
+            self,
+            mag_client,
+            cluster_uuid,
+            tls_required,
+            certkey_required=True,
+    ):
+        if not tls_required:
+            return {}
+        opts = {
+            'cluster_uuid': cluster_uuid,
+        }
+        tls = {
+            'ca': mag_client.certificates.get(**opts).pem
+        }
+
+        if certkey_required:
+            csr = magnum_utils.generate_csr_and_key()
+            opts['csr'] = csr['csr']
+            tls['cert'] = mag_client.certificates.create(**opts).pem
+            tls['key'] = csr['key']
+        return tls
+
+    def _write_certs(self, certs, path, force):
+        for k in ('key', 'cert', 'ca'):
+            fname = "%s/%s.pem" % (path, k)
+            if os.path.exists(fname):
+                if not force:
+                    raise Exception("File %s exists, aborting." % fname)
+                os.remove(fname)
+
+            if k not in certs:
+                # key and cert aren't always generated
+                continue
+            with open(fname, "w") as f:
+                f.write(certs[k])
 
 
 class ResizeCluster(command.Command):

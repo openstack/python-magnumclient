@@ -269,6 +269,7 @@ def do_cluster_config(cs, args):
         'cluster_uuid': cluster.uuid,
     }
 
+    # Create a new Certificate and Key, sign it
     if not cluster_template.tls_disabled:
         tls = magnum_utils.generate_csr_and_key()
         tls['ca'] = cs.certificates.get(**opts).pem
