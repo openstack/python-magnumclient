@@ -307,7 +307,7 @@ class VerifiedHTTPSConnection(http_client.HTTPSConnection):
         if self.cert_file:
             context.load_cert_chain(self.cert_file, self.key_file)
 
-        self.sock = context.wrap_socket(sock)
+        self.sock = context.wrap_socket(sock, server_hostname=self.host)
 
     @staticmethod
     def get_system_ca_file():
