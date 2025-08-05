@@ -22,6 +22,7 @@ from magnumclient.common import httpclient
 from magnumclient.v1 import certificates
 from magnumclient.v1 import cluster_templates
 from magnumclient.v1 import clusters
+from magnumclient.v1 import credentials
 from magnumclient.v1 import mservices
 from magnumclient.v1 import nodegroups
 from magnumclient.v1 import quotas
@@ -213,3 +214,4 @@ class Client(object):
         self.stats = stats.StatsManager(self.http_client)
         self.quotas = quotas.QuotasManager(self.http_client)
         self.nodegroups = nodegroups.NodeGroupManager(self.http_client)
+        self.credentials = credentials.CredentialManager(self.http_client)
