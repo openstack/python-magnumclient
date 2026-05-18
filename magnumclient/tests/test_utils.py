@@ -216,6 +216,78 @@ class FormatLabelsTest(test_utils.BaseTestCase):
                          'not K22.2.2.2', str(ex))
 
 
+class HandleTaintsTest(test_utils.BaseTestCase):
+
+    def test_none(self):
+        self.assertEqual([], utils.handle_taints(None))
+
+    def test_empty_list(self):
+        self.assertEqual([], utils.handle_taints([]))
+
+    def test_single_arg_comma_separated(self):
+        ts = utils.handle_taints([
+            'gpu=true:NoSchedule,dedicated=:NoExecute',
+        ])
+        self.assertEqual([
+            {'key': 'gpu', 'value': 'true', 'effect': 'NoSchedule'},
+            {'key': 'dedicated', 'value': '', 'effect': 'NoExecute'},
+        ], ts)
+
+    def test_value_optional(self):
+        ts = utils.handle_taints(['nectar.org.au/unreachable:NoSchedule'])
+        self.assertEqual([
+            {'key': 'nectar.org.au/unreachable', 'value': '',
+             'effect': 'NoSchedule'},
+        ], ts)
+
+    def test_mixed_value_and_no_value(self):
+        ts = utils.handle_taints([
+            'gpu=true:NoSchedule,unreachable:NoExecute',
+        ])
+        self.assertEqual([
+            {'key': 'gpu', 'value': 'true', 'effect': 'NoSchedule'},
+            {'key': 'unreachable', 'value': '', 'effect': 'NoExecute'},
+        ], ts)
+
+    def test_repeated_flag(self):
+        ts = utils.handle_taints([
+            'gpu=true:NoSchedule',
+            'reserved=ops:PreferNoSchedule',
+        ])
+        self.assertEqual([
+            {'key': 'gpu', 'value': 'true', 'effect': 'NoSchedule'},
+            {'key': 'reserved', 'value': 'ops',
+             'effect': 'PreferNoSchedule'},
+        ], ts)
+
+    def test_semicolon_separator(self):
+        ts = utils.handle_taints([
+            'a=1:NoSchedule;b=2:NoExecute',
+        ])
+        self.assertEqual([
+            {'key': 'a', 'value': '1', 'effect': 'NoSchedule'},
+            {'key': 'b', 'value': '2', 'effect': 'NoExecute'},
+        ], ts)
+
+    def test_invalid_effect(self):
+        ex = self.assertRaises(exc.CommandError,
+                               utils.handle_taints,
+                               ['gpu=true:Bogus'])
+        self.assertIn('Bogus', str(ex))
+
+    def test_missing_key(self):
+        ex = self.assertRaises(exc.CommandError,
+                               utils.handle_taints,
+                               ['=true:NoSchedule'])
+        self.assertIn('=true:NoSchedule', str(ex))
+
+    def test_no_effect_separator(self):
+        ex = self.assertRaises(exc.CommandError,
+                               utils.handle_taints,
+                               ['gpu=true'])
+        self.assertIn('gpu=true', str(ex))
+
+
 class CliUtilsTest(test_utils.BaseTestCase):
 
     def test_keys_and_vals_to_strs(self):

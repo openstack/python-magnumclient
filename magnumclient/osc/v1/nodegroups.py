@@ -88,6 +88,23 @@ class CreateNodeGroup(command.Command):
             default=False,
             help=_('The labels provided will be merged with the labels '
                    'configured in the specified cluster.'))
+        parser.add_argument(
+            '--node-labels',
+            dest='node_labels',
+            metavar='<KEY1=VALUE1,KEY2=VALUE2...>',
+            action='append',
+            help=_('Kubernetes node labels in the form of key=value pairs to '
+                   'apply to every node in this nodegroup. May be used '
+                   'multiple times.'))
+        parser.add_argument(
+            '--node-taints',
+            dest='node_taints',
+            metavar='<KEY1=VALUE1:EFFECT1,KEY2:EFFECT2...>',
+            action='append',
+            help=_('Kubernetes node taints to apply to every node in this '
+                   'nodegroup, as KEY[=VALUE]:EFFECT (VALUE is optional). '
+                   'EFFECT must be one of NoSchedule, PreferNoSchedule or '
+                   'NoExecute. May be used multiple times.'))
 
         return parser
 
@@ -119,6 +136,14 @@ class CreateNodeGroup(command.Command):
             # We are only sending this if it's True. This
             # way we avoid breaking older APIs.
             args["merge_labels"] = parsed_args.merge_labels
+
+        if parsed_args.node_labels is not None:
+            args['node_labels'] = magnum_utils.handle_labels(
+                parsed_args.node_labels)
+
+        if parsed_args.node_taints is not None:
+            args['node_taints'] = magnum_utils.handle_taints(
+                parsed_args.node_taints)
 
         cluster_id = parsed_args.cluster
         nodegroup = mag_client.nodegroups.create(cluster_id, **args)
@@ -257,6 +282,24 @@ class UpdateNodeGroup(command.Command):
             type=int,
             dest='max_node_count',
             help=_('The maximum node count for the nodegroup.'))
+        parser.add_argument(
+            '--node-labels',
+            dest='node_labels',
+            metavar='<KEY1=VALUE1,KEY2=VALUE2...>',
+            action='append',
+            help=_('Kubernetes node labels in the form of key=value pairs to '
+                   'apply to every node in this nodegroup. Replaces any '
+                   'existing node labels. May be used multiple times.'))
+        parser.add_argument(
+            '--node-taints',
+            dest='node_taints',
+            metavar='<KEY1=VALUE1:EFFECT1,KEY2:EFFECT2...>',
+            action='append',
+            help=_('Kubernetes node taints to apply to every node in this '
+                   'nodegroup, as KEY[=VALUE]:EFFECT (VALUE is optional). '
+                   'EFFECT must be one of NoSchedule, PreferNoSchedule or '
+                   'NoExecute. Replaces any existing node taints. May be '
+                   'used multiple times.'))
         return parser
 
     def take_action(self, parsed_args):
@@ -273,6 +316,26 @@ class UpdateNodeGroup(command.Command):
         if parsed_args.max_node_count is not None:
             patch.append({'op': 'replace', 'path': '/max_node_count',
                           'value': parsed_args.max_node_count})
+
+        # The Magnum API's JSON patch value field only accepts text or int,
+        # so dict/list values are sent as their string representation and
+        # deserialized server-side (see magnum.api.utils.apply_jsonpatch).
+        if parsed_args.node_labels is not None:
+            # An empty value (e.g. --node-labels '') clears the field.
+            labels = [x for x in parsed_args.node_labels if x]
+            patch.append({
+                'op': 'replace',
+                'path': '/node_labels',
+                'value': str(magnum_utils.handle_labels(labels)),
+            })
+
+        if parsed_args.node_taints is not None:
+            taints = [x for x in parsed_args.node_taints if x]
+            patch.append({
+                'op': 'replace',
+                'path': '/node_taints',
+                'value': str(magnum_utils.handle_taints(taints)),
+            })
 
         if not patch:
             raise exceptions.CommandError("Nothing to update.")

@@ -351,6 +351,8 @@ class FakeNodeGroup(object):
             'status': 'CREATE_COMPLETE',
             'status_reason': 'None',
             'master_lb_enabled': False,
+            'node_labels': {},
+            'node_taints': [],
         }
 
         # Overwrite default attributes.

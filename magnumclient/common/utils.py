@@ -132,6 +132,41 @@ def format_labels(lbls, parse_comma=True):
     return labels
 
 
+_VALID_TAINT_EFFECTS = ('NoSchedule', 'PreferNoSchedule', 'NoExecute')
+
+
+def handle_taints(taints):
+    """Reformat --node-taints values into the API's list of dicts.
+
+    Accepts one or more strings of the form ``KEY[=VALUE]:EFFECT``
+    (e.g. ``key1=value1:NoSchedule`` or ``key2:NoExecute``), with semicolons
+    also accepted as a separator, and returns a list of
+    ``{key, value, effect}`` dicts. ``value`` is optional and defaults to an
+    empty string; ``key`` and ``effect`` are required.
+    """
+    if not taints:
+        return []
+
+    if len(taints) == 1:
+        taints = taints[0].replace(';', ',').split(',')
+
+    parsed = []
+    for raw in taints:
+        try:
+            head, effect = raw.rsplit(':', 1)
+        except ValueError:
+            raise exc.CommandError(_(
+                'taints must be a list of KEY[=VALUE]:EFFECT, not %s') % raw)
+        # VALUE is optional: "key:effect" is equivalent to "key=:effect".
+        key, _sep, value = head.partition('=')
+        if not key or effect not in _VALID_TAINT_EFFECTS:
+            raise exc.CommandError(_(
+                "taints must be KEY[=VALUE]:EFFECT where EFFECT is one of "
+                "NoSchedule, PreferNoSchedule, NoExecute, not %s") % raw)
+        parsed.append({'key': key, 'value': value, 'effect': effect})
+    return parsed
+
+
 def print_list_field(field):
     return lambda obj: ', '.join(getattr(obj, field))
 

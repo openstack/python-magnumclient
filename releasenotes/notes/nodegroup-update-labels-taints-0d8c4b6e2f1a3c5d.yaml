@@ -1,0 +1,14 @@
+---
+features:
+  - |
+    The ``openstack coe nodegroup update`` command gained ``--node-labels``
+    and ``--node-taints`` flags for updating the Kubernetes node labels and
+    node taints on an existing nodegroup, e.g.::
+
+        openstack coe nodegroup update \
+            --node-labels workload=gpu \
+            --node-taints workload=gpu:NoSchedule \
+            <cluster> <nodegroup>
+
+    Each flag replaces the corresponding field in full and may be repeated.
+    Passing an empty value (e.g. ``--node-labels ''``) clears the field.
