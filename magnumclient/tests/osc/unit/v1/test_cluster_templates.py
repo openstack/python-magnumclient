@@ -382,6 +382,59 @@ class TestClusterTemplateUpdate(TestClusterTemplate):
             [{'op': 'remove', 'path': '/bar'}]
         )
 
+    def test_cluster_template_update_hidden(self):
+        arglist = ['foo', '--hidden']
+        verifylist = [
+            ('cluster-template', 'foo'),
+            ('hidden', True),
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'replace', 'path': '/hidden', 'value': True}]
+        )
+
+    def test_cluster_template_update_visible(self):
+        arglist = ['foo', '--visible']
+        verifylist = [
+            ('cluster-template', 'foo'),
+            ('hidden', False),
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'replace', 'path': '/hidden', 'value': False}]
+        )
+
+    def test_cluster_template_update_with_op_and_hidden(self):
+        arglist = ['foo', 'replace', 'name=bar', '--hidden']
+        verifylist = [
+            ('cluster-template', 'foo'),
+            ('op', 'replace'),
+            ('hidden', True),
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'replace', 'path': '/name', 'value': 'bar'},
+             {'op': 'replace', 'path': '/hidden', 'value': True}]
+        )
+
+    def test_cluster_template_update_no_args(self):
+        arglist = ['foo']
+        verifylist = [('cluster-template', 'foo')]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.assertRaises(
+            InvalidAttribute,
+            self.cmd.take_action, parsed_args)
+
     def test_cluster_template_update_bad_op(self):
         arglist = ['foo', 'bar', 'snafu']
         verifylist = [

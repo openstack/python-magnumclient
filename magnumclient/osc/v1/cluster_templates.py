@@ -427,18 +427,33 @@ class UpdateClusterTemplate(command.ShowOne):
         parser.add_argument(
             'op',
             metavar='<op>',
+            nargs='?',
             choices=['add', 'replace', 'remove'],
+            default=None,
             help=_("Operations: one of 'add', 'replace' or 'remove'"))
 
         parser.add_argument(
             'attributes',
             metavar='<path=value>',
-            nargs='+',
+            nargs='*',
             action='append',
             default=[],
             help=_(
                 "Attributes to add/replace or remove (only PATH is necessary "
                 "on remove)"))
+
+        parser.set_defaults(hidden=None)
+        parser.add_argument(
+            '--hidden',
+            dest='hidden',
+            action='store_true',
+            help=_('Hide the cluster template.'))
+
+        parser.add_argument(
+            '--visible',
+            dest='hidden',
+            action='store_false',
+            help=_('Make the cluster template visible.'))
 
         return parser
 
@@ -446,8 +461,17 @@ class UpdateClusterTemplate(command.ShowOne):
         self.log.debug("take_action(%s)", parsed_args)
 
         mag_client = self.app.client_manager.container_infra
-        patch = magnum_utils.args_array_to_patch(parsed_args.op,
-                                                 parsed_args.attributes[0])
+        raw_attrs = parsed_args.attributes[0] if parsed_args.attributes else []
+        if parsed_args.op:
+            patch = magnum_utils.args_array_to_patch(parsed_args.op, raw_attrs)
+        else:
+            patch = []
+        if parsed_args.hidden is not None:
+            patch += [{'op': 'replace', 'path': '/hidden',
+                       'value': parsed_args.hidden}]
+        if not patch:
+            raise InvalidAttribute('At least one of op/attributes or '
+                                   '--hidden/--visible must be specified.')
         name = getattr(parsed_args, 'cluster-template', None)
         ct = mag_client.cluster_templates.update(name, patch)
         return _show_cluster_template(ct)
