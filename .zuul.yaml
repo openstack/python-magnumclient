@@ -1,4 +1,5 @@
 - project:
+    queue: magnum
     templates:
       - check-requirements
       - openstack-cover-jobs
