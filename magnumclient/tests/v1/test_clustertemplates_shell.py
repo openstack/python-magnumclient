@@ -51,7 +51,8 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
                            master_flavor_id=None, name=None,
                            keypair_id=None, fixed_network=None,
                            fixed_subnet=None, network_driver=None,
-                           volume_driver=None, dns_nameserver='8.8.8.8',
+                           volume_driver=None, driver=None,
+                           dns_nameserver='8.8.8.8',
                            flavor_id='m1.medium',
                            docker_storage_driver='devicemapper',
                            docker_volume_size=None, http_proxy=None,
@@ -72,6 +73,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args['fixed_subnet'] = fixed_subnet
         expected_args['network_driver'] = network_driver
         expected_args['volume_driver'] = volume_driver
+        expected_args['driver'] = driver
         expected_args['dns_nameserver'] = dns_nameserver
         expected_args['flavor_id'] = flavor_id
         expected_args['docker_volume_size'] = docker_volume_size

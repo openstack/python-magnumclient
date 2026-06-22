@@ -100,6 +100,10 @@ def _show_cluster_template(cluster_template):
            metavar='<volume-driver>',
            help=_('The volume driver name for instantiating container'
                   ' volume.'))
+@utils.arg('--driver',
+           metavar='<driver>',
+           help=_('The name of the Magnum driver to use for this cluster '
+                  'template.'))
 @utils.arg('--dns-nameserver',
            metavar='<dns-nameserver>',
            default='8.8.8.8',
@@ -212,6 +216,7 @@ def do_cluster_template_create(cs, args):
     opts['fixed_subnet'] = args.fixed_subnet
     opts['network_driver'] = args.network_driver
     opts['volume_driver'] = args.volume_driver
+    opts['driver'] = args.driver
     opts['dns_nameserver'] = args.dns_nameserver
     opts['docker_volume_size'] = args.docker_volume_size
     opts['docker_storage_driver'] = args.docker_storage_driver

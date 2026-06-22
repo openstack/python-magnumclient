@@ -55,6 +55,7 @@ CLUSTER_TEMPLATE_ATTRIBUTES = [
     'project_id',
     'hidden',
     'tags',
+    'driver',
 ]
 
 
@@ -124,6 +125,12 @@ class CreateClusterTemplate(command.ShowOne):
             metavar='<volume-driver>',
             help=_('The volume driver name for instantiating container '
                    'volume.'))
+        parser.add_argument(
+            '--driver',
+            dest='driver',
+            metavar='<driver>',
+            help=_('The name of the Magnum driver to use for this cluster '
+                   'template.'))
         parser.add_argument(
             '--dns-nameserver',
             dest='dns_nameserver',
@@ -262,6 +269,7 @@ class CreateClusterTemplate(command.ShowOne):
             'fixed_subnet': parsed_args.fixed_subnet,
             'network_driver': parsed_args.network_driver,
             'volume_driver': parsed_args.volume_driver,
+            'driver': parsed_args.driver,
             'dns_nameserver': parsed_args.dns_nameserver,
             'flavor_id': parsed_args.flavor,
             'master_flavor_id': parsed_args.master_flavor,

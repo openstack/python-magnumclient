@@ -188,6 +188,7 @@ class FakeClusterTemplate(object):
             'project_id': uuid.uuid4().hex,
             'hidden': False,
             'tags': "",
+            'driver': None,
         }
 
         # Overwrite default attributes.

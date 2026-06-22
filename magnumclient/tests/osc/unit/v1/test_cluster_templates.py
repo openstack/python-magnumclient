@@ -50,6 +50,7 @@ class TestClusterTemplate(magnum_fakes.TestMagnumClientOSCV1):
         'server_type': 'vm',
         'tls_disabled': False,
         'volume_driver': None,
+        'driver': None,
     }
 
     def setUp(self):
@@ -134,6 +135,27 @@ class TestClusterTemplateCreate(TestClusterTemplate):
             ('external_network', self.new_ct.external_network_id))
         self.assertRaises(magnum_fakes.MagnumParseException,
                           self.check_parser, self.cmd, arglist, verifylist)
+
+    def test_cluster_template_create_with_driver(self):
+        """--driver is passed through to the API."""
+        arglist = [
+            '--coe', self.new_ct.coe,
+            '--external-network', self.new_ct.external_network_id,
+            '--image', self.new_ct.image_id,
+            '--driver', 'k8s-fedora-coreos-v1',
+            self.new_ct.name,
+        ]
+        verifylist = [
+            ('coe', self.new_ct.coe),
+            ('external_network', self.new_ct.external_network_id),
+            ('image', self.new_ct.image_id),
+            ('driver', 'k8s-fedora-coreos-v1'),
+            ('name', self.new_ct.name),
+        ]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.create.assert_called_with(
+            **dict(self.default_create_args, driver='k8s-fedora-coreos-v1'))
 
     def test_cluster_template_create_floating_ips(self):
         """Verifies floating ip parameters."""
