@@ -31,32 +31,6 @@ import prettytable
 from magnumclient.i18n import _
 
 
-DEPRECATION_BASE = ('%sThe --%s parameter is deprecated and '
-                    'will be removed in a future release. Use the '
-                    '<%s> positional parameter %s.')
-
-NAME_DEPRECATION_HELP = DEPRECATION_BASE % ('', 'name', 'name', 'instead')
-
-NAME_DEPRECATION_WARNING = DEPRECATION_BASE % (
-    'WARNING: ', 'name', 'name', 'to avoid seeing this message')
-
-CLUSTER_DEPRECATION_HELP = DEPRECATION_BASE % ('', 'cluster', 'cluster',
-                                               'instead')
-
-CLUSTER_DEPRECATION_WARNING = DEPRECATION_BASE % (
-    'WARNING: ', 'cluster', 'cluster', 'to avoid seeing this message')
-
-MAGNUM_CLIENT_DEPRECATION_WARNING = (
-    'WARNING: The magnum client is deprecated and will be removed in a future '
-    'release.\nUse the OpenStack client to avoid seeing this message.')
-
-
-def deprecation_message(preamble, new_name):
-    msg = ('%s This parameter is deprecated and will be removed in a future '
-           'release. Use --%s instead.' % (preamble, new_name))
-    return msg
-
-
 class MissingArgs(Exception):
     """Supplied arguments are not sufficient for calling a function."""
     def __init__(self, missing):
@@ -106,103 +80,6 @@ def validate_args(fn, *args, **kwargs):
         raise MissingArgs(missing)
 
 
-def validate_name_args(positional_name, optional_name):
-    if optional_name:
-        print(NAME_DEPRECATION_WARNING)
-    if positional_name and optional_name:
-        raise DuplicateArgs("<name>", (positional_name, optional_name))
-
-
-def validate_cluster_args(positional_cluster, optional_cluster):
-    if optional_cluster:
-        print(CLUSTER_DEPRECATION_WARNING)
-    if positional_cluster and optional_cluster:
-        raise DuplicateArgs("<cluster>", (positional_cluster,
-                                          optional_cluster))
-
-
-def deprecated(message):
-    """Decorator for marking a call as deprecated by printing a given message.
-
-    Example:
-    >>> @deprecated("Bay functions are deprecated and should be replaced by "
-    ...             "calls to cluster")
-    ... def bay_create(args):
-    ...     pass
-    """
-    @decorator.decorator
-    def wrapper(func, *args, **kwargs):
-        print(message)
-        return func(*args, **kwargs)
-    return wrapper
-
-
-def deprecation_map(dep_map):
-    """Decorator for applying a map of deprecating arguments to a function.
-
-    The map connects deprecating arguments and their replacements. The
-    shell.py script uses this map to create mutually exclusive argument groups
-    in argparse and also prints a deprecation warning telling the user to
-    switch to the updated argument.
-
-    NOTE: This decorator MUST be the outermost in the chain of argument
-    decorators to work correctly.
-
-    Example usage:
-    >>> @deprecation_map({ "old-argument": "new-argument" })
-    ... @args("old-argument", required=True)
-    ... @args("new-argument", required=True)
-    ... def do_command_line_stuff():
-    ...     pass
-    """
-    def _decorator(func):
-        if not hasattr(func, 'arguments'):
-            return func
-
-        func.deprecated_groups = []
-        for old_param, new_param in dep_map.items():
-            old_info, new_info = None, None
-            required = False
-            for (args, kwargs) in func.arguments:
-                if old_param in args:
-                    old_info = (args, kwargs)
-                    # Old arguments shouldn't be required if they were not
-                    # previously, so prioritize old requirement
-                    if 'required' in kwargs:
-                        required = kwargs['required']
-                    # Set to false so argparse doesn't get angry
-                    kwargs['required'] = False
-                elif new_param in args:
-                    new_info = (args, kwargs)
-                    kwargs['required'] = False
-                if old_info and new_info:
-                    break
-            # Add a tuple of (old, new, required), which in turn is:
-            # ((old_args, old_kwargs), (new_args, new_kwargs), required)
-            func.deprecated_groups.append((old_info, new_info, required))
-            # Remove arguments that would be duplicated by the groups we made
-            func.arguments.remove(old_info)
-            func.arguments.remove(new_info)
-
-        return func
-    return _decorator
-
-
-def arg(*args, **kwargs):
-    """Decorator for CLI args.
-
-    Example:
-
-    >>> @arg("name", help="Name of the new entity")
-    ... def entity_create(args):
-    ...     pass
-    """
-    def _decorator(func):
-        add_arg(func, *args, **kwargs)
-        return func
-    return _decorator
-
-
 def env(*args, **kwargs):
     """Returns the first environment variable set.
 
@@ -215,41 +92,76 @@ def env(*args, **kwargs):
     return kwargs.get('default', '')
 
 
+def deprecation_message(preamble, new_name):
+    msg = ('%s This parameter is deprecated and will be removed in a future '
+           'release. Use --%s instead.' % (preamble, new_name))
+    return msg
+
+
+def deprecated(message):
+    """Decorator for marking a CLI command as deprecated.
+
+    Prints the given message before executing the decorated function.
+    """
+    @decorator.decorator
+    def wrapper(func, *args, **kwargs):
+        print(message)
+        return func(*args, **kwargs)
+    return wrapper
+
+
+def deprecation_map(dep_map):
+    """Decorator for applying a map of deprecating argument aliases.
+
+    The map connects old argument names to their replacements. The shell
+    uses this map to create mutually exclusive argument groups in argparse
+    and prints a deprecation warning when the old form is used.
+
+    NOTE: This decorator MUST be the outermost in the chain of argument
+    decorators to work correctly.
+    """
+    def _decorator(func):
+        if not hasattr(func, 'arguments'):
+            return func
+
+        func.deprecated_groups = []
+        for old_param, new_param in dep_map.items():
+            old_info, new_info = None, None
+            required = False
+            for (args, kwargs) in func.arguments:
+                if old_param in args:
+                    old_info = (args, kwargs)
+                    if 'required' in kwargs:
+                        required = kwargs['required']
+                    kwargs['required'] = False
+                elif new_param in args:
+                    new_info = (args, kwargs)
+                    kwargs['required'] = False
+                if old_info and new_info:
+                    break
+            func.deprecated_groups.append((old_info, new_info, required))
+            func.arguments.remove(old_info)
+            func.arguments.remove(new_info)
+
+        return func
+    return _decorator
+
+
+def arg(*args, **kwargs):
+    """Decorator for CLI args."""
+    def _decorator(func):
+        add_arg(func, *args, **kwargs)
+        return func
+    return _decorator
+
+
 def add_arg(func, *args, **kwargs):
     """Bind CLI arguments to a shell.py `do_foo` function."""
-
     if not hasattr(func, 'arguments'):
         func.arguments = []
 
-    # NOTE(sirp): avoid dups that can occur when the module is shared across
-    # tests.
     if (args, kwargs) not in func.arguments:
-        # Because of the semantics of decorator composition if we just append
-        # to the options list positional options will appear to be backwards.
         func.arguments.insert(0, (args, kwargs))
-
-
-def unauthenticated(func):
-    """Adds 'unauthenticated' attribute to decorated function.
-
-    Usage:
-
-    >>> @unauthenticated
-    ... def mymethod(f):
-    ...     pass
-    """
-    func.unauthenticated = True
-    return func
-
-
-def isunauthenticated(func):
-    """Checks if the function does not require authentication.
-
-    Mark such functions with the `@unauthenticated` decorator.
-
-    :returns: bool
-    """
-    return getattr(func, 'unauthenticated', False)
 
 
 def print_list(objs, fields, formatters=None, sortby_index=0,
@@ -370,38 +282,6 @@ def get_password(max_password_prompts=3):
         except EOFError:
             pass
     return pw
-
-
-def service_type(stype):
-    """Adds 'service_type' attribute to decorated function.
-
-    Usage:
-
-    .. code-block:: python
-
-       @service_type('volume')
-       def mymethod(f):
-       ...
-    """
-    def inner(f):
-        f.service_type = stype
-        return f
-    return inner
-
-
-def get_service_type(f):
-    """Retrieves service type from function."""
-    return getattr(f, 'service_type', None)
-
-
-def pretty_choice_list(lst):
-    return ', '.join("'%s'" % i for i in lst)
-
-
-def exit(msg=''):
-    if msg:
-        print(msg, file=sys.stderr)
-    sys.exit(1)
 
 
 def _format_field_name(attr):
