@@ -191,18 +191,6 @@ class OpenStackMagnumShell(object):
                                                  default=None),
                             help=_('Defaults to env[OS_PROJECT_NAME].'))
 
-        parser.add_argument('--os-tenant-id',
-                            metavar='<auth-tenant-id>',
-                            default=cliutils.env('OS_TENANT_ID',
-                                                 default=None),
-                            help=argparse.SUPPRESS)
-
-        parser.add_argument('--os-tenant-name',
-                            metavar='<auth-tenant-name>',
-                            default=cliutils.env('OS_TENANT_NAME',
-                                                 default=None),
-                            help=argparse.SUPPRESS)
-
         parser.add_argument('--os-project-domain-id',
                             metavar='<auth-project-domain-id>',
                             default=cliutils.env('OS_PROJECT_DOMAIN_ID',
@@ -231,14 +219,6 @@ class OpenStackMagnumShell(object):
                             metavar='<service-type>',
                             help=_('Defaults to container-infra for all '
                                    'actions.'))
-        parser.add_argument('--service_type',
-                            help=argparse.SUPPRESS)
-
-        parser.add_argument('--endpoint-type',
-                            metavar='<endpoint-type>',
-                            default=cliutils.env('OS_ENDPOINT_TYPE',
-                                                 default=None),
-                            help=argparse.SUPPRESS)
 
         parser.add_argument('--os-endpoint-type',
                             metavar='<os-endpoint-type>',
@@ -272,8 +252,6 @@ class OpenStackMagnumShell(object):
                                 default='latest'),
                             help=_('Accepts "api", '
                                    'defaults to env[MAGNUM_API_VERSION].'))
-        parser.add_argument('--magnum_api_version',
-                            help=argparse.SUPPRESS)
 
         parser.add_argument('--os-cacert',
                             metavar='<ca-certificate>',
@@ -288,14 +266,6 @@ class OpenStackMagnumShell(object):
                                                  default=None),
                             help=_("Use this API endpoint instead of the "
                                    "Service Catalog."))
-        parser.add_argument('--bypass-url',
-                            metavar='<bypass-url>',
-                            default=cliutils.env('BYPASS_URL', default=None),
-                            dest='bypass_url',
-                            help=argparse.SUPPRESS)
-        parser.add_argument('--bypass_url',
-                            help=argparse.SUPPRESS)
-
         parser.add_argument('--insecure',
                             default=cliutils.env('MAGNUMCLIENT_INSECURE',
                                                  default=False),
@@ -462,14 +432,6 @@ class OpenStackMagnumShell(object):
         (options, args) = parser.parse_known_args(argv)
         self.setup_debugging(options.debug)
 
-        # NOTE(dtroyer): Hackery to handle --endpoint_type due to argparse
-        #                thinking usage-list --end is ambiguous; but it
-        #                works fine with only --endpoint-type present
-        #                Go figure.
-        if '--endpoint_type' in argv:
-            spot = argv.index('--endpoint_type')
-            argv[spot] = '--endpoint-type'
-
         # build available subcommands based on version
         (api_major_version, magnum_api_version) = (
             self._check_version(options.magnum_api_version))
@@ -497,12 +459,6 @@ class OpenStackMagnumShell(object):
         if not args.service_type:
             args.service_type = DEFAULT_SERVICE_TYPE
 
-        if args.bypass_url:
-            args.os_endpoint_override = args.bypass_url
-
-        args.os_project_id = (args.os_project_id or args.os_tenant_id)
-        args.os_project_name = (args.os_project_name or args.os_tenant_name)
-
         self._ensure_auth_info(args)
 
         try:
@@ -512,7 +468,6 @@ class OpenStackMagnumShell(object):
         except KeyError:
             client = client_v1
 
-        args.os_endpoint_type = (args.os_endpoint_type or args.endpoint_type)
         if args.os_endpoint_type:
             args.os_interface = args.os_endpoint_type
 

@@ -112,27 +112,19 @@ def _load_session_client(session=None, endpoint_override=None, username=None,
 
 
 class Client(object):
-    def __init__(self, username=None, api_key=None, project_id=None,
+    def __init__(self, username=None, project_id=None,
                  project_name=None, auth_url=None, magnum_url=None,
-                 endpoint_type=None, endpoint_override=None,
+                 endpoint_override=None,
                  service_type=DEFAULT_SERVICE_TYPE,
-                 region_name=None, input_auth_token=None,
+                 region_name=None,
                  session=None, password=None, auth_type='password',
-                 interface=None, service_name=None, insecure=False,
+                 interface=None, endpoint_type=None, service_name=None,
+                 insecure=False,
                  user_domain_id=None, user_domain_name=None,
                  project_domain_id=None, project_domain_name=None,
                  auth_token=None, timeout=600, api_version=None,
                  **kwargs):
 
-        # We have to keep the api_key are for backwards compat, but let's
-        # remove it from the rest of our code since it's not a keystone
-        # concept
-        if not password:
-            password = api_key
-        # Backwards compat for people passing in input_auth_token
-        if input_auth_token:
-            auth_token = input_auth_token
-        # Backwards compat for people passing in endpoint_type
         if endpoint_type:
             interface = endpoint_type
 
