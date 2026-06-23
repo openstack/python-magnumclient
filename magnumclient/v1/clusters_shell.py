@@ -20,13 +20,6 @@ from magnumclient import exceptions
 from magnumclient.i18n import _
 
 
-# Maps old parameter names to their new names and whether they are required
-# e.g. keypair-id to keypair
-DEPRECATING_PARAMS = {
-    "--keypair-id": "--keypair",
-}
-
-
 def _show_cluster(cluster):
     del cluster._info['links']
     utils.print_dict(cluster._info)
@@ -75,28 +68,15 @@ def do_cluster_list(cs, args):
                      sortby_index=None)
 
 
-@utils.deprecation_map(DEPRECATING_PARAMS)
-@utils.arg('positional_name',
+@utils.arg('name',
            metavar='<name>',
            nargs='?',
            default=None,
            help=_('Name of the cluster to create.'))
-@utils.arg('--name',
-           metavar='<name>',
-           default=None,
-           help=(_('Name of the cluster to create. %s') %
-                 utils.NAME_DEPRECATION_HELP))
 @utils.arg('--cluster-template',
            required=True,
            metavar='<cluster_template>',
            help=_('ID or name of the cluster template.'))
-@utils.arg('--keypair-id',
-           dest='keypair',
-           metavar='<keypair>',
-           default=None,
-           help=utils.deprecation_message(
-                'Name of the keypair to use for this cluster.',
-                'keypair'))
 @utils.arg('--keypair',
            dest='keypair',
            metavar='<keypair>',
@@ -135,11 +115,9 @@ def do_cluster_create(cs, args):
     """Create a cluster."""
     args.command = 'cluster-create'
 
-    utils.validate_name_args(args.positional_name, args.name)
-
     cluster_template = cs.cluster_templates.get(args.cluster_template)
     opts = dict()
-    opts['name'] = args.positional_name or args.name
+    opts['name'] = args.name
     opts['cluster_template_id'] = cluster_template.uuid
     opts['keypair'] = args.keypair
     if args.docker_volume_size is not None:
