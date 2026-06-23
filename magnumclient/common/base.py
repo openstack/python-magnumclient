@@ -22,8 +22,6 @@ Base utilities to build API operation managers and objects on top of.
 import copy
 from urllib import parse as urlparse
 
-from magnumclient.common.apiclient import base
-
 
 def getid(obj):
     """Wrapper to get  object's ID.
@@ -135,11 +133,69 @@ class Manager(object):
         self.api.raw_request('DELETE', url)
 
 
-class Resource(base.Resource):
+class Resource(object):
     """Represents a particular instance of an object (tenant, user, etc).
 
     This is pretty much just a bag for attributes.
     """
+
+    def __init__(self, manager, info, loaded=False):
+        self.manager = manager
+        self._info = info
+        self._add_details(info)
+        self._loaded = loaded
+
+    def __repr__(self):
+        reprkeys = sorted(k
+                          for k in self.__dict__.keys()
+                          if k[0] != '_' and k != 'manager')
+        info = ", ".join("%s=%s" % (k, getattr(self, k)) for k in reprkeys)
+        return "<%s %s>" % (self.__class__.__name__, info)
+
+    def _add_details(self, info):
+        for (k, v) in info.items():
+            try:
+                setattr(self, k, v)
+                self._info[k] = v
+            except AttributeError:
+                pass
+
+    def __getattr__(self, k):
+        if k not in self.__dict__:
+            if not self.is_loaded():
+                self.get()
+                return self.__getattr__(k)
+            raise AttributeError(k)
+        else:
+            return self.__dict__[k]
+
+    def get(self):
+        self.set_loaded(True)
+        if not hasattr(self.manager, 'get'):
+            return
+        new = self.manager.get(self.id)
+        if new:
+            self._add_details(new._info)
+            self._add_details(
+                {'x_request_id': self.manager.client.last_request_id})
+
+    def __eq__(self, other):
+        if not isinstance(other, Resource):
+            return NotImplemented
+        if not isinstance(other, self.__class__):
+            return False
+        if hasattr(self, 'id') and hasattr(other, 'id'):
+            return self.id == other.id
+        return self._info == other._info
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def is_loaded(self):
+        return self._loaded
+
+    def set_loaded(self, val):
+        self._loaded = val
 
     def to_dict(self):
         return copy.deepcopy(self._info)
