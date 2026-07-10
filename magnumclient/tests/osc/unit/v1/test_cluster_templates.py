@@ -389,64 +389,67 @@ class TestClusterTemplateUpdate(TestClusterTemplate):
         # Get the command object to test
         self.cmd = osc_ct.UpdateClusterTemplate(self.app, None)
 
-    def test_cluster_template_update_pass(self):
-        arglist = ['foo', 'remove', 'bar']
-        verifylist = [
-            ('cluster-template', 'foo'),
-            ('op', 'remove'),
-            ('attributes', [['bar']])
-        ]
+    def test_cluster_template_update_name(self):
+        arglist = ['foo', '--name', 'bar']
+        verifylist = [('cluster-template', 'foo'), ('name', 'bar')]
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
         self.cmd.take_action(parsed_args)
         self.cluster_templates_mock.update.assert_called_with(
             'foo',
-            [{'op': 'remove', 'path': '/bar'}]
-        )
+            [{'op': 'replace', 'path': '/name', 'value': 'bar'}])
 
     def test_cluster_template_update_hidden(self):
         arglist = ['foo', '--hidden']
-        verifylist = [
-            ('cluster-template', 'foo'),
-            ('hidden', True),
-        ]
+        verifylist = [('cluster-template', 'foo'), ('hidden', True)]
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
         self.cmd.take_action(parsed_args)
         self.cluster_templates_mock.update.assert_called_with(
             'foo',
-            [{'op': 'replace', 'path': '/hidden', 'value': True}]
-        )
+            [{'op': 'replace', 'path': '/hidden', 'value': True}])
 
     def test_cluster_template_update_visible(self):
         arglist = ['foo', '--visible']
-        verifylist = [
-            ('cluster-template', 'foo'),
-            ('hidden', False),
-        ]
+        verifylist = [('cluster-template', 'foo'), ('hidden', False)]
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
         self.cmd.take_action(parsed_args)
         self.cluster_templates_mock.update.assert_called_with(
             'foo',
-            [{'op': 'replace', 'path': '/hidden', 'value': False}]
-        )
+            [{'op': 'replace', 'path': '/hidden', 'value': False}])
 
-    def test_cluster_template_update_with_op_and_hidden(self):
-        arglist = ['foo', 'replace', 'name=bar', '--hidden']
-        verifylist = [
-            ('cluster-template', 'foo'),
-            ('op', 'replace'),
-            ('hidden', True),
-        ]
-        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
-
+    def test_cluster_template_update_public_private(self):
+        arglist = ['foo', '--public']
+        parsed_args = self.check_parser(self.cmd, arglist, [])
         self.cmd.take_action(parsed_args)
         self.cluster_templates_mock.update.assert_called_with(
             'foo',
-            [{'op': 'replace', 'path': '/name', 'value': 'bar'},
-             {'op': 'replace', 'path': '/hidden', 'value': True}]
-        )
+            [{'op': 'replace', 'path': '/public', 'value': True}])
+
+    def test_cluster_template_update_label_add(self):
+        arglist = ['foo', '--label', 'k=v']
+        parsed_args = self.check_parser(self.cmd, arglist, [])
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'add', 'path': '/labels/k', 'value': 'v'}])
+
+    def test_cluster_template_update_label_remove(self):
+        arglist = ['foo', '--no-label', 'k']
+        parsed_args = self.check_parser(self.cmd, arglist, [])
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'remove', 'path': '/labels/k'}])
+
+    def test_cluster_template_update_tags(self):
+        arglist = ['foo', '--tag', 'tag1', '--tag', 'tag2']
+        parsed_args = self.check_parser(self.cmd, arglist, [])
+        self.cmd.take_action(parsed_args)
+        self.cluster_templates_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'replace', 'path': '/tags', 'value': 'tag1,tag2'}])
 
     def test_cluster_template_update_no_args(self):
         arglist = ['foo']
@@ -456,14 +459,3 @@ class TestClusterTemplateUpdate(TestClusterTemplate):
         self.assertRaises(
             InvalidAttribute,
             self.cmd.take_action, parsed_args)
-
-    def test_cluster_template_update_bad_op(self):
-        arglist = ['foo', 'bar', 'snafu']
-        verifylist = [
-            ('cluster-template', 'foo'),
-            ('op', 'bar'),
-            ('attributes', ['snafu'])
-        ]
-
-        self.assertRaises(magnum_fakes.MagnumParseException,
-                          self.check_parser, self.cmd, arglist, verifylist)

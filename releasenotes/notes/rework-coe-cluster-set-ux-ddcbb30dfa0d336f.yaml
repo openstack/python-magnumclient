@@ -1,0 +1,28 @@
+---
+features:
+  - |
+    ``openstack coe cluster set``, ``openstack coe nodegroup set``, and
+    ``openstack coe cluster template set`` now accept named flags instead
+    of the previous JSON Patch positional arguments (``<op> <path=value>``).
+
+    ``coe cluster set`` gains ``--name``, ``--node-count``,
+    ``--master-count``, ``--label <key=value>`` (repeatable, adds or
+    replaces a single label), ``--no-label <key>`` (repeatable, removes a
+    single label), and ``--rollback``. The ``--rollback`` flag is also now
+    correctly forwarded to the API, fixing a pre-existing silent bug.
+
+    ``coe nodegroup set`` gains ``--min-nodes`` and ``--max-nodes``
+    (the only fields the Magnum API permits patching on a nodegroup; node
+    count changes go through the resize action).
+
+    ``coe cluster template set`` gains a full set of named flags matching
+    the create command, including ``--label``/``--no-label`` for per-key
+    label operations, ``--tag`` for tags, and boolean ``--X``/``--no-X``
+    pairs for toggles such as ``--public``/``--private``,
+    ``--hidden``/``--visible``, ``--tls-disabled``/``--tls-enabled``, etc.
+upgrade:
+  - |
+    The ``openstack coe cluster set``, ``openstack coe nodegroup set``, and
+    ``openstack coe cluster template set`` commands no longer accept the
+    positional ``<op>`` and ``<path=value>`` arguments. Callers must migrate
+    to the new named flags described in the features section above.
