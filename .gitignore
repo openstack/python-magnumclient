@@ -52,3 +52,9 @@ ChangeLog
 *~
 .*.swp
 *.DS_Store
+
+# certs from unit testing
+ca.pem
+cert.pem
+config
+key.pem
