@@ -18,63 +18,28 @@ from magnumclient.exceptions import InvalidAttribute
 from magnumclient.i18n import _
 from magnumclient.v1 import basemodels
 
-# Maps old parameter names to their new names and whether they are required
-DEPRECATING_PARAMS = {
-    "--external-network-id": "--external-network",
-    "--flavor-id": "--flavor",
-    "--image-id": "--image",
-    "--keypair-id": "--keypair",
-    "--master-flavor-id": "--master-flavor",
-}
-
 
 def _show_cluster_template(cluster_template):
     del cluster_template._info['links']
     utils.print_dict(cluster_template._info)
 
 
-@utils.deprecation_map(DEPRECATING_PARAMS)
-@utils.arg('positional_name',
+@utils.arg('name',
            metavar='<name>',
            nargs='?',
            default=None,
            help=_('Name of the cluster template to create.'))
-@utils.arg('--name',
-           metavar='<name>',
-           default=None,
-           help=(_('Name of the cluster template to create. %s') %
-                 utils.NAME_DEPRECATION_HELP))
-@utils.arg('--image-id',
-           dest='image',
-           required=True,
-           metavar='<image>',
-           help=utils.deprecation_message(
-               'The name or UUID of the base image to customize for the '
-               'Cluster.', 'image'))
 @utils.arg('--image',
            dest='image',
            required=True,
            metavar='<image>',
            help=_('The name or UUID of the base image to customize for the '
                   'Cluster.'))
-@utils.arg('--keypair-id',
-           dest='keypair',
-           metavar='<keypair>',
-           help=utils.deprecation_message(
-               'The name of the SSH keypair to load into the '
-               'Cluster nodes.', 'keypair'))
 @utils.arg('--keypair',
            dest='keypair',
            metavar='<keypair>',
            help=_('The name of the SSH keypair to load into the '
                   'Cluster nodes.'))
-@utils.arg('--external-network-id',
-           dest='external_network',
-           required=True,
-           metavar='<external-network>',
-           help=utils.deprecation_message(
-                'The external Neutron network name or UUID to connect to '
-                'this Cluster Template.', 'external-network'))
 @utils.arg('--external-network',
            dest='external_network',
            required=True,
@@ -108,25 +73,12 @@ def _show_cluster_template(cluster_template):
            metavar='<dns-nameserver>',
            default='8.8.8.8',
            help=_('The DNS nameserver to use for this cluster template.'))
-@utils.arg('--flavor-id',
-           dest='flavor',
-           metavar='<flavor>',
-           default='m1.medium',
-           help=utils.deprecation_message(
-                'The nova flavor name or UUID to use when launching the '
-                'Cluster.', 'flavor'))
 @utils.arg('--flavor',
            dest='flavor',
            metavar='<flavor>',
            default='m1.medium',
            help=_('The nova flavor name or UUID to use when launching the '
                   'Cluster.'))
-@utils.arg('--master-flavor-id',
-           dest='master_flavor',
-           metavar='<master-flavor>',
-           help=utils.deprecation_message(
-                'The nova flavor name or UUID to use when launching the master'
-                ' node of the Cluster.', 'master-flavor'))
 @utils.arg('--master-flavor',
            dest='master_flavor',
            metavar='<master-flavor>',
@@ -139,9 +91,8 @@ def _show_cluster_template(cluster_template):
                   'for the docker volume to use.'))
 @utils.arg('--docker-storage-driver',
            metavar='<docker-storage-driver>',
-           default='devicemapper',
-           help=_('Select a docker storage driver. Supported: devicemapper, '
-                  'overlay. Default: devicemapper'))
+           default='overlay2',
+           help=_('Select a docker storage driver. Default: overlay2'))
 @utils.arg('--http-proxy',
            metavar='<http-proxy>',
            help=_('The http_proxy address to use for nodes in Cluster.'))
@@ -203,10 +154,8 @@ def do_cluster_template_create(cs, args):
     """Create a cluster template."""
     args.command = 'cluster-template-create'
 
-    utils.validate_name_args(args.positional_name, args.name)
-
     opts = {}
-    opts['name'] = args.positional_name or args.name
+    opts['name'] = args.name
     opts['flavor_id'] = args.flavor
     opts['master_flavor_id'] = args.master_flavor
     opts['image_id'] = args.image

@@ -14,7 +14,6 @@
 
 from unittest import mock
 
-from magnumclient.common import cliutils
 from magnumclient import exceptions
 from magnumclient.tests.v1 import shell_test_base
 from magnumclient.tests.v1 import test_clustertemplates_shell
@@ -191,33 +190,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         mock_create.assert_called_with(**expected_args)
 
     @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
-    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
-    def test_cluster_create_deprecation_warnings(self, mock_create,
-                                                 mock_get):
-        self._test_arg_failure('cluster-create --cluster-template xxx '
-                               '--keypair-id x',
-                               self._deprecated_warning)
-        self.assertTrue(mock_create.called)
-        self.assertTrue(mock_get.called)
-
-        self._test_arg_failure('cluster-create --cluster-template xxx '
-                               '--name foo ',
-                               self._deprecated_warning)
-        self.assertTrue(mock_create.called)
-        self.assertTrue(mock_get.called)
-
-    @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
-    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
-    def test_cluster_create_deprecation_errors(self,
-                                               mock_create,
-                                               mock_get):
-        self._test_arg_failure('cluster-create --cluster-template xxx '
-                               '--keypair-id x --keypair x',
-                               self._too_many_group_arg_error)
-        self.assertFalse(mock_create.called)
-        self.assertFalse(mock_get.called)
-
-    @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
     def test_cluster_show_clustertemplate_metadata(self,
                                                    mock_cluster,
@@ -261,22 +233,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
             'cluster-create foo --cluster-template xxx',
             ['xxx'],
             {'name': 'foo'})
-
-    @mock.patch('magnumclient.v1.cluster_templates.ClusterTemplateManager.get')
-    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
-    def test_cluster_create_success_only_optional_name(self,
-                                                       mock_create,
-                                                       mock_get):
-        self._test_cluster_create_success(
-            'cluster-create --name foo --cluster-template xxx',
-            ['xxx'],
-            {'name': 'foo'})
-
-    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
-    def test_cluster_create_failure_only_name(self, mock_create):
-        self._test_arg_failure('cluster-create --name test',
-                               self._mandatory_arg_error)
-        mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
     def test_cluster_create_failure_only_keypair(self, mock_create):
@@ -326,15 +282,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         self._test_arg_failure('cluster-create --cluster-template xxx '
                                '--master-count test',
                                self._invalid_value_error)
-        mock_create.assert_not_called()
-
-    @mock.patch('magnumclient.v1.clusters.ClusterManager.create')
-    def test_cluster_create_failure_duplicate_name(self, mock_create):
-        self.assertRaises(cliutils.DuplicateArgs,
-                          self._test_arg_failure,
-                          'cluster-create foo --name bar '
-                          '--cluster-template xxx',
-                          self._duplicate_arg_error)
         mock_create.assert_not_called()
 
     @mock.patch('magnumclient.v1.clusters.ClusterManager.delete')

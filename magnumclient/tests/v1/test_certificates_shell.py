@@ -14,7 +14,6 @@
 
 from unittest import mock
 
-from magnumclient.common import cliutils
 from magnumclient.tests.v1 import shell_test_base
 from magnumclient.v1 import certificates_shell
 
@@ -32,17 +31,6 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
         expected_args = {}
         expected_args['cluster_uuid'] = mockcluster.uuid
         mock_cert_get.assert_called_once_with(**expected_args)
-
-    @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
-    @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
-    def test_ca_show_failure_duplicate_arg(self, mock_cert_get,
-                                           mock_cluster_get):
-        self.assertRaises(cliutils.DuplicateArgs,
-                          self._test_arg_failure,
-                          'ca-show foo --cluster foo',
-                          self._duplicate_arg_error)
-        mock_cert_get.assert_not_called()
-        mock_cluster_get.assert_not_called()
 
     @mock.patch('os.path.isfile')
     @mock.patch('magnumclient.v1.clusters.ClusterManager.get')
@@ -90,10 +78,7 @@ class ShellTest(shell_test_base.TestCommandLineArgument):
     @mock.patch('magnumclient.v1.certificates.CertificateManager.get')
     def test_ca_show_failure_with_invalid_field(self, mock_cert_get,
                                                 mock_cluster_get):
-        self.assertRaises(cliutils.MissingArgs,
-                          self._test_arg_failure,
-                          'ca-show',
-                          self._few_argument_error)
+        self._test_arg_failure('ca-show', self._few_argument_error)
         mock_cert_get.assert_not_called()
         mock_cluster_get.assert_not_called()
 
