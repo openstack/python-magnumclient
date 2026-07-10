@@ -13,6 +13,43 @@
 from magnumclient.v1 import basemodels
 
 
+CLUSTER_TEMPLATE_ATTRIBUTES = [
+    'insecure_registry',
+    'labels',
+    'updated_at',
+    'floating_ip_enabled',
+    'fixed_subnet',
+    'master_flavor_id',
+    'uuid',
+    'no_proxy',
+    'https_proxy',
+    'tls_disabled',
+    'keypair_id',
+    'public',
+    'http_proxy',
+    'docker_volume_size',
+    'server_type',
+    'external_network_id',
+    'cluster_distro',
+    'image_id',
+    'volume_driver',
+    'registry_enabled',
+    'docker_storage_driver',
+    'apiserver_port',
+    'name',
+    'created_at',
+    'network_driver',
+    'fixed_network',
+    'coe',
+    'flavor_id',
+    'master_lb_enabled',
+    'dns_nameserver',
+    'project_id',
+    'hidden',
+    'tags',
+    'driver',
+]
+
 CREATION_ATTRIBUTES = basemodels.CREATION_ATTRIBUTES
 CREATION_ATTRIBUTES.append('insecure_registry')
 CREATION_ATTRIBUTES.append('driver')

@@ -15,16 +15,8 @@
 from magnumclient.common import cliutils as utils
 from magnumclient.common import utils as magnum_utils
 from magnumclient.i18n import _
+from magnumclient.v1.quotas import QUOTA_ATTRIBUTES  # noqa: F401
 from osc_lib.command import command
-
-QUOTA_ATTRIBUTES = [
-    'resource',
-    'created_at',
-    'updated_at',
-    'hard_limit',
-    'project_id',
-    'id'
-]
 
 
 def _show_quota(quota):
