@@ -23,7 +23,7 @@ import sys
 import textwrap
 
 import decorator
-from magnumclient.common.apiclient import exceptions
+from magnumclient import exceptions
 from oslo_utils import encodeutils
 from oslo_utils import strutils
 import prettytable
@@ -343,7 +343,7 @@ def _get_list_table_columns_and_formatters(fields, objs, exclude_fields=(),
              formatters is a dictionary specifies how to display the value
              of the field.
              They can be [], {}.
-    :raise: magnumclient.common.apiclient.exceptions.CommandError.
+    :raise: magnumclient.exceptions.CommandError.
     """
 
     if objs and isinstance(objs, list):

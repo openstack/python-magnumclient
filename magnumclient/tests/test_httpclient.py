@@ -20,10 +20,10 @@ from unittest import mock
 from oslo_serialization import jsonutils
 import socket
 
-from magnumclient.common.apiclient.exceptions import GatewayTimeout
-from magnumclient.common.apiclient.exceptions import MultipleChoices
 from magnumclient.common import httpclient as http
 from magnumclient import exceptions as exc
+from magnumclient.exceptions import GatewayTimeout
+from magnumclient.exceptions import MultipleChoices
 from magnumclient.tests import utils
 
 NORMAL_ERROR = 0
