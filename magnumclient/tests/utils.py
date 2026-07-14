@@ -16,16 +16,13 @@
 import copy
 import datetime
 import io
-import os
 from oslo_serialization import jsonutils
 import queue
-import sys
 
 import fixtures
 import testtools
 
 from magnumclient.common import httpclient as http
-from magnumclient import shell
 
 FAKE_ENV = {'OS_USERNAME': 'username',
             'OS_PASSWORD': 'password',
@@ -131,47 +128,6 @@ class FakeKeystone(object):
                       '%Y-%m-%dT%H:%M:%S.%f'),
                       'id': 'd1a541311782870742235'}
         }
-
-
-class TestCase(testtools.TestCase):
-    TEST_REQUEST_BASE = {
-        'verify': True,
-    }
-
-    def setUp(self):
-        super(TestCase, self).setUp()
-        if (os.environ.get('OS_STDOUT_CAPTURE') == 'True' or
-                os.environ.get('OS_STDOUT_CAPTURE') == '1'):
-            stdout = self.useFixture(fixtures.StringStream('stdout')).stream
-            self.useFixture(fixtures.MonkeyPatch('sys.stdout', stdout))
-        if (os.environ.get('OS_STDERR_CAPTURE') == 'True' or
-                os.environ.get('OS_STDERR_CAPTURE') == '1'):
-            stderr = self.useFixture(fixtures.StringStream('stderr')).stream
-            self.useFixture(fixtures.MonkeyPatch('sys.stderr', stderr))
-
-    def make_env(self, exclude=None, fake_env=FAKE_ENV):
-        env = dict((k, v) for k, v in fake_env.items() if k != exclude)
-        self.useFixture(fixtures.MonkeyPatch('os.environ', env))
-
-    def shell(self, argstr, exitcodes=(0,)):
-        orig = sys.stdout
-        orig_stderr = sys.stderr
-        try:
-            sys.stdout = io.StringIO()
-            sys.stderr = io.StringIO()
-            _shell = shell.OpenStackMagnumShell()
-            _shell.main(argstr.split())
-        except SystemExit:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            self.assertIn(exc_value.code, exitcodes)
-        finally:
-            stdout = sys.stdout.getvalue()
-            sys.stdout.close()
-            sys.stdout = orig
-            stderr = sys.stderr.getvalue()
-            sys.stderr.close()
-            sys.stderr = orig_stderr
-        return (stdout, stderr)
 
 
 class FakeSessionResponse(object):
