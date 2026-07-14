@@ -15,33 +15,10 @@
 
 from magnumclient.common import utils as magnum_utils
 from magnumclient.i18n import _
+from magnumclient.v1.nodegroups import NODEGROUP_ATTRIBUTES  # noqa: F401
 
 from osc_lib.command import command
 from osc_lib import utils
-
-
-NODEGROUP_ATTRIBUTES = [
-    'uuid',
-    'name',
-    'cluster_id',
-    'project_id',
-    'docker_volume_size',
-    'labels',
-    'labels_overridden',
-    'labels_skipped',
-    'labels_added',
-    'flavor_id',
-    'image_id',
-    'node_addresses',
-    'node_count',
-    'role',
-    'max_node_count',
-    'min_node_count',
-    'is_default',
-    'stack_id',
-    'status',
-    'status_reason',
-]
 
 
 class CreateNodeGroup(command.Command):

@@ -15,48 +15,13 @@
 from magnumclient.common import utils as magnum_utils
 from magnumclient.exceptions import InvalidAttribute
 from magnumclient.i18n import _
+from magnumclient.v1.cluster_templates import (
+    CLUSTER_TEMPLATE_ATTRIBUTES
+)
 
 from osc_lib.command import command
 from osc_lib import utils as osc_utils
 from oslo_log import log as logging
-
-
-CLUSTER_TEMPLATE_ATTRIBUTES = [
-    'insecure_registry',
-    'labels',
-    'updated_at',
-    'floating_ip_enabled',
-    'fixed_subnet',
-    'master_flavor_id',
-    'uuid',
-    'no_proxy',
-    'https_proxy',
-    'tls_disabled',
-    'keypair_id',
-    'public',
-    'http_proxy',
-    'docker_volume_size',
-    'server_type',
-    'external_network_id',
-    'cluster_distro',
-    'image_id',
-    'volume_driver',
-    'registry_enabled',
-    'docker_storage_driver',
-    'apiserver_port',
-    'name',
-    'created_at',
-    'network_driver',
-    'fixed_network',
-    'coe',
-    'flavor_id',
-    'master_lb_enabled',
-    'dns_nameserver',
-    'project_id',
-    'hidden',
-    'tags',
-    'driver',
-]
 
 
 def _show_cluster_template(cluster_template):

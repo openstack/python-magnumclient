@@ -17,46 +17,10 @@ import os
 from magnumclient.common import utils as magnum_utils
 from magnumclient import exceptions
 from magnumclient.i18n import _
+from magnumclient.v1.clusters import CLUSTER_ATTRIBUTES  # noqa: F401
 
 from osc_lib.command import command
 from osc_lib import utils
-
-
-CLUSTER_ATTRIBUTES = [
-    'status',
-    'health_status',
-    'cluster_template_id',
-    'node_addresses',
-    'uuid',
-    'stack_id',
-    'status_reason',
-    'created_at',
-    'updated_at',
-    'coe_version',
-    'labels',
-    'labels_overridden',
-    'labels_skipped',
-    'labels_added',
-    'fixed_network',
-    'fixed_subnet',
-    'floating_ip_enabled',
-    'faults',
-    'keypair',
-    'api_address',
-    'master_addresses',
-    'master_lb_enabled',
-    'create_timeout',
-    'node_count',
-    'discovery_url',
-    'docker_volume_size',
-    'master_count',
-    'container_version',
-    'name',
-    'master_flavor_id',
-    'flavor_id',
-    'health_status_reason',
-    'project_id',
-]
 
 
 class CreateCluster(command.Command):

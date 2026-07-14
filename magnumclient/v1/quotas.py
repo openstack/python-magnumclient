@@ -15,6 +15,15 @@ from magnumclient import exceptions
 from magnumclient.v1 import basemodels
 
 
+QUOTA_ATTRIBUTES = [
+    'resource',
+    'created_at',
+    'updated_at',
+    'hard_limit',
+    'project_id',
+    'id',
+]
+
 CREATION_ATTRIBUTES = ['project_id', 'resource', 'hard_limit']
 
 
