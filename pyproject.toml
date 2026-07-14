@@ -1,3 +1,78 @@
 [build-system]
 requires = ["pbr>=6.1.1"]
 build-backend = "pbr.build"
+
+[project]
+name = "python-magnumclient"
+description = "Client library for Magnum API"
+authors = [
+    {name = "OpenStack", email = "openstack-discuss@lists.openstack.org"},
+]
+readme = {file = "README.rst", content-type = "text/x-rst"}
+license = "Apache-2.0"
+dynamic = ["version", "dependencies"]
+requires-python = ">=3.11"
+classifiers = [
+  "Environment :: OpenStack",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: System Administrators",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
+
+[project.urls]
+Homepage = "https://docs.openstack.org/python-magnumclient/latest/"
+Repository = "https://opendev.org/openstack/python-magnumclient"
+
+[tool.setuptools]
+packages = [
+    "magnumclient"
+]
+
+[project.entry-points."openstack.cli.extension"]
+container_infra = "magnumclient.osc.plugin"
+
+[project.entry-points."openstack.container_infra.v1"]
+coe_ca_rotate = "magnumclient.osc.v1.certificates:RotateCa"
+coe_ca_show = "magnumclient.osc.v1.certificates:ShowCa"
+coe_ca_sign = "magnumclient.osc.v1.certificates:SignCa"
+
+coe_cluster_create = "magnumclient.osc.v1.clusters:CreateCluster"
+coe_cluster_list = "magnumclient.osc.v1.clusters:ListCluster"
+coe_cluster_delete = "magnumclient.osc.v1.clusters:DeleteCluster"
+coe_cluster_show = "magnumclient.osc.v1.clusters:ShowCluster"
+coe_cluster_update = "magnumclient.osc.v1.clusters:UpdateCluster"
+coe_cluster_config = "magnumclient.osc.v1.clusters:ConfigCluster"
+coe_cluster_resize = "magnumclient.osc.v1.clusters:ResizeCluster"
+coe_cluster_upgrade = "magnumclient.osc.v1.clusters:UpgradeCluster"
+
+coe_cluster_template_create = "magnumclient.osc.v1.cluster_templates:CreateClusterTemplate"
+coe_cluster_template_delete = "magnumclient.osc.v1.cluster_templates:DeleteClusterTemplate"
+coe_cluster_template_list = "magnumclient.osc.v1.cluster_templates:ListTemplateCluster"
+coe_cluster_template_show = "magnumclient.osc.v1.cluster_templates:ShowClusterTemplate"
+coe_cluster_template_update = "magnumclient.osc.v1.cluster_templates:UpdateClusterTemplate"
+
+coe_credential_rotate = "magnumclient.osc.v1.credentials:RotateCredential"
+
+coe_nodegroup_list = "magnumclient.osc.v1.nodegroups:ListNodeGroup"
+coe_nodegroup_show = "magnumclient.osc.v1.nodegroups:ShowNodeGroup"
+coe_nodegroup_create = "magnumclient.osc.v1.nodegroups:CreateNodeGroup"
+coe_nodegroup_delete = "magnumclient.osc.v1.nodegroups:DeleteNodeGroup"
+coe_nodegroup_update = "magnumclient.osc.v1.nodegroups:UpdateNodeGroup"
+
+coe_quotas_create = "magnumclient.osc.v1.quotas:CreateQuotas"
+coe_quotas_delete = "magnumclient.osc.v1.quotas:DeleteQuotas"
+coe_quotas_update = "magnumclient.osc.v1.quotas:UpdateQuotas"
+coe_quotas_show = "magnumclient.osc.v1.quotas:ShowQuotas"
+coe_quotas_list = "magnumclient.osc.v1.quotas:ListQuotas"
+
+coe_service_list = "magnumclient.osc.v1.mservices:ListService"
+
+coe_stats_list = "magnumclient.osc.v1.stats:ListStats"
