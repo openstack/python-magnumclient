@@ -14,6 +14,7 @@
 #    under the License.
 
 from magnumclient.common import utils as magnum_utils
+from magnumclient import exceptions
 from magnumclient.i18n import _
 from magnumclient.v1.nodegroups import NODEGROUP_ATTRIBUTES  # noqa: F401
 
@@ -243,24 +244,19 @@ class UpdateNodeGroup(command.Command):
         parser.add_argument(
             'nodegroup',
             metavar='<nodegroup>',
-            help=_('The name or UUID of cluster to update'))
-
+            help=_('The name or UUID of the nodegroup to update.'))
         parser.add_argument(
-            'op',
-            metavar='<op>',
-            choices=['add', 'replace', 'remove'],
-            help=_("Operations: one of 'add', 'replace' or 'remove'"))
-
+            '--min-nodes',
+            metavar='<min-nodes>',
+            type=int,
+            dest='min_node_count',
+            help=_('The minimum node count for the nodegroup.'))
         parser.add_argument(
-            'attributes',
-            metavar='<path=value>',
-            nargs='+',
-            action='append',
-            default=[],
-            help=_(
-                "Attributes to add/replace or remove (only PATH is necessary "
-                "on remove)"))
-
+            '--max-nodes',
+            metavar='<max-nodes>',
+            type=int,
+            dest='max_node_count',
+            help=_('The maximum node count for the nodegroup.'))
         return parser
 
     def take_action(self, parsed_args):
@@ -268,11 +264,20 @@ class UpdateNodeGroup(command.Command):
 
         mag_client = self.app.client_manager.container_infra
 
-        patch = magnum_utils.args_array_to_patch(parsed_args.op,
-                                                 parsed_args.attributes[0])
+        patch = []
 
-        cluster_id = parsed_args.cluster
-        mag_client.nodegroups.update(cluster_id, parsed_args.nodegroup,
-                                     patch)
+        if parsed_args.min_node_count is not None:
+            patch.append({'op': 'replace', 'path': '/min_node_count',
+                          'value': parsed_args.min_node_count})
+
+        if parsed_args.max_node_count is not None:
+            patch.append({'op': 'replace', 'path': '/max_node_count',
+                          'value': parsed_args.max_node_count})
+
+        if not patch:
+            raise exceptions.CommandError("Nothing to update.")
+
+        mag_client.nodegroups.update(parsed_args.cluster,
+                                     parsed_args.nodegroup, patch)
         print("Request to update nodegroup %s has been accepted." %
               parsed_args.nodegroup)

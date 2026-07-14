@@ -296,31 +296,45 @@ class UpdateCluster(command.Command):
         parser.add_argument(
             'cluster',
             metavar='<cluster>',
-            help=_('The name or UUID of cluster to update'))
-
+            help=_('The name or UUID of the cluster to update'))
         parser.add_argument(
-            'op',
-            metavar='<op>',
-            choices=['add', 'replace', 'remove'],
-            help=_("Operations: one of 'add', 'replace' or 'remove'"))
-
+            '--name',
+            metavar='<name>',
+            help=_('New name for the cluster.'))
         parser.add_argument(
-            'attributes',
-            metavar='<path=value>',
-            nargs='+',
+            '--node-count',
+            metavar='<node-count>',
+            type=int,
+            dest='node_count',
+            help=_('New number of nodes in the cluster.'))
+        parser.add_argument(
+            '--master-count',
+            metavar='<master-count>',
+            type=int,
+            dest='master_count',
+            help=_('New number of master nodes in the cluster.'))
+        parser.add_argument(
+            '--label',
+            metavar='<key=value>',
             action='append',
+            dest='labels',
             default=[],
-            help=_(
-                "Attributes to add/replace or remove (only PATH is necessary "
-                "on remove)"))
-
+            help=_('Label to add or update on the cluster '
+                   '(repeat to set multiple labels).'))
+        parser.add_argument(
+            '--no-label',
+            metavar='<key>',
+            action='append',
+            dest='no_labels',
+            default=[],
+            help=_('Label key to remove from the cluster '
+                   '(repeat to remove multiple labels).'))
         parser.add_argument(
             '--rollback',
             action='store_true',
             dest='rollback',
             default=False,
             help=_('Rollback cluster on update failure.'))
-
         return parser
 
     def take_action(self, parsed_args):
@@ -328,11 +342,33 @@ class UpdateCluster(command.Command):
 
         mag_client = self.app.client_manager.container_infra
 
-        patch = magnum_utils.args_array_to_patch(parsed_args.op,
-                                                 parsed_args.attributes[0])
+        patch = []
 
-        mag_client.clusters.update(parsed_args.cluster,
-                                   patch)
+        if parsed_args.name:
+            patch.append({'op': 'replace', 'path': '/name',
+                          'value': parsed_args.name})
+
+        if parsed_args.node_count is not None:
+            patch.append({'op': 'replace', 'path': '/node_count',
+                          'value': parsed_args.node_count})
+
+        if parsed_args.master_count is not None:
+            patch.append({'op': 'replace', 'path': '/master_count',
+                          'value': parsed_args.master_count})
+
+        for label in parsed_args.labels:
+            k, v = label.split('=', 1)
+            patch.append({'op': 'add', 'path': '/labels/%s' % k,
+                          'value': v})
+
+        for key in parsed_args.no_labels:
+            patch.append({'op': 'remove', 'path': '/labels/%s' % key})
+
+        if not patch:
+            raise exceptions.CommandError("Nothing to update.")
+
+        mag_client.clusters.update(parsed_args.cluster, patch,
+                                   rollback=parsed_args.rollback)
         print("Request to update cluster %s has been accepted." %
               parsed_args.cluster)
 

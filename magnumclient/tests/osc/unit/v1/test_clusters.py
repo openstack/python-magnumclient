@@ -285,36 +285,69 @@ class TestClusterUpdate(TestCluster):
         self.clusters_mock.update = mock.Mock()
         self.clusters_mock.update.return_value = None
 
-        # Get the command object to test
         self.cmd = osc_clusters.UpdateCluster(self.app, None)
 
-    def test_cluster_update_pass(self):
-        arglist = ['foo', 'remove', 'bar']
-        verifylist = [
-            ('cluster', 'foo'),
-            ('op', 'remove'),
-            ('attributes', [['bar']]),
-            ('rollback', False)
-        ]
+    def test_cluster_update_name(self):
+        arglist = ['foo', '--name', 'bar']
+        verifylist = [('cluster', 'foo'), ('name', 'bar'), ('rollback', False)]
         parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
         self.cmd.take_action(parsed_args)
         self.clusters_mock.update.assert_called_with(
             'foo',
-            [{'op': 'remove', 'path': '/bar'}]
-        )
+            [{'op': 'replace', 'path': '/name', 'value': 'bar'}],
+            rollback=False)
 
-    def test_cluster_update_bad_op(self):
-        arglist = ['foo', 'bar', 'snafu']
-        verifylist = [
-            ('cluster', 'foo'),
-            ('op', 'bar'),
-            ('attributes', ['snafu']),
-            ('rollback', False)
-        ]
+    def test_cluster_update_node_count(self):
+        arglist = ['foo', '--node-count', '5']
+        verifylist = [('cluster', 'foo'), ('node_count', 5)]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
 
-        self.assertRaises(magnum_fakes.MagnumParseException,
-                          self.check_parser, self.cmd, arglist, verifylist)
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'replace', 'path': '/node_count', 'value': 5}],
+            rollback=False)
+
+    def test_cluster_update_label_add(self):
+        arglist = ['foo', '--label', 'k1=v1', '--label', 'k2=v2']
+        verifylist = [('cluster', 'foo'), ('labels', ['k1=v1', 'k2=v2'])]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'add', 'path': '/labels/k1', 'value': 'v1'},
+             {'op': 'add', 'path': '/labels/k2', 'value': 'v2'}],
+            rollback=False)
+
+    def test_cluster_update_label_remove(self):
+        arglist = ['foo', '--no-label', 'k1']
+        verifylist = [('cluster', 'foo'), ('no_labels', ['k1'])]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'remove', 'path': '/labels/k1'}],
+            rollback=False)
+
+    def test_cluster_update_rollback(self):
+        arglist = ['foo', '--name', 'bar', '--rollback']
+        verifylist = [('cluster', 'foo'), ('name', 'bar'), ('rollback', True)]
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+        self.clusters_mock.update.assert_called_with(
+            'foo',
+            [{'op': 'replace', 'path': '/name', 'value': 'bar'}],
+            rollback=True)
+
+    def test_cluster_update_nothing_raises(self):
+        arglist = ['foo']
+        parsed_args = self.check_parser(self.cmd, arglist, [])
+        self.assertRaises(exceptions.CommandError,
+                          self.cmd.take_action, parsed_args)
 
 
 class TestClusterShow(TestCluster):
