@@ -28,18 +28,27 @@ API_VERSIONS = {
 
 def make_client(instance):
     """Returns a magnum client."""
+    requested_version = instance._api_version[API_NAME]
+    # API_VERSIONS is keyed by major version only; a full microversion string
+    # like '1.12' must be reduced to its major part for the class lookup.
+    major_version = requested_version.split('.')[0]
     magnum_client = utils.get_client_class(
         API_NAME,
-        instance._api_version[API_NAME],
+        major_version,
         API_VERSIONS)
     LOG.debug('Instantiating magnum client: %s', magnum_client)
+
+    # Forward an explicit microversion to the HTTP client; fall back to
+    # 'latest' when only a bare major version was given (the default).
+    api_version = (requested_version if '.' in requested_version
+                   else DEFAULT_MAGNUM_API_VERSION)
 
     client = magnum_client(session=instance.session,
                            region_name=instance._region_name,
                            interface=instance._interface,
                            insecure=instance._insecure,
                            ca_cert=instance._cacert,
-                           api_version=DEFAULT_MAGNUM_API_VERSION)
+                           api_version=api_version)
     return client
 
 
