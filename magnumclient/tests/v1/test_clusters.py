@@ -26,7 +26,7 @@ CLUSTER1 = {'id': 123,
             'uuid': '66666666-7777-8888-9999-000000000001',
             'name': 'cluster1',
             'cluster_template_id': 'e74c40e0-d825-11e2-a28f-0800200c9a61',
-            'stack_id': '5d12f6fd-a196-4bf0-ae4c-1f639a523a51',
+            'cluster_id': '5d12f6fd-a196-4bf0-ae4c-1f639a523a51',
             'api_address': '172.17.2.1',
             'node_addresses': ['172.17.2.3'],
             'node_count': 2,
@@ -36,7 +36,7 @@ CLUSTER2 = {'id': 124,
             'uuid': '66666666-7777-8888-9999-000000000002',
             'name': 'cluster2',
             'cluster_template_id': 'e74c40e0-d825-11e2-a28f-0800200c9a62',
-            'stack_id': '5d12f6fd-a196-4bf0-ae4c-1f639a523a52',
+            'cluster_id': '5d12f6fd-a196-4bf0-ae4c-1f639a523a52',
             'api_address': '172.17.2.2',
             'node_addresses': ['172.17.2.4'],
             'node_count': 2,
@@ -46,7 +46,7 @@ CLUSTER2 = {'id': 124,
 CREATE_CLUSTER = copy.deepcopy(CLUSTER1)
 del CREATE_CLUSTER['id']
 del CREATE_CLUSTER['uuid']
-del CREATE_CLUSTER['stack_id']
+del CREATE_CLUSTER['cluster_id']
 del CREATE_CLUSTER['api_address']
 del CREATE_CLUSTER['node_addresses']
 

@@ -237,7 +237,7 @@ class FakeCluster(object):
             'cluster_template_id': 'fake-ct',
             'node_addresses': [],
             'uuid': '3a369884-b6ba-484f-a206-919b4b718aff',
-            'stack_id': 'c4554582-77bd-4734-8f1a-72c3c40e5fb4',
+            'cluster_id': 'c4554582-77bd-4734-8f1a-72c3c40e5fb4',
             'status_reason': None,
             'labels': {},
             'labels_overridden': {},

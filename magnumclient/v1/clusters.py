@@ -21,7 +21,7 @@ CLUSTER_ATTRIBUTES = [
     'cluster_template_id',
     'node_addresses',
     'uuid',
-    'stack_id',
+    'cluster_id',
     'status_reason',
     'created_at',
     'updated_at',
@@ -73,6 +73,22 @@ class Cluster(baseunit.BaseTemplate):
 class ClusterManager(baseunit.BaseTemplateManager):
     resource_class = Cluster
     template_name = 'clusters'
+
+    @staticmethod
+    def _normalize(cluster):
+        # Pre-1.13 servers return stack_id instead of cluster_id; normalise
+        # so callers always see cluster_id regardless of server microversion.
+        stack_id = cluster._info.get('stack_id')
+        if stack_id and not cluster._info.get('cluster_id'):
+            cluster._info['cluster_id'] = stack_id
+        return cluster
+
+    def get(self, id):
+        cluster = super().get(id)
+        return self._normalize(cluster) if cluster else None
+
+    def list(self, **kwargs):
+        return [self._normalize(c) for c in super().list(**kwargs)]
 
     def resize(self, cluster_uuid, node_count,
                nodes_to_remove=[], nodegroup=None):
