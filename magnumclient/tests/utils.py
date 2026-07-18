@@ -16,10 +16,11 @@
 import copy
 import datetime
 import io
-from oslo_serialization import jsonutils
 import queue
 
 import fixtures
+from oslo_serialization import jsonutils
+from oslo_utils import timeutils
 import testtools
 
 from magnumclient.common import httpclient as http
@@ -119,7 +120,7 @@ class FakeServiceCatalog(object):
 
 class FakeKeystone(object):
     service_catalog = FakeServiceCatalog()
-    timestamp = datetime.datetime.utcnow() + datetime.timedelta(days=5)
+    timestamp = timeutils.utcnow() + datetime.timedelta(days=5)
 
     def __init__(self, auth_token):
         self.auth_token = auth_token
